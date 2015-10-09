@@ -237,7 +237,8 @@ function bb:Run()
 		end
 	end
 	-- Build up pulse frame (hearth)
-	bb:Engine()
+	--bb:Engine()
+    --BadBoyUpdate()
 	-- add minimap fire icon
 	bb:MinimapButton()
 	-- build up UI
@@ -245,6 +246,8 @@ function bb:Run()
 	-- start up enemies Engine
 	enemiesEngineRange = 55
 	EnemiesEngine()
+    makeEnemiesTable(maxDistance) -- Do it one time here to prevent errors
+    --BadBoyUpdate()
 	ChatOverlay("-= BadBoy Loaded =-")
 end
 --[[Startup UI]]
@@ -273,15 +276,16 @@ function bb:PulseUI()
 	-- End Bug Check
     -- Disabled as of october 2015, bug seems to be fixed for awhile
 
-	mainText:SetText(displayDistance)
+	--mainText:SetText(displayDistance)
+    mainText:SetText(targetDistance)
 	-- enemies
-	makeEnemiesTable(maxDistance)
+	--makeEnemiesTable(maxDistance)
 	-- allies
-    if isChecked("HE Active") then
-	    nNova:Update()
-    end
+    --if isChecked("HE Active") then
+	--    nNova:Update()
+    --end
 	-- Pulse other features
 	-- PokeEngine()
-	ProfessionHelper()
-	SalvageHelper()
+	--ProfessionHelper()
+	--SalvageHelper()
 end

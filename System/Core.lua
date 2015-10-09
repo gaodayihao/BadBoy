@@ -1,11 +1,11 @@
-function bb:Engine()
-	-- Hidden Frame
-	if Pulse_Engine == nil then
-		Pulse_Engine = CreateFrame("Frame", nil, UIParent)
-		Pulse_Engine:SetScript("OnUpdate", BadBoyUpdate)
-		Pulse_Engine:Show()
-	end
-end
+--function bb:Engine()
+--	-- Hidden Frame
+--	if Pulse_Engine == nil then
+--		Pulse_Engine = CreateFrame("Frame", nil, UIParent)
+--		Pulse_Engine:SetScript("OnUpdate", BadBoyUpdate)
+--		Pulse_Engine:Show()
+--	end
+--end
 -- Chat Overlay: Originally written by Sheuron.
 local function onUpdate(self,elapsed)
 	if self.time < GetTime() - 2.0 then if self:GetAlpha() == 0 then self:Hide(); else self:SetAlpha(self:GetAlpha() - 0.02); end end

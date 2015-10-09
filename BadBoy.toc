@@ -320,3 +320,5 @@ System\Libs\LibRangeCheck-2.0\LibRangeCheck-2.0.lua
 
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Always: delayed
+
+System\timer.lua
