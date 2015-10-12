@@ -277,8 +277,8 @@ function bb:PulseUI()
 	-- End Bug Check
     -- Disabled as of october 2015, bug seems to be fixed for awhile
 
-	--mainText:SetText(displayDistance)
-    mainText:SetText(targetDistance)
+	mainText:SetText(displayDistance)
+
 	-- enemies
 	--makeEnemiesTable(maxDistance)
 	-- allies
