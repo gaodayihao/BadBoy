@@ -83,6 +83,7 @@ Rotations\Death Knight\Frost\FrostCuteOne.lua
 
 Rotations\Death Knight\Blood\cBlood.lua
 Rotations\Death Knight\Blood\Blood.lua
+Rotations\Death Knight\Blood\BloodCuteOne.lua
 
 Rotations\Death Knight\Unholy\cUnholy.lua
 Rotations\Death Knight\Unholy\Unholy.lua
@@ -151,6 +152,7 @@ Rotations\Monk\Brewmaster\Brewmaster.lua
 
 Rotations\Monk\Mistweaver\cMistweaver.lua
 Rotations\Monk\Mistweaver\Mistweaver.lua
+Rotations\Monk\Mistweaver\MistweaverCpoworks.lua
 
 Rotations\Monk\Windwalker\cWindwalker.lua
 Rotations\Monk\Windwalker\Windwalker.lua
