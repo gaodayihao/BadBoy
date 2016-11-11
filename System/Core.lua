@@ -245,6 +245,12 @@ frame:SetScript("OnEvent", frame.OnEvent)
 --[[-------------------------------------------------------------------------------------------------------------------------------------------------------]]
 --[[This function is refired everytime wow ticks. This frame is located in Core.lua]]
 function BadBoyUpdate(self)
+	local tempTime = GetTime();
+	if not self.lastUpdateTime then
+		self.lastUpdateTime = tempTime
+	end
+	if self.lastUpdateTime and (tempTime - self.lastUpdateTime) > (1/10) then
+	self.lastUpdateTime = tempTime
 	-- prevent ticking when firechack isnt loaded
 	-- if user click power button, stop everything from pulsing.
 	if not getOptionCheck("Start/Stop BadBoy") or bb.data["Power"] ~= 1 then
@@ -260,6 +266,7 @@ function BadBoyUpdate(self)
 		end
 		return
 	end
+	
 	-- pulse enemiesEngine
 	bb:PulseUI()
 
@@ -276,6 +283,7 @@ function BadBoyUpdate(self)
 
 	-- accept dungeon queues
 	bb:AcceptQueues()
+	
 	--[[Class/Spec Selector]]
     bb.selectedProfile = bb.data.options[bb.selectedSpec]["Rotation".."Drop"] or 1
 	local playerClass = select(3,UnitClass("player"))
@@ -378,6 +386,8 @@ function BadBoyUpdate(self)
 			DemonHunterVengeance()
 		end
 	end
+	end
+	
 end
 
 --[[-------------------------------------------------------------------------------------------------------------------------------------------------------]]
