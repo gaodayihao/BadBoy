@@ -208,6 +208,7 @@ Rotations\Shaman\cShaman.lua
 Rotations\Shaman\Enhancement\cEnhancement.lua
 Rotations\Shaman\Enhancement\Enhancement.lua
 Rotations\Shaman\Enhancement\EnhancementCuteOne.lua
+Rotations\Shaman\Enhancement\EnhancementEllis.lua
 
 Rotations\Shaman\Elemental\cElemental.lua
 Rotations\Shaman\Elemental\Elemental.lua
