@@ -861,8 +861,8 @@ function bb.ui:createConfigWindow()
         bb.ui:createCheckbox(section, "Auto-Sell/Repair", "Automatically sells grays and repais when you open a repairman trade.")
         bb.ui:createCheckbox(section, "Accept Queues", "Automatically accept LFD, LFR, .. queue.")
         bb.ui:createCheckbox(section, "Overlay Messages", "Check to enable chat overlay messages.")
-        bb.ui:createSpinnerWithout(section,  "Rotations TPS" ,15, 1, 30, 1, "Sets Rotations TPS.", "Sets a TPS for Rotations.")
-        bb.ui:createSpinnerWithout(section,  "Unit TPS" ,5, 1, 10, 1, "Sets Unit TPS.", "Sets a TPS for Unit.")
+        bb.ui:createSpinnerWithout(section,  LC_ROTATION_TPS ,15, 1, 30, 1, "", "Sets a TPS for Rotations.")
+        bb.ui:createSpinnerWithout(section,  LC_UNITS_TPS ,5, 1, 10, 1, "", "Sets a TPS for Unit.")
         bb.ui:checkSectionState(section)
     end
 

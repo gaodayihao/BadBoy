@@ -1,0 +1,2 @@
+LC_ROTATION_TPS = "Rotation TPS";
+LC_UNITS_TPS = "Units TPS";
