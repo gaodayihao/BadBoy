@@ -259,17 +259,7 @@ function BadBoyUpdate(self)
 		return
 	end
 
-	local tempTime = GetTime()
-	if not self.lastUnitUpdateTime then
-		self.lastUnitUpdateTime = 0
-	end
-
-	if not self.lastRotationUpdateTime then
-		self.lastRotationUpdateTime = 0
-	end
-
-	if tempTime - self.lastUnitUpdateTime > 1/(getOptionValue(LC_UNITS_TPS) or 5) then
-		self.lastUnitUpdateTime = tempTime
+	if bb.timer:useTimer("UnitUpdate", 1/(getOptionValue(LC_UNITS_TPS) or 5)) then
 		-- prevent ticking when firechack isnt loaded
 		-- if user click power button, stop everything from pulsing.
 		
@@ -291,8 +281,7 @@ function BadBoyUpdate(self)
 		bb:AcceptQueues()
 	end
 	
-	if tempTime - self.lastRotationUpdateTime > 1/(getOptionValue(LC_ROTATION_TPS) or 15) then
-		self.lastRotationUpdateTime = tempTime
+	if bb.timer:useTimer("RotationUpdate", 1/(getOptionValue(LC_ROTATION_TPS) or 15)) then
 		--[[Class/Spec Selector]]
 	    bb.selectedProfile = bb.data.options[bb.selectedSpec]["Rotation".."Drop"] or 1
 		local functionSelector = {

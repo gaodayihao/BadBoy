@@ -142,7 +142,7 @@ if select(2, UnitClass("player")) == "SHAMAN" then
 --- ROTATION ---
 ----------------
     local function runRotation()
-        if bb.timer:useTimer("debugElemental", math.random(0.15,0.3)) then
+        --if bb.timer:useTimer("debugElemental", math.random(0.15,0.3)) then
             --print("Running: "..rotationName)
 
     ---------------
@@ -739,7 +739,7 @@ if select(2, UnitClass("player")) == "SHAMAN" then
                     end
                 end --End In Combat
             end --End Rotation Logic
-        end -- End Timer
+        --end -- End Timer
     end -- End runRotation
     tinsert(cEnhancement.rotations, {
         name = rotationName,

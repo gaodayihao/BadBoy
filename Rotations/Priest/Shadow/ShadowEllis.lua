@@ -43,11 +43,16 @@ if select(2, UnitClass("player")) == "PRIEST" then
         local function rotationOptions()
             local section
             -- General Options
-            section = bb.ui:createSection(bb.ui.window.profile, "General")
+            section = bb.ui:createSection(bb.ui.window.profile, LC_GENERAL)
                 -- SWP Max Targets
-                bb.ui:createSpinner(section, "SWP Max Targets",  3,  1,  10,  1)
+                bb.ui:createSpinnerWithout(section, LC_SWP_MAX_TARGETS,  3,  1,  10,  1, LC_SWP_MAX_TARGETS_DESCRIPTION)
                 -- VT Max Targets
-                bb.ui:createSpinner(section, "VT Max Targets",  3,  1,  10,  1)
+                bb.ui:createSpinnerWithout(section, LC_VT_MAX_TARGETS,  3,  1,  10,  1, LC_VT_MAX_TARGETS_DESCRIPTION)
+            bb.ui:checkSectionState(section)
+            -- Pre-Pull BossMod
+            section = bb.ui:createSection(bb.ui.window.profile, LC_PRE_PULL_BOSSMOD)
+                -- Potion
+                bb.ui:createDropdown(section, LC_POTION, {LC_OLD_WAR,LC_PROLONGED_POWER}, 1)
             bb.ui:checkSectionState(section)
             -- Cooldown Options
             section = bb.ui:createSection(bb.ui.window.profile, "Cooldowns")
@@ -67,7 +72,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 bb.ui:createCheckbox(section,"Power Infusion")
             bb.ui:checkSectionState(section)
             -- Defensive Options
-            section = bb.ui:createSection(bb.ui.window.profile, "Defensive")
+            section = bb.ui:createSection(bb.ui.window.profile, LC_DEFENSIVE)
                 -- Healthstone
                 bb.ui:createSpinner(section, "Healthstone",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.")
                 -- Gift of The Naaru
@@ -100,7 +105,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
 --- ROTATION ---
 ----------------
     local function runRotation()
-        if bb.timer:useTimer("debugShadow", 0.1) then
+        --if bb.timer:useTimer("debugShadow", 0.1) then
             --print("Running: "..rotationName)
 
     ---------------
@@ -158,8 +163,8 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local ttm                                           = bb.player.timeToMax
             local units                                         = bb.player.units
             
-            local SWPmaxTargets                                 = getOptionValue("SWP Max Targets")
-            local VTmaxTargets                                  = getOptionValue("VT Max Targets")
+            local SWPmaxTargets                                 = getOptionValue(LC_SWP_MAX_TARGETS)
+            local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
 
             if useMindBlast == nil then useMindBlast = false end
             if leftCombat == nil then leftCombat = GetTime() end
@@ -387,7 +392,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if actionList_Auto() then return end
                 end     
             end -- End Combat Rotation
-        end -- End Timer
+        --end -- End Timer
     end -- Run Rotation
 
     tinsert(cShadow.rotations, {
