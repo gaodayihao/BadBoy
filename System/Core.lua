@@ -245,6 +245,20 @@ frame:SetScript("OnEvent", frame.OnEvent)
 --[[-------------------------------------------------------------------------------------------------------------------------------------------------------]]
 --[[This function is refired everytime wow ticks. This frame is located in Core.lua]]
 function BadBoyUpdate(self)
+	if not getOptionCheck("Start/Stop BadBoy") or bb.data["Power"] ~= 1 then
+		optionsFrame:Hide()
+		_G["debugFrame"]:Hide()
+		return false
+	end
+	if FireHack == nil then
+		optionsFrame:Hide()
+		_G["debugFrame"]:Hide()
+		if getOptionCheck("Start/Stop BadBoy") then
+			ChatOverlay("FireHack not Loaded.")
+		end
+		return
+	end
+
 	local tempTime = GetTime()
 	if not self.lastUnitUpdateTime then
 		self.lastUnitUpdateTime = 0
@@ -258,20 +272,7 @@ function BadBoyUpdate(self)
 		self.lastUnitUpdateTime = tempTime
 		-- prevent ticking when firechack isnt loaded
 		-- if user click power button, stop everything from pulsing.
-		if not getOptionCheck("Start/Stop BadBoy") or bb.data["Power"] ~= 1 then
-			optionsFrame:Hide()
-			_G["debugFrame"]:Hide()
-			return false
-		end
-		if FireHack == nil then
-			optionsFrame:Hide()
-			_G["debugFrame"]:Hide()
-			if getOptionCheck("Start/Stop BadBoy") then
-				ChatOverlay("FireHack not Loaded.")
-			end
-			return
-		end
-
+		
 		-- pulse enemiesEngine
 		bb:PulseUI()
 
