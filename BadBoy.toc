@@ -11,6 +11,7 @@ bindings.xml
 ##Localization
 Localization\localization.lua
 Localization\localization_tw.lua
+Localization\localization_cn.lua
 
 ## System
 System\Beautycase.lua
