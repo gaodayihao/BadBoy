@@ -453,8 +453,8 @@ if select(2, UnitClass("player")) == "SHAMAN" then
 						if isChecked("Potion") and inRaid then
 							if getOptionValue("Potion") == 1 and canUse(127844) and not buff.oldWar then -- Old War
 								useItem(127844)
-							elseif getOptionValue("Potion") == 2 and canUse(142177) and not buff.prolongedPower then -- Prolonged Power
-								useItem(142177)
+							elseif getOptionValue("Potion") == 2 and canUse(142117) and not buff.prolongedPower then -- Prolonged Power
+								useItem(142117)
 							end
 						end
                     end -- End Pre-Pull
