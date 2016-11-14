@@ -125,7 +125,7 @@ Raidable means if its good to raid with.
 |Discipline|0%|Cpoworks|7.0|:interrobang::x:
 |Holy|0%|||
 |Shadow|70%|Cpoworks|7.0|:heavy_check_mark:
-|Shadow|10%|Ellis|7.0|:heavy_check_mark:
+|Shadow|10%|Ellis|7.0|
 ||||
 | **Rogue** |||
 |Assassination|100%|CuteOne|7.0|:interrobang:

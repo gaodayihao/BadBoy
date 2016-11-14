@@ -42,55 +42,63 @@ if select(2, UnitClass("player")) == "PRIEST" then
 
         local function rotationOptions()
             local section
-            -- General Options
+        -- General Options
             section = bb.ui:createSection(bb.ui.window.profile, LC_GENERAL)
-                -- SWP Max Targets
-                bb.ui:createSpinnerWithout(section, LC_SWP_MAX_TARGETS,  3,  1,  10,  1, LC_SWP_MAX_TARGETS_DESCRIPTION)
-                -- VT Max Targets
+            -- SWP Max Targets
+                bb.ui:createSpinnerWithout(section, LC_SWP_MAX_TARGETS,  6,  1,  10,  1, LC_SWP_MAX_TARGETS_DESCRIPTION)
+            -- VT Max Targets
                 bb.ui:createSpinnerWithout(section, LC_VT_MAX_TARGETS,  3,  1,  10,  1, LC_VT_MAX_TARGETS_DESCRIPTION)
+            -- VT Max Targets
+                bb.ui:createSpinnerWithout(section, LC_DOT_MINIMUM_HEALTH,  3,  1,  5,  1, LC_DOT_MINIMUM_HEALTH_DESCRIPTION)
+            -- Body And Soul
+                bb.ui:createSpinner(section, LC_BODY_AND_SOUL,  1.5,  0,  5,  0.5, LC_BODY_AND_SOUL_DESCRIPTION)
             bb.ui:checkSectionState(section)
-            -- Pre-Pull BossMod
+        -- Pre-Pull BossMod
             section = bb.ui:createSection(bb.ui.window.profile, LC_PRE_PULL_BOSSMOD)
-                -- Potion
-                bb.ui:createDropdown(section, LC_POTION, {LC_OLD_WAR,LC_PROLONGED_POWER}, 1)
+            -- Pre-Pull Timer
+                bb.ui:createSpinner(section, LC_PRE_PULL_TIMER,  3,  1,  10,  1,  LC_PRE_PULL_TIMER_DESCRIPTION)
+            -- Potion
+                bb.ui:createDropdown(section, LC_POTION, {LC_DEADLY_GRACE,LC_PROLONGED_POWER}, 1)
+            -- Flask
+                bb.ui:createCheckbox(section,LC_FLASK)
             bb.ui:checkSectionState(section)
-            -- Cooldown Options
+        -- Cooldown Options
             section = bb.ui:createSection(bb.ui.window.profile, "Cooldowns")
-                -- Int Pot
+            -- Int Pot
                 bb.ui:createCheckbox(section,"Int Pot")
-                -- Flask / Crystal
-                bb.ui:createCheckbox(section,"Flask / Crystal")
-                -- Trinkets
+            -- Trinkets
                 bb.ui:createCheckbox(section,"Trinkets")
-                -- Touch of the Void
+            -- Touch of the Void
                 if hasEquiped(128318) then
                     bb.ui:createCheckbox(section,"Touch of the Void")
                 end
-                -- Shadowfiend
+            -- Shadowfiend
                 bb.ui:createCheckbox(section,"Shadowfiend / Mind Bender")
-                -- Power Infusion
+            -- Power Infusion
                 bb.ui:createCheckbox(section,"Power Infusion")
             bb.ui:checkSectionState(section)
-            -- Defensive Options
+        -- Defensive Options
             section = bb.ui:createSection(bb.ui.window.profile, LC_DEFENSIVE)
-                -- Healthstone
+            -- Healthstone
                 bb.ui:createSpinner(section, "Healthstone",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.")
-                -- Gift of The Naaru
+            -- Gift of The Naaru
                 if bb.player.race == "Draenei" then
                     bb.ui:createSpinner(section, "Gift of the Naaru",  50,  0,  100,  5,  "|cffFFFFFFHealth Percent to Cast At")
                 end
-                -- Power Word: Shield
+            -- Power Word: Shield
                 bb.ui:createSpinner(section, "Power Word: Shield",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.")
-                -- Dispel Magic
+            -- Dispel Magic
                 bb.ui:createCheckbox(section,"Dispel Magic")
+            -- Vampiric Embrace
+                bb.ui:createSpinner(section, LC_VAMPIRIC_EMBRACE,  40,  1,  100,  5, LC_VAMPIRIC_EMBRACE_DESCRIPTION)
             bb.ui:checkSectionState(section)
-            -- Toggle Key Options
+        -- Toggle Key Options
             section = bb.ui:createSection(bb.ui.window.profile, "Toggle Keys")
-                -- Single/Multi Toggle
+            -- Single/Multi Toggle
                 bb.ui:createDropdown(section, "Rotation Mode", bb.dropOptions.Toggle,  4)
-                -- Cooldown Key Toggle
+            -- Cooldown Key Toggle
                 bb.ui:createDropdown(section, "Cooldown Mode", bb.dropOptions.Toggle,  3)
-                -- Pause Toggle
+            -- Pause Toggle
                 bb.ui:createDropdown(section, "Pause Mode", bb.dropOptions.Toggle,  6)
             bb.ui:checkSectionState(section)
         end
@@ -122,7 +130,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local addsIn                                        = 999
             local artifact                                      = bb.player.artifact
             local buff                                          = bb.player.buff
-            local canFlask                                      = canUse(bb.player.flask.wod.agilityBig)
+            local canFlask                                      = canUse(bb.player.flask.wod.intellectBig)
             local cast                                          = bb.player.cast
             local castable                                      = bb.player.cast.debug
             local combatTime                                    = getCombatTime()
@@ -133,24 +141,24 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local debuff                                        = bb.player.debuff
             local enemies                                       = bb.player.enemies
             local falling, swimming, flying, moving             = getFallTime(), IsSwimming(), IsFlying(), GetUnitSpeed("player")>0
-            local flaskBuff                                     = getBuffRemain("player",bb.player.flask.wod.buff.agilityBig)
+            local flaskBuff                                     = getBuffRemain("player",bb.player.flask.wod.buff.intellectBig)
             local friendly                                      = friendly or UnitIsFriend("target", "player")
             local gcd                                           = bb.player.gcd
             local hasMouse                                      = ObjectExists("mouseover")
-            local healPot                                       = getHealthPot()
+            --local healPot                                       = getHealthPot()
             local inCombat                                      = bb.player.inCombat
             local inInstance                                    = bb.player.instance=="party"
             local inRaid                                        = bb.player.instance=="raid"
             local lastSpell                                     = lastSpellCast
             local level                                         = bb.player.level
-            local lootDelay                                     = getOptionValue("LootDelay")
-            local lowestHP                                      = bb.friend[1].unit
+            --local lootDelay                                     = getOptionValue("LootDelay")
+            --local lowestHP                                      = bb.friend[1].unit
             local mode                                          = bb.player.mode
-            local moveIn                                        = 999
-            -- local multidot                                      = (useCleave() or bb.player.mode.rotation ~= 3)
+            --local moveIn                                        = 999
+            --local multidot                                      = (useCleave() or bb.player.mode.rotation ~= 3)
             local perk                                          = bb.player.perk        
             local php                                           = bb.player.health
-            local playerMouse                                   = UnitIsPlayer("mouseover")
+            --local playerMouse                                   = UnitIsPlayer("mouseover")
             local power, powmax, powgen, powerDeficit           = bb.player.power, bb.player.powerMax, bb.player.powerRegen, bb.player.powerDeficit
             local pullTimer                                     = bb.DBM:getPulltimer()
             local racial                                        = bb.player.getRacial()
@@ -160,30 +168,39 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local talent                                        = bb.player.talent
             local thp                                           = getHP(bb.player.units.dyn40)
             local ttd                                           = getTTD
-            local ttm                                           = bb.player.timeToMax
+            --local ttm                                           = bb.player.timeToMax
             local units                                         = bb.player.units
             
             local SWPmaxTargets                                 = getOptionValue(LC_SWP_MAX_TARGETS)
             local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
 
             if useMindBlast == nil then useMindBlast = false end
-            if leftCombat == nil then leftCombat = GetTime() end
-            if profileStop == nil then profileStop = false end
-            if IsHackEnabled("NoKnockback") ~= nil then SetHackEnabled("NoKnockback", false) end
-
-
-
+            --if leftCombat == nil then leftCombat = GetTime() end
+            --if profileStop == nil then profileStop = false end
+            --if IsHackEnabled("NoKnockback") ~= nil then SetHackEnabled("NoKnockback", false) end
+            
+            --print(SWPmaxTargets)
+            
+    --------------------
+    -- Custom Function--
+    --------------------
+            function usePotion()
+                if isChecked(LC_POTION) and inRaid then
+					if getOptionValue(LC_POTION) == 1 and canUse(127843) and not buff.deadlyGrace then -- Deadly Grace
+						useItem(127843)
+					elseif getOptionValue(LC_POTION) == 2 and canUse(142117) and not buff.prolongedPower then -- Prolonged Power
+						useItem(142117)
+					end
+				end
+            end
     --------------------
     --- Action Lists ---
     --------------------
-            -- Action list - Extras
+        -- Action list - Extras
             function actionList_Extra()
-                -- Dispel Magic
-                -- if isChecked("Dispel Magic") and canDispel("target",bb.player.spell.dispelMagic) and not isBoss() and ObjectExists("target") then
-                --     if cast.dispelMagic() then return end
-                -- end
+
             end -- End Action List - Extra
-            -- Action List - Defensive
+        -- Action List - Defensive
             function actionList_Defensive()
                 if useDefensive() and getHP("player")>0 then     
                     -- Gift of the Naaru
@@ -196,21 +213,21 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     end
                 end -- End Defensive Check
             end -- End Action List - Defensive
-            -- Action List - Interrupts
+        -- Action List - Interrupts
             function actionList_Interrupts()
 
             end -- End Action List - Interrupts
-            -- Action List - Cooldowns
+        -- Action List - Cooldowns
             function actionList_Cooldowns()
                 if useCDs() then
-                    -- Racials
-                    -- blood_fury
-                    -- arcane_torrent
-                    -- berserking
+                -- Racials
+                -- blood_fury
+                -- arcane_torrent
+                -- berserking
                     if (bb.player.race == "Orc" or bb.player.race == "Troll" or bb.player.race == "Blood Elf") then
                         if bb.player.castRacial() then return end
                     end
-                    -- Touch of the Void
+                -- Touch of the Void
                     if isChecked("Touch of the Void") and getDistance(bb.player.units.dyn5)<5 then
                         if hasEquiped(128318) then
                             if GetItemCooldown(128318)==0 then
@@ -218,7 +235,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                             end
                         end
                     end
-                    -- Trinkets
+                -- Trinkets
                     if isChecked("Trinkets") then
                         if canUse(13) then
                             useItem(13)
@@ -229,13 +246,30 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     end     
                 end
             end -- End Action List - Cooldowns
-            -- Action List - Pre-Combat
+        -- Action List - Pre-Combat
             function actionList_PreCombat()
-                if not buff.shadowform then
-                    cast.shadowform()
+                if not (IsFlying() or IsMounted()) then
+                -- Flask
+                    --flask,type=flask_of_the_whispered_pact
+                    if isChecked(LC_FLASK) then
+                        if canFlask and flaskBuff < 420 then
+                            useItem(bb.player.flask.wod.intellectBig)
+                            return true
+                        end
+                    end
+                
+                -- Shadowform
+                    if not buff.shadowform then
+                        if cast.shadowform() then return end
+                    end
+                    
+                    if isChecked(LC_PRE_PULL_TIMER) and pullTimer <= getOptionValue(LC_PRE_PULL_TIMER) then
+                    -- Potion
+                        usePotion()
+                    end
                 end
             end  -- End Action List - Pre-Combat
-            -- Action List - Single
+        -- Action List - Single
             function actionList_Auto()
                 --Surrender to Madness
                 --MindBender
@@ -378,7 +412,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
     ---------------------------------
     --- Out Of Combat - Rotations ---
     ---------------------------------
-            if not inCombat and ObjectExists("target") and not UnitIsDeadOrGhost("target") and UnitCanAttack("target", "player") then
+            if inRaid and not inCombat and isBoss("target") and isValidUnit("target") then
                 if actionList_PreCombat() then return end
             end
     -----------------------------

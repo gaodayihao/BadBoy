@@ -39,8 +39,8 @@ function cCharacter:new(class)
         agilityLow 		= 127848, 	-- Flask of the Seventh Demon (Legion)
         agilityBig 		= 127848, 	-- Flask of the Seventh Demon (Legion)
         -- Intellect
-        intellectLow 	= 109147,
-        intellectBig 	= 109155,
+        intellectLow 	= 127847, 	-- Flask of the Whispered Pact (Legion)
+        intellectBig 	= 127847, 	-- Flask of the Whispered Pact (Legion)
         -- Stamina
         staminaLow 		= 109152,
         staminaBig		= 109160,
@@ -53,8 +53,8 @@ function cCharacter:new(class)
         agilityLow 		= 188033, 	-- Flask of the Seventh Demon (Legion)
         agilityBig 		= 188033, 	-- Flask of the Seventh Demon (Legion)
         -- Intellect
-        intellectLow 	= 156070,
-        intellectBig 	= 156079,
+        intellectLow 	= 188031,	-- Flask of the Whispered Pact (Legion)
+        intellectBig 	= 188031,	-- Flask of the Whispered Pact (Legion)
         -- Stamina
         staminaLow 		= 156077,
         staminaBig 		= 156084,
