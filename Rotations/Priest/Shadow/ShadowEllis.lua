@@ -153,6 +153,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local inInstance                                    = br.player.instance=="party"
             local inRaid                                        = br.player.instance=="raid"
             local lastSpell                                     = lastSpellCast
+            local lastTarget                                    = lastSpellTarget
             local level                                         = br.player.level
             --local lootDelay                                     = getOptionValue("LootDelay")
             --local lowestHP                                      = br.friend[1].unit
@@ -174,6 +175,8 @@ if select(2, UnitClass("player")) == "PRIEST" then
             --local ttm                                           = br.player.timeToMax
             local units                                         = br.player.units
             
+            local autoTarget                                    = false
+
             local SWPmaxTargets                                 = getOptionValue(LC_SWP_MAX_TARGETS)
             local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
 
@@ -244,6 +247,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
 
             function analyzeS2M()
                 if inCombat then 
+                    if not isValidUnit("target") then return end
                     local targetTTD = ttd("target")
                 -- variable,op=set,name=actors_fight_time_mod,value=0
                     local actorsFightTimeMod = 0
@@ -286,6 +290,28 @@ if select(2, UnitClass("player")) == "PRIEST" then
     --------------------
     --- Action Lists ---
     --------------------
+        -- Action List - Auto Target
+            local function actionList_AutoTarget()
+                if not inCombat then return end
+                if autoTarget == false then return end
+                if isValidUnit("target") then return end
+                local theEnemies = enemies.yards40
+                local targetUnit = nil
+                for i = 1, #theEnemies do
+                    local thisUnit = theEnemies[i]
+                    if not targetUnit and UnitGUID(thisUnit) ~= lastTarget then
+                        targetUnit = thisUnit
+                    else
+                        local health = UnitHealth(thisUnit)
+                        if health > UnitHealth(targetUnit) and UnitGUID(thisUnit) ~= lastTarget then
+                            targetUnit = thisUnit
+                        end
+                    end
+                end
+                if targetUnit and isInCombat(targetUnit) then
+                    TargetUnit(targetUnit)
+                end
+            end -- End Action List - Auto Target
         -- Action list - Extras
             function actionList_Extra()
                 analyzeS2M()
@@ -340,61 +366,127 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     end
                 end
             end  -- End Action List - Pre-Combat
-        -- Action List - Single
-            function actionList_Auto()
-                --Surrender to Madness
-                --MindBender
-                if isChecked("Shadowfiend / Mind Bender") and talent.mindBender then
+        -- Action List - Main
+            function actionList_Main()
+            -- surrender_to_madness,if=talent.surrender_to_madness.enabled&target.time_to_die<=variable.s2mcheck
+                --Never auto use S2M
+            -- mindbender,if=talent.mindbender.enabled&!talent.surrender_to_madness.enabled
+                if useCDs() and talent.mindBender and not talent.surrenderToMadness then
                     if cast.mindBender() then return end
                 end
-                -- Void Eruption
-                if ((talent.legacyOfTheVoid and power > 70) or power > 100) then
+            -- mindbender,if=talent.mindbender.enabled&talent.surrender_to_madness.enabled&target.time_to_die>variable.s2mcheck+60
+                if useCDs() and talent.mindBender and talent.surrenderToMadness and ttd("target") > s2mcheck + 60 then
+                    if cast.mindBender() then return end
+                end
+            -- shadow_word_pain,if=dot.shadow_word_pain.remains<(3+(4%3))*gcd
+                if getDebuffRemain("target",spell.shadowWordPain,"player") < (3+(4%3))*gcd then
+                    if cast.shadowWordPain("target") then return end
+                end
+            -- vampiric_touch,if=dot.vampiric_touch.remains<(4+(4%3))*gcd
+                if getDebuffRemain("target",spell.vampiricTouch,"player") < (4+(4%3))*gcd then
+                    if cast.vampiricTouch("target") then return end
+                end
+            -- void_eruption,if=insanity>=85|(talent.auspicious_spirits.enabled&insanity>=(80-shadowy_apparitions_in_flight*4))
+                if (talent.legacyOfTheVoid and power >= 70) or power >= 100 then --can't do this
                     if cast.voidEruption() then return end
                 end
-                -- Shadow Crash
-                if cast.shadowCrash() then return end
-                
-                -- Shadow Word Death
-                -- if ChargesRemaining(ShadowWordDeath) = SpellCharges(ShadowWordDeath)
-                if charges.shadowWordDeath == charges.max.shadowWordDeath then
-                    if cast.shadowWordDeath() then return end
+            -- shadow_crash,if=talent.shadow_crash.enabled
+                if talent.shadowCrash then
+                    if cast.shadowCrash() then return end
                 end
-                -- Mind Blast
-                if cast.mindBlast() then return end
-                -- Shadow Word: Pain
-                if getDebuffRemain(units.dyn40,spell.shadowWordPain,"player") <= 4 then
-                    if cast.shadowWordPain(units.dyn40) then return end 
-                end
-                if getDebuffRemain(units.dyn40,spell.shadowWordPain,"player") > 4 and debuff.count.shadowWordPain < SWPmaxTargets and (debuff.count.vampiricTouch >= 1 or isMoving("player")) then
+            -- mindbender,if=talent.mindbender.enabled&set_bonus.tier18_2pc
+                --ignore
+            -- shadow_word_pain,if=!ticking&talent.legacy_of_the_void.enabled&insanity>=70,cycle_targets=1
+                if (debuff.count.shadowWordPain <= SWPmaxTargets or isMoving("player")) and talent.legacyOfTheVoid and power >= 70 then
                     for i=1,#enemies.yards40 do
                         local thisUnit = enemies.yards40[i]
-                        if getDebuffRemain(thisUnit,spell.shadowWordPain,"player") <= 4 then
+                        local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.shadowWordPain,"player") ~= nil
+                        if isInCombat(thisUnit) and not tempestDebuff then
                             if cast.shadowWordPain(thisUnit) then return end 
                         end
                     end
-                end              
-                -- Vampiric Touch
-                if getDebuffRemain(units.dyn40,spell.vampiricTouch,"player") <= 6 and not isCastingSpell(spell.vampiricTouch)then
-                    if cast.vampiricTouch(units.dyn40) then return end 
                 end
-                if getDebuffRemain(units.dyn40,spell.vampiricTouch,"player") > 6 and not isCastingSpell(spell.vampiricTouch) and debuff.count.vampiricTouch < VTmaxTargets and debuff.count.shadowWordPain >= 1 then
+            -- vampiric_touch,if=!ticking&talent.legacy_of_the_void.enabled&insanity>=70,cycle_targets=1
+                if debuff.count.vampiricTouch <= VTmaxTargets and talent.legacyOfTheVoid and power >= 70 then
                     for i=1,#enemies.yards40 do
                         local thisUnit = enemies.yards40[i]
-                        if getDebuffRemain(thisUnit,spell.vampiricTouch,"player") <= 6 then
+                        local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.vampiricTouch,"player") ~= nil
+                        if isInCombat(thisUnit) and not tempestDebuff then
                             if cast.vampiricTouch(thisUnit) then return end 
                         end
                     end
-                end 
-                -- Shadow Word: Void
-                if cast.shadowWordVoid() then return end
-                -- Mind Shear
-                -- Mind Spike / Mind Flay
-                if talent.mindSpike then
-                    if cast.mindSpike() then return end
-                else
+                end
+            -- shadow_word_death,if=!talent.reaper_of_souls.enabled&cooldown.shadow_word_death.charges=2&insanity<=90
+                if not talent.reaperOfSouls and charges.shadowWordDeath == charges.max.shadowWordDeath and power <= 90 then
+                    if cast.shadowWordDeath() then return end
+                end
+            -- shadow_word_death,if=talent.reaper_of_souls.enabled&cooldown.shadow_word_death.charges=2&insanity<=70
+                if talent.reaperOfSouls and charges.shadowWordDeath == charges.max.shadowWordDeath and power <= 70 then
+                    if cast.shadowWordDeath() then return end
+                end
+            -- mind_blast,if=talent.legacy_of_the_void.enabled&(insanity<=81|(insanity<=75.2&talent.fortress_of_the_mind.enabled))
+                if talent.legacyOfTheVoid and (power <= 81 or (power <= 75.2 and talent.fortressOfTheMind)) then
+                    if cast.mindBlast() then return end
+                end
+            -- mind_blast,if=!talent.legacy_of_the_void.enabled|(insanity<=96|(insanity<=95.2&talent.fortress_of_the_mind.enabled))
+                if not talent.legacyOfTheVoid or (power <= 96 or (power <= 95.2 and talent.fortressOfTheMind)) then
+                    if cast.mindBlast() then return end
+                end
+            -- shadow_word_pain,if=!ticking&target.time_to_die>10&(active_enemies<5&(talent.auspicious_spirits.enabled|talent.shadowy_insight.enabled)),cycle_targets=1
+                if debuff.count.shadowWordPain <= SWPmaxTargets or isMoving("player") and (talent.auspiciousSpirits or talent.shadowyInsight) then
+                    for i=1,#enemies.yards40 do
+                        local thisUnit = enemies.yards40[i]
+                        local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.shadowWordPain,"player") ~= nil
+                        if isInCombat(thisUnit) and not tempestDebuff and ttd(thisUnit) > 10 then
+                            if cast.shadowWordPain(thisUnit) then return end 
+                        end
+                    end
+                end
+            -- vampiric_touch,if=!ticking&target.time_to_die>10&(active_enemies<4|talent.sanlayn.enabled|(talent.auspicious_spirits.enabled&artifact.unleash_the_shadows.rank)),cycle_targets=1
+                if debuff.count.vampiricTouch <= VTmaxTargets or talent.sanlaryn or (talent.auspiciousSpirits and artifact.unleashTheShadows) then
+                    for i=1,#enemies.yards40 do
+                        local thisUnit = enemies.yards40[i]
+                        local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.vampiricTouch,"player") ~= nil
+                        if isInCombat(thisUnit) and not tempestDebuff and ttd(thisUnit) > 10 then
+                            if cast.vampiricTouch(thisUnit) then return end 
+                        end
+                    end
+                end
+            -- shadow_word_pain,if=!ticking&target.time_to_die>10&(active_enemies<5&artifact.sphere_of_insanity.rank),cycle_targets=1
+                if debuff.count.shadowWordPain <= SWPmaxTargets or isMoving("player") and artifact.sphereOfInsanity then
+                    for i=1,#enemies.yards40 do
+                        local thisUnit = enemies.yards40[i]
+                        local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.shadowWordPain,"player") ~= nil
+                        if isInCombat(thisUnit) and not tempestDebuff and ttd(thisUnit) > 10 then
+                            if cast.shadowWordPain(thisUnit) then return end 
+                        end
+                    end
+                end
+            -- shadow_word_void,if=(insanity<=70&talent.legacy_of_the_void.enabled)|(insanity<=85&!talent.legacy_of_the_void.enabled)
+                if (power <= 70 and talent.legacyOfTheVoid) or (power <= 85 and not talent.legacyOfTheVoid) then
+                    if cast.shadowWordVoid() then return end
+                end
+            -- mind_flay,line_cd=10,if=!talent.mind_spike.enabled&active_enemies>=2&active_enemies<4,interrupt=1,chain=1
+                -- ???
+            -- mind_sear,if=active_enemies>=2,interrupt=1,chain=1
+                if (#getEnemies("target",10) > 2 and mode.rotation == 1) or mode.rotation == 2 then
+                    if isCastingSpell(spell.mindSear) then return end
+                    if cast.mindSear() then return end
+                end
+            -- mind_flay,if=!talent.mind_spike.enabled,interrupt=1,chain=1
+                if not talent.mindSpike then
+                    if isCastingSpell(spell.mindFlay) then return end
                     if cast.mindFlay() then return end
                 end
-            end -- End Action List - Single
+            -- mind_spike,if=talent.mind_spike.enabled
+                if talent.mindSpike then
+                    if cast.mindSpike() then return end
+                end
+            -- shadow_word_pain
+                if isMoving("player") then
+                    if cast.shadowWordPain() then return end 
+                end
+            end
 
         -- Action List - VoidForm
             function actionList_VoidForm()
@@ -490,13 +582,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
     -----------------------------
     --- In Combat - Rotations --- 
     -----------------------------
-            if inCombat and isValidUnit(units.dyn40) and getDistance(units.dyn40) < 40 and not isCastingSpell(spell.voidTorrent) then
-
-                if buff.voidForm then
-                    if actionList_VoidForm() then return end
-                else
-                    if actionList_Auto() then return end
-                end     
+            if inCombat and isValidUnit(units.dyn40) 
+                and getDistance(units.dyn40) < 40 
+                and not isCastingSpell(spell.voidTorrent) 
+                and not isCastingSpell(spell.vampiricTouch) then
+                actionList_Main()
             end -- End Combat Rotation
         --end -- End Timer
     end -- Run Rotation

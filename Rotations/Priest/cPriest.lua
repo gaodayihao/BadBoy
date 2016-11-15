@@ -44,7 +44,9 @@ function cPriest:new(spec)
         }
         self.spell.class.artifacts      	= {}
         self.spell.class.buffs          	= {        -- Buffs Available To All Specs in Class
-            powerWordShield = 17
+            powerInfusion = 10060,
+            powerWordShield = 17,
+            prolongedPower = 229206
         }
         self.spell.class.debuffs        	= {}
         self.spell.class.glyphs         	= {}

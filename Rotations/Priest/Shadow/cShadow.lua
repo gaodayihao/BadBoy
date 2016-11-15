@@ -41,12 +41,12 @@ function cShadow:new()
             voidTorrent = 205065
         }
         self.spell.spec.artifacts       = {
-            massHysteria = 194378
+            massHysteria = 194378,
+            unleashTheShadows = 194093,
+            sphereOfInsanity = 194179
         }
         self.spell.spec.buffs           = {
             deadlyGrace = 188027,
-            prolongedPower = 229206,
-            powerInfusion = 10060,
             shadowyInsight = 124430,
             voidForm = 194249,
             surrenderedSoul = 212570,
@@ -578,6 +578,7 @@ function cShadow:new()
             local spellCast = self.spell.vampiricTouch
             local thisUnit = thisUnit
             if thisUnit == nil then thisUnit = self.units.dyn40 end
+            if lastSpellCast == spellCast and UnitGUID(thisUnit) == lastSpellTarget then return false end
             if debug == nil then debug = false end
             if getDistance(thisUnit) < 40 and self.cd.vampiricTouch == 0 then
                 if debug then
