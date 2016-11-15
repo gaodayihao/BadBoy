@@ -33,6 +33,7 @@ function cShadow:new()
             shadowWordDeath = 32379,
             shadowWordVoid = 205351,
             silence = 15487,
+            surrenderToMadness = 193223,
             vampiricEmbrace = 15286,
             vampiricTouch = 34914,
             voidBolt = 205448,
@@ -286,7 +287,6 @@ function cShadow:new()
             self.mode.rotation  = bb.data["Rotation"]
             self.mode.cooldown  = bb.data["Cooldown"]
             self.mode.defensive = bb.data["Defensive"]
-            self.mode.voidEruption = bb.data["VoidEruption"]
         end
 
         -- Create the toggle defined within rotation files

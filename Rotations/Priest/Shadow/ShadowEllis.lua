@@ -27,11 +27,15 @@ if select(2, UnitClass("player")) == "PRIEST" then
         };
         CreateButton("Defensive",3,0)
         -- Void Form Button
-        VoidEruptionModes = {
-            [1] = { mode = "On", value = 1 , overlay = "Void Eruption Enabled", tip = "Void Eruption will be used.", highlight = 1, icon = bb.player.spell.voidEruption },
-            [2] = { mode = "Off", value = 2 , overlay = "Void Eruption Disabled", tip = "Void Eruption will not be used.", highlight = 0, icon = bb.player.spell.voidEruption }
+        SurrenderToMadnessModes = {
+            [1] = { mode = "", value = 1 , overlay = "", tip = "Surrender To Madness Analyze (s).", highlight = 1, icon = bb.player.spell.surrenderToMadness }
         };
-        CreateButton("VoidEruption",4,0)
+        CreateButton("SurrenderToMadness",4,0)
+        -- Shadow Word:Death Button
+        ShadowWordDeathModes = {
+            [1] = { mode = "", value = 1 , overlay = "", tip = "Target to die (s)", highlight = 1, icon = bb.player.spell.shadowWordDeath }
+        };
+        CreateButton("ShadowWordDeath",5,0)
     end
 
 ---------------
@@ -122,7 +126,6 @@ if select(2, UnitClass("player")) == "PRIEST" then
             UpdateToggle("Rotation",0.25)
             UpdateToggle("Cooldown",0.25)
             UpdateToggle("Defensive",0.25)
-            UpdateToggle("VoidEruption",0.25)
     --------------
     --- Locals ---
     --------------
@@ -175,8 +178,8 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
 
             local s2mcheck                                      = 0
-            local nAP                                           = -1
 
+            if nAP == nil then nAP = -1 end
             if useMindBlast == nil then useMindBlast = false end
             if rawHastePct == nil then rawHastePct = 0 end
 
@@ -263,14 +266,20 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if talent.sanlaryn then
                         sanlarynNum = 1
                     end
-                    s2mcheck = 0.8 * (135+((rawHastePct*25)*(2+(1*reaperOfSoulsNum)+(2*artifact.rank.massHysteria)-(1*sanlarynNum))))
+                    s2mcheck = 0.8 * (121+((rawHastePct*25)*(2+(1*reaperOfSoulsNum)+(2*artifact.rank.massHysteria)-(1*sanlarynNum))))
                                 -(actorsFightTimeMod*nAP)
-                    s2mcheck = s2mcheck * 0.9 -- 2016/11/15 hotfix
+                    --s2mcheck = s2mcheck * 0.9 -- 2016/11/15 hotfix
                 -- variable,op=min,name=s2mcheck,value=180
                     s2mcheck = math.min(s2mcheck,180)
                     --print(s2mcheck)
+                    _G["text".."SurrenderToMadness"]:SetText(round2(s2mcheck,0))
+                    _G["text".."ShadowWordDeath"]:SetText(round2(targetTTD,0))
                 else
-                    nAP = -1
+                    if nAP > -1 then
+                        nAP = -1
+                        _G["text".."SurrenderToMadness"]:SetText("")
+                        _G["text".."ShadowWordDeath"]:SetText("")
+                    end
                     updateRawHate()
                 end
             end
@@ -339,7 +348,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.mindBender() then return end
                 end
                 -- Void Eruption
-                if mode.voidEruption == 1 and ((talent.legacyOfTheVoid and power > 70) or power > 100) then
+                if ((talent.legacyOfTheVoid and power > 70) or power > 100) then
                     if cast.voidEruption() then return end
                 end
                 -- Shadow Crash
