@@ -40,11 +40,12 @@ function cShadow:new()
             voidTorrent = 205065
         }
         self.spell.spec.artifacts       = {
-
+            massHysteria = 194378
         }
         self.spell.spec.buffs           = {
             deadlyGrace = 188027,
             prolongedPower = 229206,
+            powerInfusion = 10060,
             shadowyInsight = 124430,
             voidForm = 194249,
             surrenderedSoul = 212570,

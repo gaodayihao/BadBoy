@@ -174,35 +174,116 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local SWPmaxTargets                                 = getOptionValue(LC_SWP_MAX_TARGETS)
             local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
 
+            local s2mcheck                                      = 0
+            local nAP                                           = -1
+
             if useMindBlast == nil then useMindBlast = false end
+            if rawHastePct == nil then rawHastePct = 0 end
+
             --if leftCombat == nil then leftCombat = GetTime() end
             --if profileStop == nil then profileStop = false end
             --if IsHackEnabled("NoKnockback") ~= nil then SetHackEnabled("NoKnockback", false) end
-            
-            --print(SWPmaxTargets)
             
     --------------------
     -- Custom Function--
     --------------------
             function usePotion()
                 if isChecked(LC_POTION) and inRaid then
-					if getOptionValue(LC_POTION) == 1 and canUse(127843) and not buff.deadlyGrace then -- Deadly Grace
-						useItem(127843)
-					elseif getOptionValue(LC_POTION) == 2 and canUse(142117) and not buff.prolongedPower then -- Prolonged Power
-						useItem(142117)
-					end
-				end
+                    if getOptionValue(LC_POTION) == 1 and canUse(127843) and not buff.deadlyGrace then -- Deadly Grace
+                        useItem(127843)
+                    elseif getOptionValue(LC_POTION) == 2 and canUse(142117) and not buff.prolongedPower then -- Prolonged Power
+                        useItem(142117)
+                    end
+                end
+            end
+
+            function nonexecuteActorsPct()
+                local execute, nonexecute = 0, 0
+
+                for i = 1, #bb.friend do
+                    local specId
+                    if UnitIsPlayer(bb.friend[i].unit) then
+                        local specIndex = GetSpecialization()
+                        if specIndex then
+                            specId = select(1, GetSpecializationInfo(specIndex))
+                        end
+                    else
+                        specId = GetInspectSpecialization(bb.friend[i].unit)
+                    end
+
+                    if specId == 258 or     -- PRIEST_SHADOW
+                       specId == 71  or     -- WARRIOR_ARMS
+                       specId == 72  or     -- WARRIOR_FURY
+                       specId == 254 then   -- HUNTER_MARKSMANSHIP
+                        execute = execute + 1
+                    else
+                        nonexecute = nonexecute + 1
+                    end
+                end
+
+                local divisor = nonexecute + execute
+                if divisor > 0 then
+                    return nonexecute / divisor
+                else
+                    return 0
+                end
+
+                return 0
+            end
+
+            function updateRawHate()
+                if bb.timer:useTimer("debugUpdateRawHate", 2) then
+                    if not hasBloodLust() and buff.stack.voidForm == 0 and not buff.powerInfusion then
+                        rawHastePct = round2(GetHaste()/100,4)
+                    end
+                end
+            end
+
+            function analyzeS2M()
+                if inCombat then 
+                    local targetTTD = ttd("target")
+                -- variable,op=set,name=actors_fight_time_mod,value=0
+                    local actorsFightTimeMod = 0
+                -- variable,op=set,name=actors_fight_time_mod,value=-((-(450)+(time+target.time_to_die))%10),if=time+target.time_to_die>450&time+target.time_to_die<600
+                    if combatTime + targetTTD > 450 and combatTime + targetTTD < 600 then
+                        actorsFightTimeMod = -((-(450) + (combatTime + targetTTD)) % 10)
+                -- variable,op=set,name=actors_fight_time_mod,value=((450-(time+target.time_to_die))%5),if=time+target.time_to_die<=450
+                    elseif combatTime + targetTTD <= 450 then
+                        actorsFightTimeMod = ((450 - (combatTime + targetTTD)) % 5)
+                    end
+                -- variable,op=set,name=s2mcheck,value=0.8*(135+((raw_haste_pct*25)*(2+(1*talent.reaper_of_souls.enabled)+(2*artifact.mass_hysteria.rank)-(1*talent.sanlayn.enabled))))-(variable.actors_fight_time_mod*nonexecute_actors_pct)
+                    if nAP == -1 then
+                        nAP = nonexecuteActorsPct()
+                    end
+                    local reaperOfSoulsNum = 0
+                    local sanlarynNum = 0
+                    if talent.reaperOfSouls then
+                        reaperOfSoulsNum = 1
+                    end
+                    if talent.sanlaryn then
+                        sanlarynNum = 1
+                    end
+                    s2mcheck = 0.8 * (135+((rawHastePct*25)*(2+(1*reaperOfSoulsNum)+(2*artifact.rank.massHysteria)-(1*sanlarynNum))))
+                                -(actorsFightTimeMod*nAP)
+                    s2mcheck = s2mcheck * 0.9 -- 2016/11/15 hotfix
+                -- variable,op=min,name=s2mcheck,value=180
+                    s2mcheck = math.min(s2mcheck,180)
+                    --print(s2mcheck)
+                else
+                    nAP = -1
+                    updateRawHate()
+                end
             end
     --------------------
     --- Action Lists ---
     --------------------
         -- Action list - Extras
             function actionList_Extra()
-
+                analyzeS2M()
             end -- End Action List - Extra
         -- Action List - Defensive
             function actionList_Defensive()
-                if useDefensive() and getHP("player")>0 then     
+                if useDefensive() and getHP("player")>0 then
                     -- Gift of the Naaru
                     if isChecked("Gift of the Naaru") and php <= getOptionValue("Gift of the Naaru") and php > 0 and bb.player.race=="Draenei" then
                         if castSpell("player",racial,false,false,false) then return end
@@ -220,30 +301,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
         -- Action List - Cooldowns
             function actionList_Cooldowns()
                 if useCDs() then
-                -- Racials
-                -- blood_fury
-                -- arcane_torrent
-                -- berserking
-                    if (bb.player.race == "Orc" or bb.player.race == "Troll" or bb.player.race == "Blood Elf") then
-                        if bb.player.castRacial() then return end
+                -- Potion
+                    -- potion,name=deadly_grace,if=buff.bloodlust.react|target.time_to_die<=40|(buff.voidform.stack>80&buff.power_infusion.up)
+                    if hasBloodLust() or ttd("target") <= 40 or (buff.stack.voidForm > 80 and buff.powerInfusion) then
+                        usePotion()
                     end
-                -- Touch of the Void
-                    if isChecked("Touch of the Void") and getDistance(bb.player.units.dyn5)<5 then
-                        if hasEquiped(128318) then
-                            if GetItemCooldown(128318)==0 then
-                                useItem(128318)
-                            end
-                        end
-                    end
-                -- Trinkets
-                    if isChecked("Trinkets") then
-                        if canUse(13) then
-                            useItem(13)
-                        end
-                        if canUse(14) then
-                            useItem(14)
-                        end
-                    end     
                 end
             end -- End Action List - Cooldowns
         -- Action List - Pre-Combat
@@ -355,6 +417,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if useCDs() and isChecked("Power Infusion") and (buff.stack.voidForm >= 10 and not buff.surrenderedSoul) or buff.stack.voidForm >= 60 then
                     if cast.powerInfusion() then return end 
                 end
+                
                 --Shadow Crash
                 if talent.shadowCrash then
                     if cast.shadowCrash() then return end
@@ -412,7 +475,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
     ---------------------------------
     --- Out Of Combat - Rotations ---
     ---------------------------------
-            if inRaid and not inCombat and isBoss("target") and isValidUnit("target") then
+            if inRaid and not inCombat and isBoss() and isValidUnit("target") then
                 if actionList_PreCombat() then return end
             end
     -----------------------------
