@@ -238,7 +238,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.mindBender() then return end
                 end
                 -- Void Eruption
-                if mode.voidEruption == 1 and ((talent.legacyOfTheVoid and power > 70) or power > 100) then
+                if mode.voidEruption == 1 and ((talent.legacyOfTheVoid and power > 70) or power >= 100) then
                     if cast.voidEruption() then return end
                 end
                 -- Shadow Crash
