@@ -7,36 +7,36 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
 	local function createToggles()
     -- Rotation Button
         RotationModes = {
-            [1] = { mode = "Auto", value = 1 , overlay = "Automatic Rotation", tip = "Swaps between Single and Multiple based on number of targets in range.", highlight = 1, icon = bb.player.spell.bladeDance},
-            [2] = { mode = "Mult", value = 2 , overlay = "Multiple Target Rotation", tip = "Multiple target rotation used.", highlight = 0, icon = bb.player.spell.bladeDance},
-            [3] = { mode = "Sing", value = 3 , overlay = "Single Target Rotation", tip = "Single target rotation used.", highlight = 0, icon = bb.player.spell.chaosStrike},
-            [4] = { mode = "Off", value = 4 , overlay = "DPS Rotation Disabled", tip = "Disable DPS Rotation", highlight = 0, icon = bb.player.spell.spectralSight}
+            [1] = { mode = "Auto", value = 1 , overlay = "Automatic Rotation", tip = "Swaps between Single and Multiple based on number of targets in range.", highlight = 1, icon = br.player.spell.bladeDance},
+            [2] = { mode = "Mult", value = 2 , overlay = "Multiple Target Rotation", tip = "Multiple target rotation used.", highlight = 0, icon = br.player.spell.bladeDance},
+            [3] = { mode = "Sing", value = 3 , overlay = "Single Target Rotation", tip = "Single target rotation used.", highlight = 0, icon = br.player.spell.chaosStrike},
+            [4] = { mode = "Off", value = 4 , overlay = "DPS Rotation Disabled", tip = "Disable DPS Rotation", highlight = 0, icon = br.player.spell.spectralSight}
         };
         CreateButton("Rotation",1,0)
     -- Cooldown Button
         CooldownModes = {
-            [1] = { mode = "Auto", value = 1 , overlay = "Cooldowns Automated", tip = "Automatic Cooldowns - Boss Detection.", highlight = 1, icon = bb.player.spell.metamorphosis},
-            [2] = { mode = "On", value = 2 , overlay = "Cooldowns Enabled", tip = "Cooldowns used regardless of target.", highlight = 0, icon = bb.player.spell.metamorphosis},
-            [3] = { mode = "Off", value = 3 , overlay = "Cooldowns Disabled", tip = "No Cooldowns will be used.", highlight = 0, icon = bb.player.spell.metamorphosis}
+            [1] = { mode = "Auto", value = 1 , overlay = "Cooldowns Automated", tip = "Automatic Cooldowns - Boss Detection.", highlight = 1, icon = br.player.spell.metamorphosis},
+            [2] = { mode = "On", value = 2 , overlay = "Cooldowns Enabled", tip = "Cooldowns used regardless of target.", highlight = 0, icon = br.player.spell.metamorphosis},
+            [3] = { mode = "Off", value = 3 , overlay = "Cooldowns Disabled", tip = "No Cooldowns will be used.", highlight = 0, icon = br.player.spell.metamorphosis}
         };
        	CreateButton("Cooldown",2,0)
     -- Defensive Button
         DefensiveModes = {
-            [1] = { mode = "On", value = 1 , overlay = "Defensive Enabled", tip = "Includes Defensive Cooldowns.", highlight = 1, icon = bb.player.spell.darkness},
-            [2] = { mode = "Off", value = 2 , overlay = "Defensive Disabled", tip = "No Defensives will be used.", highlight = 0, icon = bb.player.spell.darkness}
+            [1] = { mode = "On", value = 1 , overlay = "Defensive Enabled", tip = "Includes Defensive Cooldowns.", highlight = 1, icon = br.player.spell.darkness},
+            [2] = { mode = "Off", value = 2 , overlay = "Defensive Disabled", tip = "No Defensives will be used.", highlight = 0, icon = br.player.spell.darkness}
         };
         CreateButton("Defensive",3,0)
     -- Interrupt Button
         InterruptModes = {
-            [1] = { mode = "On", value = 1 , overlay = "Interrupts Enabled", tip = "Includes Basic Interrupts.", highlight = 1, icon = bb.player.spell.consumeMagic},
-            [2] = { mode = "Off", value = 2 , overlay = "Interrupts Disabled", tip = "No Interrupts will be used.", highlight = 0, icon = bb.player.spell.consumeMagic}
+            [1] = { mode = "On", value = 1 , overlay = "Interrupts Enabled", tip = "Includes Basic Interrupts.", highlight = 1, icon = br.player.spell.consumeMagic},
+            [2] = { mode = "Off", value = 2 , overlay = "Interrupts Disabled", tip = "No Interrupts will be used.", highlight = 0, icon = br.player.spell.consumeMagic}
         };
         CreateButton("Interrupt",4,0)
     -- Mover
         MoverModes = {
-            [1] = { mode = "AC", value = 1 , overlay = "Movement Animation Cancel Enabled", tip = "Will Cancel Movement Animation.", highlight = 1, icon = bb.player.spell.felRush},
-            [2] = { mode = "On", value = 2 , overlay = "Auto Movement Enabled", tip = "Will Cast Movement Abilities.", highlight = 0, icon = bb.player.spell.felRush},
-            [3] = { mode = "Off", value = 3 , overlay = "Auto Movement Disabled", tip = "Will NOT Cast Movement Abilities", highlight = 0, icon = bb.player.spell.felRush}
+            [1] = { mode = "AC", value = 1 , overlay = "Movement Animation Cancel Enabled", tip = "Will Cancel Movement Animation.", highlight = 1, icon = br.player.spell.felRush},
+            [2] = { mode = "On", value = 2 , overlay = "Auto Movement Enabled", tip = "Will Cast Movement Abilities.", highlight = 0, icon = br.player.spell.felRush},
+            [3] = { mode = "Off", value = 3 , overlay = "Auto Movement Disabled", tip = "Will NOT Cast Movement Abilities", highlight = 0, icon = br.player.spell.felRush}
         };
         CreateButton("Mover",5,0)
     end
@@ -50,73 +50,73 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
         local function rotationOptions()
             local section
         -- General Options
-            section = bb.ui:createSection(bb.ui.window.profile, "General")
+            section = br.ui:createSection(br.ui.window.profile, "General")
             -- APL
-                bb.ui:createDropdownWithout(section, "APL Mode", {"|cffFFFFFFSimC","|cffFFFFFFAMR"}, 1, "|cffFFFFFFSet APL Mode to use.")
+                br.ui:createDropdownWithout(section, "APL Mode", {"|cffFFFFFFSimC","|cffFFFFFFAMR"}, 1, "|cffFFFFFFSet APL Mode to use.")
             -- Dummy DPS Test
-                bb.ui:createSpinner(section, "DPS Testing",  5,  5,  60,  5,  "|cffFFFFFFSet to desired time for test in minuts. Min: 5 / Max: 60 / Interval: 5")
+                br.ui:createSpinner(section, "DPS Testing",  5,  5,  60,  5,  "|cffFFFFFFSet to desired time for test in minuts. Min: 5 / Max: 60 / Interval: 5")
             -- Pre-Pull Timer
-                bb.ui:createSpinner(section, "Pre-Pull Timer",  5,  1,  10,  1,  "|cffFFFFFFSet to desired time to start Pre-Pull (DBM Required). Min: 1 / Max: 10 / Interval: 1")
+                br.ui:createSpinner(section, "Pre-Pull Timer",  5,  1,  10,  1,  "|cffFFFFFFSet to desired time to start Pre-Pull (DBM Required). Min: 1 / Max: 10 / Interval: 1")
             -- Eye Beam Targets
-                bb.ui:createSpinner(section, "Eye Beam Targets", 3, 1, 10, 1, "|cffFFBB00Number of Targets to use at.")
+                br.ui:createSpinner(section, "Eye Beam Targets", 3, 1, 10, 1, "|cffFFBB00Number of Targets to use at.")
             -- Glide Fall Time
-                bb.ui:createSpinner(section, "Glide", 2, 0, 10, 1, "|cffFFBB00Seconds until Glide will be used while falling.")
+                br.ui:createSpinner(section, "Glide", 2, 0, 10, 1, "|cffFFBB00Seconds until Glide will be used while falling.")
             -- Artifact 
-                bb.ui:createDropdownWithout(section,"Artifact", {"|cff00FF00Everything","|cffFFFF00Cooldowns","|cffFF0000Never"}, 1, "|cffFFFFFFWhen to use Artifact Ability.")
-            bb.ui:checkSectionState(section)
+                br.ui:createDropdownWithout(section,"Artifact", {"|cff00FF00Everything","|cffFFFF00Cooldowns","|cffFF0000Never"}, 1, "|cffFFFFFFWhen to use Artifact Ability.")
+            br.ui:checkSectionState(section)
         -- Cooldown Options
-            section = bb.ui:createSection(bb.ui.window.profile, "Cooldowns")
+            section = br.ui:createSection(br.ui.window.profile, "Cooldowns")
             -- Agi Pot
-                bb.ui:createCheckbox(section,"Agi-Pot")
+                br.ui:createCheckbox(section,"Agi-Pot")
             -- Flask / Crystal
-                bb.ui:createCheckbox(section,"Flask / Crystal")
+                br.ui:createCheckbox(section,"Flask / Crystal")
             -- Legendary Ring
-                bb.ui:createCheckbox(section,"Legendary Ring")
+                br.ui:createCheckbox(section,"Legendary Ring")
             -- Racial
-                bb.ui:createCheckbox(section,"Racial")
+                br.ui:createCheckbox(section,"Racial")
             -- Trinkets
-                bb.ui:createCheckbox(section,"Trinkets")
+                br.ui:createCheckbox(section,"Trinkets")
             -- Metamorphosis
-                bb.ui:createCheckbox(section,"Metamorphosis")
-            bb.ui:checkSectionState(section)
+                br.ui:createCheckbox(section,"Metamorphosis")
+            br.ui:checkSectionState(section)
         -- Defensive Options
-            section = bb.ui:createSection(bb.ui.window.profile, "Defensive")
+            section = br.ui:createSection(br.ui.window.profile, "Defensive")
             -- Healthstone
-                bb.ui:createSpinner(section, "Pot/Stoned",  60,  0,  100,  5,  "|cffFFFFFFHealth Percent to Cast At")
+                br.ui:createSpinner(section, "Pot/Stoned",  60,  0,  100,  5,  "|cffFFFFFFHealth Percent to Cast At")
             -- Heirloom Neck
-                bb.ui:createSpinner(section, "Heirloom Neck",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.");
+                br.ui:createSpinner(section, "Heirloom Neck",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.");
             -- Blur
-                bb.ui:createSpinner(section, "Blur", 50, 0, 100, 5, "|cffFFBB00Health Percentage to use at.")
+                br.ui:createSpinner(section, "Blur", 50, 0, 100, 5, "|cffFFBB00Health Percentage to use at.")
             -- Darkness
-                bb.ui:createSpinner(section, "Darkness", 30, 0, 100, 5, "|cffFFBB00Health Percentage to use at.")
+                br.ui:createSpinner(section, "Darkness", 30, 0, 100, 5, "|cffFFBB00Health Percentage to use at.")
             -- Chaos Nova
-                bb.ui:createSpinner(section, "Chaos Nova - HP", 30, 0, 100, 5, "|cffFFBB00Health Percentage to use at.")
-                bb.ui:createSpinner(section, "Chaos Nova - AoE", 3, 1, 10, 1, "|cffFFBB00Number of Targets to use at.")
-            bb.ui:checkSectionState(section)
+                br.ui:createSpinner(section, "Chaos Nova - HP", 30, 0, 100, 5, "|cffFFBB00Health Percentage to use at.")
+                br.ui:createSpinner(section, "Chaos Nova - AoE", 3, 1, 10, 1, "|cffFFBB00Number of Targets to use at.")
+            br.ui:checkSectionState(section)
         -- Interrupt Options
-            section = bb.ui:createSection(bb.ui.window.profile, "Interrupts")
+            section = br.ui:createSection(br.ui.window.profile, "Interrupts")
             -- Consume Magic
-                bb.ui:createCheckbox(section, "Consume Magic")
+                br.ui:createCheckbox(section, "Consume Magic")
             -- Chaos Nova
-                bb.ui:createCheckbox(section, "Chaos Nova")
+                br.ui:createCheckbox(section, "Chaos Nova")
             -- Interrupt Percentage
-                bb.ui:createSpinner(section, "Interrupt At",  0,  0,  95,  5,  "|cffFFFFFFCast Percent to Cast At")
-            bb.ui:checkSectionState(section)
+                br.ui:createSpinner(section, "Interrupt At",  0,  0,  95,  5,  "|cffFFFFFFCast Percent to Cast At")
+            br.ui:checkSectionState(section)
         -- Toggle Key Options
-            section = bb.ui:createSection(bb.ui.window.profile, "Toggle Keys")
+            section = br.ui:createSection(br.ui.window.profile, "Toggle Keys")
             -- Single/Multi Toggle
-                bb.ui:createDropdown(section, "Rotation Mode", bb.dropOptions.Toggle,  4)
+                br.ui:createDropdown(section, "Rotation Mode", br.dropOptions.Toggle,  4)
             -- Cooldown Key Toggle
-                bb.ui:createDropdown(section, "Cooldown Mode", bb.dropOptions.Toggle,  3)
+                br.ui:createDropdown(section, "Cooldown Mode", br.dropOptions.Toggle,  3)
             -- Defensive Key Toggle
-                bb.ui:createDropdown(section, "Defensive Mode", bb.dropOptions.Toggle,  6)
+                br.ui:createDropdown(section, "Defensive Mode", br.dropOptions.Toggle,  6)
             -- Interrupts Key Toggle
-                bb.ui:createDropdown(section, "Interrupt Mode", bb.dropOptions.Toggle,  6)
+                br.ui:createDropdown(section, "Interrupt Mode", br.dropOptions.Toggle,  6)
             -- Mover Key Toggle
-                bb.ui:createDropdown(section, "Mover Mode", bb.dropOptions.Toggle,  6)
+                br.ui:createDropdown(section, "Mover Mode", br.dropOptions.Toggle,  6)
             -- Pause Toggle
-                bb.ui:createDropdown(section, "Pause Mode", bb.dropOptions.Toggle,  6)
-            bb.ui:checkSectionState(section)
+                br.ui:createDropdown(section, "Pause Mode", br.dropOptions.Toggle,  6)
+            br.ui:checkSectionState(section)
         end
         optionTable = {{
             [1] = "Rotation Options",
@@ -129,7 +129,7 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
 --- ROTATION ---
 ----------------
 	local function runRotation()
-        if bb.timer:useTimer("debugHavoc", math.random(0.15,0.3)) then
+        if br.timer:useTimer("debugHavoc", math.random(0.15,0.3)) then
             --print("Running: "..rotationName)
 
     ---------------
@@ -146,47 +146,47 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
     --------------
             local addsExist                                     = false 
             local addsIn                                        = 999
-            local artifact                                      = bb.player.artifact
-            local buff                                          = bb.player.buff
-            local canFlask                                      = canUse(bb.player.flask.wod.agilityBig)
-            local cast                                          = bb.player.cast
-            local castable                                      = bb.player.cast.debug
+            local artifact                                      = br.player.artifact
+            local buff                                          = br.player.buff
+            local canFlask                                      = canUse(br.player.flask.wod.agilityBig)
+            local cast                                          = br.player.cast
+            local castable                                      = br.player.cast.debug
             local combatTime                                    = getCombatTime()
-            local cd                                            = bb.player.cd
-            local charges                                       = bb.player.charges
+            local cd                                            = br.player.cd
+            local charges                                       = br.player.charges
             local deadMouse                                     = UnitIsDeadOrGhost("mouseover")
             local deadtar, attacktar, hastar, playertar         = deadtar or UnitIsDeadOrGhost("target"), attacktar or UnitCanAttack("target", "player"), hastar or ObjectExists("target"), UnitIsPlayer("target")
-            local debuff                                        = bb.player.debuff
-            local enemies                                       = bb.player.enemies
+            local debuff                                        = br.player.debuff
+            local enemies                                       = br.player.enemies
             local falling, swimming, flying, moving             = getFallTime(), IsSwimming(), IsFlying(), GetUnitSpeed("player")>0
-            local flaskBuff                                     = getBuffRemain("player",bb.player.flask.wod.buff.agilityBig)
+            local flaskBuff                                     = getBuffRemain("player",br.player.flask.wod.buff.agilityBig)
             local friendly                                      = friendly or UnitIsFriend("target", "player")
-            local gcd                                           = bb.player.gcd
+            local gcd                                           = br.player.gcd
             local hasMouse                                      = ObjectExists("mouseover")
             local healPot                                       = getHealthPot()
-            local inCombat                                      = bb.player.inCombat
-            local inInstance                                    = bb.player.instance=="party"
-            local inRaid                                        = bb.player.instance=="raid"
+            local inCombat                                      = br.player.inCombat
+            local inInstance                                    = br.player.instance=="party"
+            local inRaid                                        = br.player.instance=="raid"
             local lastSpell                                     = lastSpellCast
-            local level                                         = bb.player.level
+            local level                                         = br.player.level
             local lootDelay                                     = getOptionValue("LootDelay")
-            local lowestHP                                      = bb.friend[1].unit
-            local mode                                          = bb.player.mode
+            local lowestHP                                      = br.friend[1].unit
+            local mode                                          = br.player.mode
             local moveIn                                        = 999
-            -- local multidot                                      = (useCleave() or bb.player.mode.rotation ~= 3)
-            local perk                                          = bb.player.perk        
-            local php                                           = bb.player.health
+            -- local multidot                                      = (useCleave() or br.player.mode.rotation ~= 3)
+            local perk                                          = br.player.perk        
+            local php                                           = br.player.health
             local playerMouse                                   = UnitIsPlayer("mouseover")
-            local power, powmax, powgen, powerDeficit           = bb.player.power, bb.player.powerMax, bb.player.powerRegen, bb.player.powerDeficit
-            local pullTimer                                     = bb.DBM:getPulltimer()
-            local racial                                        = bb.player.getRacial()
-            local recharge                                      = bb.player.recharge
-            local solo                                          = bb.player.instance=="none"
-            local spell                                         = bb.player.spell
-            local talent                                        = bb.player.talent
+            local power, powmax, powgen, powerDeficit           = br.player.power, br.player.powerMax, br.player.powerRegen, br.player.powerDeficit
+            local pullTimer                                     = br.DBM:getPulltimer()
+            local racial                                        = br.player.getRacial()
+            local recharge                                      = br.player.recharge
+            local solo                                          = br.player.instance=="none"
+            local spell                                         = br.player.spell
+            local talent                                        = br.player.talent
             local ttd                                           = getTTD
-            local ttm                                           = bb.player.timeToMax
-            local units                                         = bb.player.units
+            local ttm                                           = br.player.timeToMax
+            local units                                         = br.player.units
 
             if leftCombat == nil then leftCombat = GetTime() end
             if profileStop == nil then profileStop = false end
@@ -194,13 +194,13 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
             if talent.prepared then prepared = 1 else prepared = 0 end
             if talent.firstBlood then flood = 1 else flood = 0 end
             if lastSpell == spell.vengefulRetreat then vaulted = true else vaulted = false end
-            if mode.mover == 1 then
-                if IsHackEnabled("NoKnockback") ~= nil then SetHackEnabled("NoKnockback", false) end
-            end
+            -- if mode.mover == 1 then
+            --     if IsHackEnabled("NoKnockback") ~= nil then SetHackEnabled("NoKnockback", false) end
+            -- end
 
             -- Pool for Meta Variable
                         -- pooling_for_meta,value=cooldown.metamorphosis.ready&buff.metamorphosis.down&(!talent.demonic.enabled|!cooldown.eye_beam.ready)&(!talent.chaos_blades.enabled|cooldown.chaos_blades.ready)&(!talent.nemesis.enabled|debuff.nemesis.up|cooldown.nemesis.ready)
-                        if useCDs() and cd.metamorphosis == 0 and not buff.metamorphosis and (not talent.demonic or cd.eyeBeam > 0) and (not talent.chaosBlades or cd.chaosBlades == 0) and (not talent.nemesis or debuff.nemesis or cd.nemesis == 0) then
+                        if useCDs() and cd.metamorphosis == 0 and not buff.metamorphosis and (not talent.demonic or cd.eyeBeam > 0) and (not talent.chaosBlades or cd.chaosBlades == 0) and (not talent.nemesis or debuff.nemesis[units.dyn5].exists or cd.nemesis == 0) then
                             poolForMeta = true
                         else
                             poolForMeta = false
@@ -309,17 +309,10 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
         -- Action List - PostVengeful
             local function actionList_PostVengeful()
             -- Fel Rush
-                if useMover() then
-                    if mode.mover == 1 then
-                        if getDistance("target") < 10 then 
-                            if cast.felRush("target",false,true) then return end
-                        end
-                        if getDistance("target") >= 10 then
-                            if cast.felRush() then return end
-                        end
-                    else
-                        if cast.felRush() then return end
-                    end
+                if mode.mover == 1 and getDistance("target") < 5 then
+                    cancelRushAnimation()
+                elseif mode.mover == 2 or getDistance("target") >= 5 then
+                    if cast.felRush() then return end
                 end
             -- Fel Blade
                 if cast.felblade() then return end
@@ -356,21 +349,20 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                 end
             -- Fel Rush
                 -- if not HasTalent(Prepared) and not HasTalent(Momentum)
-                if useMover() and getFacing("player","target",10) and not talent.prepared and not talent.momentum then
-                    if mode.mover == 1 then
-                        if getDistance("target") < 10 then 
-                            if cast.felRush("target",false,true) then return end
-                        end
-                        if getDistance("target") >= 10 then
-                            if cast.felRush() then return end
-                        end
-                    else
+                if getFacing("player","target",10) and not talent.prepared and not talent.momentum then
+                    if mode.mover == 1 and getDistance("target") < 5 then
+                        cancelRushAnimation()
+                    elseif mode.mover == 2 or getDistance("target") >= 5 then
                         if cast.felRush() then return end
                     end
                 end
                 -- if (ChargesRemaining(FelRush) >= 2 or (ChargesRemaining(FelRush) >= 1 and ChargeSecRemaining(FelRush) <= CooldownSecRemaining(VengefulRetreat))) and not HasBuff(Momentum)
-                if useMover() and getFacing("player","target",10) and (charges.felRush >= 2 or (charges.felRush >= 1 and recharge.felRush <= cd.vengefulRetreat)) and not buff.momentum then
-                    if cast.felRush() then return end
+                if getFacing("player","target",10) and (charges.felRush >= 2 or (charges.felRush >= 1 and recharge.felRush <= cd.vengefulRetreat)) and not buff.momentum then
+                    if mode.mover == 1 and getDistance("target") < 5 then
+                        cancelRushAnimation()
+                    elseif mode.mover == 2 or getDistance("target") >= 5 then
+                        if cast.felRush() then return end
+                    end
                 end
             -- Throw Glaive
                 -- if HasTalent(Bloodlet)
@@ -399,15 +391,10 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                     if cast.eyeBeam(units.dyn5) then return end
                 end
             -- Fel Rush
-                if useMover() and getFacing("player","target",10) then
-                    if mode.mover == 1 then
-                        if getDistance("target") < 10 then 
-                            if cast.felRush("target",false,true) then return end
-                        end
-                        if getDistance("target") >= 10 then
-                            if cast.felRush() then return end
-                        end
-                    else
+                if getFacing("player","target",10) then
+                    if mode.mover == 1 and getDistance("target") < 5 then
+                        cancelRushAnimation()
+                    elseif mode.mover == 2 or getDistance("target") >= 5 then
                         if cast.felRush() then return end
                     end
                 end
@@ -458,7 +445,7 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                     end
             -- Racial: Orc Blood Fury | Troll Berserking | Blood Elf Arcane Torrent
                     -- blood_fury,buff.tigers_fury | berserking,buff.tigers_fury | arcane_torrent,buff.tigers_fury
-                    if isChecked("Racial") and (bb.player.race == "Orc" or bb.player.race == "Troll" or bb.player.race == "Blood Elf") then
+                    if isChecked("Racial") and (br.player.race == "Orc" or br.player.race == "Troll" or br.player.race == "Blood Elf") then
                         if castSpell("player",racial,false,false,false) then return end
                     end
                     if getOptionValue("APL Mode") == 1 then -- SimC
@@ -466,9 +453,9 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                         -- nemesis,target_if=min:target.time_to_die,if=raid_event.adds.exists&debuff.nemesis.down&(active_enemies>desired_targets|raid_event.adds.in>60)
                         -- nemesis,if=!raid_event.adds.exists&(cooldown.metamorphosis.remains>100|target.time_to_die<70)
                         -- nemesis,sync=metamorphosis,if=!raid_event.adds.exists
-                        if (addsExist and not debuff.nemesis and (#enemies.yards5 > getOptionValue("Eye Beam Targets") or addsIn > 60))
+                        if (addsExist and not debuff.nemesis[units.dyn5].exists and (#enemies.yards5 > getOptionValue("Eye Beam Targets") or addsIn > 60))
                             or (not addsExist and (cd.metamorphosis > 100 or ttd(units.dyn5) < 70))
-                            or (not addsExist and (not buff.metamorphosis and (not talent.demonic or cd.eyeBeam ~= 0) and (not talent.chaosBlades or cd.chaosBlades == 0) and (not talent.nemesis or debuff.nemesis or cd.nemesis == 0)))
+                            or (not addsExist and (not buff.metamorphosis and (not talent.demonic or cd.eyeBeam ~= 0) and (not talent.chaosBlades or cd.chaosBlades == 0) and (not talent.nemesis or debuff.nemesis[units.dyn5].exists or cd.nemesis == 0)))
                         then
                             if cast.nemesis(units.dyn5) then return end
                         end
@@ -481,7 +468,7 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                         -- metamorphosis,if=variable.pooling_for_meta&fury.deficit<30&(talent.chaos_blades.enabled|!cooldown.fury_of_the_illidari.ready)
                         if isChecked("Metamorphosis") then
                             if poolForMeta and powerDeficit < 30 and (talent.chaosBlades or cd.furyOfTheIllidari ~= 0) then
-                                if cast.metamorphosis() then return end
+                                if cast.metamorphosis("best",false,1,8) then return end
                             end
                         end
             -- Potion
@@ -492,7 +479,7 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
             -- Metamorphosis
                         -- if (not HasTalent(DemonReborn) or CooldownSecRemaining(EyeBeam) > 0) and not HasBuff(Metamorphosis)
                         if (not talent.demonReborn or cd.eyeBeam > 0) and not buff.metamorphosis then
-                            if cast.metamorphosis() then return end
+                            if cast.metamorphosis("best",false,1,8) then return end
                         end
             -- Nemesis
                         if cast.nemesis(units.dyn5) then return end
@@ -518,7 +505,7 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                     -- flask,type=flask_of_the_seventh_demon
                     if isChecked("Flask / Crystal") then
                         if inRaid and canFlask and flaskBuff==0 and not UnitBuffID("player",188033) and not UnitBuffID("player",156064) then
-                            useItem(bb.player.flask.wod.agilityBig)
+                            useItem(br.player.flask.wod.agilityBig)
                             return true
                         end
                         if flaskBuff==0 then
@@ -541,15 +528,10 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                             if cast.throwGlaive("target") then return end
                         end
                 -- Fel Rush
-                        if getOptionValue("APL Mode") == 1 and useMover() and getFacing("player","target",10) then
-                            if mode.mover == 1 then
-                                if getDistance("target") < 10 then 
-                                    if cast.felRush("target",false,true) then return end
-                                end
-                                if getDistance("target") >= 10 then
-                                    if cast.felRush() then return end
-                                end
-                            else
+                        if getOptionValue("APL Mode") == 1 and getFacing("player","target",10) then
+                            if mode.mover == 1 and getDistance("target") < 5 then
+                                cancelRushAnimation()
+                            elseif mode.mover == 2 or getDistance("target") >= 5 then
                                 if cast.felRush() then return end
                             end
                         end
@@ -607,15 +589,12 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                         if actionList_Cooldowns() then return end
                 -- Fel Rush 
                         -- fel_rush,animation_cancel=1,if=time=0
-                        if mode.mover == 1 and combatTime < 1 and getFacing("player","target",10) then
-                            if getDistance("target") < 10 then 
-                                if cast.felRush("target",false,true) then return end
-                            end
-                            if getDistance("target") >= 10 then
+                        if combatTime < 1 and getFacing("player","target",10) then
+                            if mode.mover == 1 and getDistance("target") < 5 then
+                                cancelRushAnimation()
+                            elseif mode.mover == 2 or getDistance("target") >= 5 then
                                 if cast.felRush() then return end
                             end
-                        elseif combatTime < 1 and getFacing("player","target",10) then
-                            if cast.felRush() then return end
                         end
                 -- Pick Up Fragment Notification
                         -- pick_up_fragment,if=talent.demonic_appetite.enabled&fury.deficit>=30
@@ -625,7 +604,9 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                 -- Vengeful Retreat
                         -- vengeful_retreat,if=(talent.prepared.enabled|talent.momentum.enabled)&buff.prepared.down&buff.momentum.down
                         if useMover() and (talent.prepared or talent.momentum) and not buff.prepared and not buff.momentum and getDistance("target") < 5 then
-                            if mode.mover == 1 or (mode.mover == 2 and charges.felRush > 0) then
+                            if mode.mover == 1 then
+                                cancelRetreatAnimation()
+                            elseif mode.mover == 2 and charges.felRush > 0 then
                                 if cast.vengefulRetreat() then return end
                             end
                         end                
@@ -635,14 +616,9 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                             and (talent.momentum or talent.felMastery) and (not talent.momentum or (charges.felRush == 2 or cd.vengefulRetreat > 4) and not buff.momentum) 
                             and (not talent.felMastery or powerDeficit >= 25) and (charges.felRush == 2 or (moveIn > charges.felRush * 10 and addsIn > 10)) 
                         then
-                            if mode.mover == 1 then
-                                if getDistance("target") < 10 then
-                                    if cast.felRush("target",false,true) then return end
-                                end
-                                if getDistance("target") >= 10 then
-                                    if cast.felRush() then return end
-                                end
-                            else
+                            if mode.mover == 1 and getDistance("target") < 5 then
+                                cancelRushAnimation()
+                            elseif mode.mover == 2 or getDistance("target") >= 5 then
                                 if cast.felRush() then return end
                             end
                         end
@@ -732,15 +708,10 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                         end
                 -- Fel Rush
                         -- fel_rush,animation_cancel=1,if=!talent.momentum.enabled&raid_event.movement.in>charges*10
-                        if useMover() and getFacing("player","target",10) and not talent.momentum and moveIn > charges.felRush * 10 then
-                            if mode.mover == 1 then
-                                if getDistance("target") < 10 then
-                                    if cast.felRush("target",false,true) then return end
-                                end
-                                if getDistance("target") >= 10 then
-                                    if cast.felRush() then return end
-                                end
-                            else
+                        if getFacing("player","target",10) and not talent.momentum and moveIn > charges.felRush * 10 then
+                            if mode.mover == 1 and getDistance("target") < 5 then
+                                cancelRushAnimation()
+                            elseif mode.mover == 2 or getDistance("target") >= 5 then
                                 if cast.felRush() then return end
                             end
                         end
@@ -759,8 +730,12 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                         end
                 -- Fel Rush
                         --fel_rush,if=movement.distance>15|(buff.out_of_range.up&!talent.momentum.enabled)
-                        if useMover() and getFacing("player","target",10) and getDistance("target") >= 15 then
-                            if cast.felRush() then return end
+                        if getFacing("player","target",10) and getDistance("target") >= 15 then
+                            if mode.mover == 1 and getDistance("target") < 5 then
+                                cancelRushAnimation()
+                            elseif mode.mover == 2 or getDistance("target") >= 5 then
+                                if cast.felRush() then return end
+                            end
                         end
                     end -- End SimC APL
         ----------------------
@@ -780,7 +755,11 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                         -- ((CooldownSecRemaining(FelRush) <= GlobalCooldownSec or (CanUse(EyeBeam) and CooldownSecRemaining(FelRush) < SpellChannelTimeSec(EyeBeam))) or 
                         -- (HasTalent(Felblade) and CooldownSecRemaining(Felblade) <= GlobalCooldownSec or (CanUse(EyeBeam) and CooldownSecRemaining(Felblade) < SpellChannelTimeSec(EyeBeam))))
                         if useMover() and (talent.prepared or talent.momentum) and ((cd.felRush <= gcd or (castable.eyeBeam and cd.felRush < eyeBeamCastRemain())) or (talent.felblade and cd.felblade <= gcd or (castable.eyeBeam and cd.felblade < eyeBeamCastRemain()))) and getDistance("target") < 5 then
-                            if cast.vengefulRetreat() then return end
+                            if mode.mover == 1 then
+                                cancelRetreatAnimation()
+                            elseif mode.mover == 2 then
+                                if cast.vengefulRetreat() then return end
+                            end
                         end
                 -- Cooldowns
                         if actionList_Cooldowns() then return end

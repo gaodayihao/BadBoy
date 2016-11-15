@@ -1,5 +1,5 @@
 if select(2, UnitClass("player")) == "DEMONHUNTER" then
-	local rotationName = "Dub"
+	local rotationName = "CuteOne"
 
 ---------------
 --- Toggles ---
@@ -7,9 +7,9 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
 	local function createToggles()
     -- Rotation Button
         RotationModes = {
-            [1] = { mode = "Auto", value = 1 , overlay = "Automatic Rotation", tip = "Swaps between Single and Multiple based on number of targets in range.", highlight = 1, icon = br.player.spell.bladeDance},
-            [2] = { mode = "Mult", value = 2 , overlay = "Multiple Target Rotation", tip = "Multiple target rotation used.", highlight = 0, icon = br.player.spell.bladeDance},
-            [3] = { mode = "Sing", value = 3 , overlay = "Single Target Rotation", tip = "Single target rotation used.", highlight = 0, icon = br.player.spell.chaosStrike},
+            [1] = { mode = "Auto", value = 1 , overlay = "Automatic Rotation", tip = "Swaps between Single and Multiple based on number of targets in range.", highlight = 1, icon = br.player.spell.soulCleave},
+            [2] = { mode = "Mult", value = 2 , overlay = "Multiple Target Rotation", tip = "Multiple target rotation used.", highlight = 0, icon = br.player.spell.soulCleave},
+            [3] = { mode = "Sing", value = 3 , overlay = "Single Target Rotation", tip = "Single target rotation used.", highlight = 0, icon = br.player.spell.shear},
             [4] = { mode = "Off", value = 4 , overlay = "DPS Rotation Disabled", tip = "Disable DPS Rotation", highlight = 0, icon = br.player.spell.spectralSight}
         };
         CreateButton("Rotation",1,0)
@@ -56,8 +56,6 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                 br.ui:createSpinner(section, "DPS Testing",  5,  5,  60,  5,  "|cffFFFFFFSet to desired time for test in minuts. Min: 5 / Max: 60 / Interval: 5")
             -- Pre-Pull Timer
                 br.ui:createSpinner(section, "Pre-Pull Timer",  5,  1,  10,  1,  "|cffFFFFFFSet to desired time to start Pre-Pull (DBM Required). Min: 1 / Max: 10 / Interval: 1")
-            -- Eye Beam Targets
-                br.ui:createSpinner(section, "Eye Beam Targets", 3, 1, 10, 1, "|cffFFBB00Number of Targets to use at.")
             br.ui:checkSectionState(section)
         -- Cooldown Options
             section = br.ui:createSection(br.ui.window.profile, "Cooldowns")
@@ -71,8 +69,6 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                 br.ui:createCheckbox(section,"Racial")
             -- Trinkets
                 br.ui:createCheckbox(section,"Trinkets")
-            -- Metamorphosis
-                br.ui:createCheckbox(section,"Metamorphosis")
             br.ui:checkSectionState(section)
         -- Defensive Options
             section = br.ui:createSection(br.ui.window.profile, "Defensive")
@@ -80,20 +76,28 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
                 br.ui:createSpinner(section, "Pot/Stoned",  60,  0,  100,  5,  "|cffFFFFFFHealth Percent to Cast At")
             -- Heirloom Neck
                 br.ui:createSpinner(section, "Heirloom Neck",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.");
-            -- Blur
-                br.ui:createSpinner(section, "Blur", 50, 0, 100, 5, "|cffFFBB00Health Percentage to use at.")
-            -- Darkness
-                br.ui:createSpinner(section, "Darkness", 30, 0, 100, 5, "|cffFFBB00Health Percentage to use at.")
-            -- Chaos Nova
-                br.ui:createSpinner(section, "Chaos Nova - HP", 30, 0, 100, 5, "|cffFFBB00Health Percentage to use at.")
-                br.ui:createSpinner(section, "Chaos Nova - AoE", 3, 1, 10, 1, "|cffFFBB00Number of Targets to use at.")
+            -- Empower Wards
+                br.ui:createCheckbox(section, "Empower Wards")
+            -- Fel Devastation
+                br.ui:createSpinner(section, "Fel Devastation",  50,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.");
+            -- Metamorphosis
+                br.ui:createSpinner(section, "Metamorphosis",  50,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.");
+            -- Sigil of Misery
+                br.ui:createSpinner(section, "Sigil of Misery - HP",  50,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.");
+                br.ui:createSpinner(section, "Sigil of Misery - AoE", 3, 0, 10, 1, "|cffFFFFFFNumber of Units in 8 Yards to Cast At") 
+            -- Soul Barrier
+                br.ui:createSpinner(section, "Soul Barrier",  50,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.");
+            -- Soul Cleave
+                br.ui:createSpinner(section, "Soul Cleave",  50,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.");
             br.ui:checkSectionState(section)
         -- Interrupt Options
             section = br.ui:createSection(br.ui.window.profile, "Interrupts")
             -- Consume Magic
                 br.ui:createCheckbox(section, "Consume Magic")
-            -- Chaos Nova
-                br.ui:createCheckbox(section, "Chaos Nova")
+            -- Sigil of Silence
+                br.ui:createCheckbox(section, "Sigil of Silence")
+            -- Sigil of Misery
+                br.ui:createCheckbox(section, "Sigil of Misery")
             -- Interrupt Percentage
                 br.ui:createSpinner(section, "Interrupt At",  0,  0,  95,  5,  "|cffFFFFFFCast Percent to Cast At")
             br.ui:checkSectionState(section)
@@ -169,6 +173,7 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
             local mode                                          = br.player.mode
             local moveIn                                        = 999
             -- local multidot                                      = (useCleave() or br.player.mode.rotation ~= 3)
+            local pain                                          = br.player.pain
             local perk                                          = br.player.perk        
             local php                                           = br.player.health
             local playerMouse                                   = UnitIsPlayer("mouseover")
@@ -228,49 +233,49 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
 		    				end
 		    			end
 		    		end
-            -- Blur
-                    if isChecked("Blur") and php <= getOptionValue("Blur") and inCombat then
-                        if cast.blur() then return end
+            -- Sigil of Misery
+                    if isChecked("Sigil of Misery - HP") and php <= getOptionValue("Sigil of Misery - HP") and inCombat and #enemies.yards8 > 0 then
+                        if cast.sigilOfMisery("player","ground") then return end
                     end
-            -- Darkness
-                    if isChecked("Darkness") and php <= getOptionValue("Darkness") and inCombat then
-                        if cast.darkness() then return end
-                    end
-            -- Chaos Nova
-                    if isChecked("Chaos Nova - HP") and php <= getValue("Chaos Nova - HP") and inCombat and #enemies.yards5 > 0 then
-                        if cast.chaosNova() then return end
-                    end
-                    if isChecked("Chaos Nova - AoE") and #enemies.yards5 >= getValue("Chaos Nova - AoE") then
-                        if cast.chaosNova() then return end
+                    if isChecked("Sigil of Misery - AoE") and #enemies.yards8 >= getOptionValue("Sigil of Misery - AoE") and inCombat then
+                        if cast.sigilOfMisery("best",false,getOptionValue("Sigil of Misery - AoE"),8) then return end
                     end
 	    		end -- End Defensive Toggle
 			end -- End Action List - Defensive
 		-- Action List - Interrupts
 			local function actionList_Interrupts()
 				if useInterrupts() then
+                    for i=1, #enemies.yards30 do
+                        thisUnit = enemies.yards30[i]
+                        if canInterrupt(thisUnit,getOptionValue("Interrupt At")) then
             -- Consume Magic
-                    if isChecked("Consume Magic")  then
-                        for i=1, #enemies.yards20 do
-                            thisUnit = enemies.yards20[i]
-                            if canInterrupt(thisUnit,getOptionValue("Interrupt At")) then
+                            if isChecked("Consume Magic") and getDistance(thisUnit) < 20 then
                                 if cast.consumeMagic(thisUnit) then return end
                             end
+            -- Sigil of Silence
+                            if isChecked("Sigil of Silence") and cd.consumeMagic > 0 then
+                                if cast.sigilOfSilence(thisUnit,"ground") then return end
+                            end
+            -- Sigil of Misery
+                            if isChecked("Sigil of Misery - Int") and cd.consumeMagic > 0 and cd.sigilOfSilence > 0 and cd.sigilOfSilence < 45 then                        
+                                if cast.sigilOfMisery(thisUnit,"ground") then return end
+                            end
                         end
-                    end
+                    end  
 			 	end -- End useInterrupts check
 			end -- End Action List - Interrupts
-        -- Action List - Single Target
-            local function actionList_SingleTarget()
-
-            end -- End Action List - Single Target
-        -- Action List - MultiTarget
-            local function actionList_MultiTarget()
-
-            end -- End Action List - Multi Target
 		-- Action List - Cooldowns
 			local function actionList_Cooldowns()
 				if useCDs() and getDistance(units.dyn5) < 5 then
-
+                -- Trinkets
+                    if isChecked("Trinkets") and getDistance("target") < 5 then
+                        if canUse(13) then
+                            useItem(13)
+                        end
+                        if canUse(14) and getNumEnemies("player",12) >= 1 then
+                            useItem(14)
+                        end                            
+                    end
                 end -- End useCDs check
             end -- End Action List - Cooldowns
         -- Action List - PreCombat
@@ -327,7 +332,7 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
     --------------------------
     --- In Combat Rotation ---
     --------------------------
-                if inCombat and profileStop==false and ObjectExists(units.dyn5) and not UnitIsDeadOrGhost(units.dyn5) and UnitCanAttack(units.dyn5, "player") then
+                if inCombat and profileStop==false and isValidUnit(units.dyn5) then
         ------------------------------
         --- In Combat - Interrupts ---
         ------------------------------
@@ -335,80 +340,109 @@ if select(2, UnitClass("player")) == "DEMONHUNTER" then
         ---------------------------
         --- SimulationCraft APL ---
         ---------------------------
-                    -- print(cast.sigilofFlame())
-                    -- if true then return end
-            -- actions=auto_attack
+        -- Start Attack
+                    -- actions=auto_attack
                     if getDistance(units.dyn5) < 5 then
                         StartAttack()
                     end
-                    if isChecked("Trinkets") and getDistance("target") < 5 then
-                        if canUse(13) then
-                            useItem(13)
-                        end
-                        if canUse(14) and getNumEnemies("player",12) >= 1 then
-                            useItem(14)
-                        end                            
+        -- Fiery Brand    
+                    -- actions+=/fiery_brand,if=buff.demon_spikes.down&buff.metamorphosis.down
+                    if not buff.demonSpikes and not buff.metamorphosis then
+                        if cast.fieryBrand() then return end
                     end
-            -- actions+=/fiery_brand,if=buff.demon_spikes.down&buff.metamorphosis.down
-            --TODO
-                    -- if power >= 30 and php <= 60 and soulAmount() >= 1 then
-                    --     if cast.soulCleave() then return end
-                    -- end
-            -- actions+=/demon_spikes,if=charges=2|buff.demon_spikes.down&!dot.fiery_brand.ticking&buff.metamorphosis.down
-                    if ( recharge.demonSpikes <= 6 and charges.demonSpikes >= 1) and hasThreat() and not buff.demonSpikes and not debuff.fieryBrand and not buff.metamorphosis then
+        -- Demon Spikes
+                    -- actions+=/demon_spikes,if=charges=2|buff.demon_spikes.down&!dot.fiery_brand.ticking&buff.metamorphosis.down
+                    if (charges.demonSpikes == 2 or not buff.demonSpikes) and not debuff.fieryBrand[units.dyn5].exists and not buff.metamorphosis then
                         if cast.demonSpikes() then return end
                     end
-            -- actions+=/empower_wards,if=debuff.casting.up
-            -- actions+=/infernal_strike,if=!sigil_placed&!in_flight&remains-travel_time-delay<0.3*duration&artifact.fiery_demise.enabled&dot.fiery_brand.ticking
-            -- actions+=/infernal_strike,if=!sigil_placed&!in_flight&remains-travel_time-delay<0.3*duration&(!artifact.fiery_demise.enabled|(max_charges-charges_fractional)*recharge_time<cooldown.fiery_brand.remains+5)&(cooldown.sigil_of_flame.remains>7|charges=2)
-                    if recharge.infernalStrike <= 2 and getDistance("target") < 5 then
-                        if cast.infernalStrike("player") then return end
+        -- Empower Wards
+                    -- actions+=/empower_wards,if=debuff.casting.up
+                    if useDefensive() and isChecked("Empower Wards") then
+                        if cd.consumeMagic > 0 then
+                            if cast.empowerWards() then return end
+                        end
                     end
-            -- actions+=/spirit_bomb,if=debuff.frailty.down
-                    if not UnitDebuffID("target",224509) then
-                        if cast.spiritBomb("target") then return end
-                    end
-            -- actions+=/soul_carver,if=dot.fiery_brand.ticking
-                    if cast.soulCarver() then return end
-                    -- if UnitDebuffID("target",207744) then
-                    --     if cast.soulCarver() then return end
+        -- Infernal Strike
+                    -- actions+=/infernal_strike,if=!sigil_placed&!in_flight&remains-travel_time-delay<0.3*duration&artifact.fiery_demise.enabled&dot.fiery_brand.ticking
+                    -- actions+=/infernal_strike,if=!sigil_placed&!in_flight&remains-travel_time-delay<0.3*duration&(!artifact.fiery_demise.enabled|(max_charges-charges_fractional)*recharge_time<cooldown.fiery_brand.remains+5)&(cooldown.sigil_of_flame.remains>7|charges=2)
+                    -- if useMover() and ((artifact.fieryDemise and debuff.fieryBrand[units.dyn5].exists) or 
+                    --     ((not artifact.fieryDemise or ((charges.max.infernalStrike - charges.frac.inferanalStrike) * recharge.infernalStrike < cd.fieryBrand + 5)) and (cd.sigilOfFlame > 7 or charges.infernalStrike ==2))) 
+                    -- then
+                    --     if cast.infernalStrike("best",false,#enemies.yards5,6) then return end
                     -- end
-            -- actions+=/immolation_aura,if=pain<=80
-                    if power <= 80 and getDistance("target") < 5 then
+        -- Spirit Bomb
+                    -- actions+=/spirit_bomb,if=debuff.frailty.down
+                    if not debuff.frailty[units.dyn5].exists then
+                        if cast.spiritBomb() then return end
+                    end
+        -- Soul Carver
+                    -- actions+=/soul_carver,if=dot.fiery_brand.ticking
+                    if debuff.fieryBrand[units.dyn5].exists then
+                        if cast.soulCarver() then return end
+                    end
+        -- Immolation Aura
+                    -- actions+=/immolation_aura,if=pain<=80
+                    if pain <= 80 and getDistance(units.dyn8AoE) < 8 then
                         if cast.immolationAura() then return end
                     end
-            -- actions+=/felblade,if=pain<=70
-                    if power <= 70 then
+        -- Felblade
+                    -- actions+=/felblade,if=pain<=70
+                    if pain <= 70 then
                         if cast.felblade() then return end
                     end
-            -- actions+=/soul_barrier
-            -- actions+=/soul_cleave,if=soul_fragments=5
-                    if soulAmount() == 5 and power >= 30 then
-                        if cast.soulCleave() then return end
+                    if useDefensive() then
+        -- Soul Barrier
+                        -- actions+=/soul_barrier
+                        if isChecked("Soul Barrier") and php < getOptionValue("Soul Barrier") then
+                            if cast.soulBarrier() then return end
+                        end
+        -- Soul Cleave
+                        -- actions+=/soul_cleave,if=soul_fragments=5
+                        if isChecked("Soul Cleave") and buff.stack.soulFragments == 5 then
+                            if cast.soulCleave(units.dyn5) then return end
+                        end
+        -- Metamorphosis
+                        -- actions+=/metamorphosis,if=buff.demon_spikes.down&!dot.fiery_brand.ticking&buff.metamorphosis.down&incoming_damage_5s>health.max*0.70
+                        if isChecked("Metamorphosis") and not buff.demonSpikes and not debuff.fieryBrand[units.dyn5].exists and not buff.metamorphosis and php < getOptionValue("Metamorphosis") then
+                            if cast.metamorphosis() then return end
+                        end
+        -- Fel Devastation
+                        -- actions+=/fel_devastation,if=incoming_damage_5s>health.max*0.70
+                        if isChecked("Fel Devastation") and php < getOptionValue("Fel Devastation") and getDistance(units.dyn20) < 20 then
+                            if cast.felDevastation() then return end
+                        end
+        -- Soul Cleave
+                        -- actions+=/soul_cleave,if=incoming_damage_5s>=health.max*0.70
+                        if isChecked("Soul Cleave") and php < getOptionValue("Soul Cleave") then
+                            if cast.soulCleave(units.dyn5) then return end
+                        end
                     end
-            -- actions+=/metamorphosis,if=buff.demon_spikes.down&!dot.fiery_brand.ticking&buff.metamorphosis.down&incoming_damage_5s>health.max*0.70
-            -- actions+=/fel_devastation,if=incoming_damage_5s>health.max*0.70
-                    if cast.felDevastation() then dub.felDevastation = false; return end
-            -- actions+=/soul_cleave,if=incoming_damage_5s>=health.max*0.70
-                    if power >= 30 and php <= 70 then
-                        if cast.soulCleave() then return end
+        -- Fel Eruption
+                    -- actions+=/fel_eruption
+                    if cast.felEruption() then return end
+        -- Sigil of Flame
+                    -- actions+=/sigil_of_flame,if=remains-delay<=0.3*duration
+                    if not isMoving(units.dyn5) then
+                        if cast.sigilOfFlame("best",false,1,8) then return end
                     end
-            -- actions+=/fel_eruption
-            -- actions+=/sigil_of_flame,if=remains-delay<=0.3*duration
-                    if not isMoving("target") and getTimeToDie() > 10 then
-                        if cast.sigilofFlame("target") then return end
+        -- Fracture
+                    -- actions+=/fracture,if=pain>=80&soul_fragments<4&incoming_damage_4s<=health.max*0.20
+                    if pain >= 80 and buff.stack.soulFragments < 4 then
+                        if cast.fracture() then return end
                     end
-            -- actions+=/fracture,if=pain>=80&soul_fragments<4&incoming_damage_4s<=health.max*0.20
-            -- actions+=/soul_cleave,if=pain>=80
-                    if power >= 80 then
-                        if cast.soulCleave() then return end
+        -- Soul Cleave
+                    -- actions+=/soul_cleave,if=pain>=80
+                    if useDefensive() and isChecked("Soul Cleave") and pain >= 80 then
+                        if cast.soulCleave(units.dyn5) then return end
                     end
-            -- actions+=/shear
-                    if power < 80 then
-                        if cast.shear() then return end
+        -- Shear
+                    -- actions+=/shear
+                    if pain < 80 or not useDefensive() or (useDefensive() and not isChecked("Soul Cleave")) then
+                        if cast.shear(units.dyn5) then return end
                     end
-                    if getDistance("target") > 5 then
-                        if cast.throwGlaive("target") then return end
+        -- Throw Glaive
+                    if getDistance(units.dyn5) > 5 then
+                        if cast.throwGlaive(units.dyn5) then return end
                     end
 				end --End In Combat
 			end --End Rotation Logic
