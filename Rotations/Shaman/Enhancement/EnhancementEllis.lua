@@ -168,7 +168,7 @@ if select(2, UnitClass("player")) == "SHAMAN" then
             local cd                                            = br.player.cd
             local charges                                       = br.player.charges
             local deadMouse, hasMouse, playerMouse              = UnitIsDeadOrGhost("mouseover"), ObjectExists("mouseover"), UnitIsPlayer("mouseover")
-            local deadtar, attacktar, hastar, playertar         = UnitIsDeadOrGhost("target"), UnitCanAttack("target", "player"), ObjectExists("target"), UnitIsPlayer("target")
+            local deadtar, attacktar, hastar, playertar         = UnitIsDeadOrGhost("target"), UnitCanAttack("player", "target"), ObjectExists("target"), UnitIsPlayer("target")
             local debuff                                        = br.player.debuff
             local enemies                                       = br.player.enemies
             local falling, swimming, flying, moving             = getFallTime(), IsSwimming(), IsFlying(), GetUnitSpeed("player") > 0

@@ -25,7 +25,7 @@ function EnemiesEngine()
 		br.enemy = {}
 		br.enemy.timer = 0
 		--local LibDraw = LibStub("LibDraw-1.0")
-		local  maxDistance = maxDistance or 50
+		local  maxDistance = maxDistance or 40
 		if br.enemy then cleanupEngine() end
 		if br.enemy == nil or br.enemy.timer == nil or br.enemy.timer <= GetTime() - 1 then
             local startTime
@@ -246,7 +246,7 @@ function EnemiesEngine()
 	-- returns true if Unit is a valid enemy
 	function getSanity(unit)
 		if  UnitIsVisible(unit) == true and getCreatureType(unit) == true
-			and UnitCanAttack(unit, "player") == true and UnitIsDeadOrGhost(unit) == false
+			and UnitCanAttack("player", unit) == true and UnitIsDeadOrGhost(unit) == false
 			and (UnitAffectingCombat(unit) or isDummy(unit) or true) then
 			return true
 		else

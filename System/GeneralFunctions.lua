@@ -2209,7 +2209,7 @@ end
 -- if isEnnemy([Unit])
 function isEnnemy(Unit)
 	local Unit = Unit or "target"
-	if UnitCanAttack(Unit,"player") then
+	if UnitCanAttack("player",Unit) then
 		return true
 	else
 		return false
@@ -2469,7 +2469,7 @@ function isValidUnit(Unit)
 	if ObjectExists(Unit) and not UnitIsDeadOrGhost(Unit) then
 		if not UnitAffectingCombat("player") and UnitIsUnit(Unit,"target") 
 			and (select(2,IsInInstance()) == "none" or #br.friend == 1 
-				or (hasThreat(Unit) or (not hasThreat(Unit) and UnitAffectingCombat("target"))) or isDummy(Unit)) and UnitCanAttack(Unit, "player") 
+				or (hasThreat(Unit) or (not hasThreat(Unit) and UnitAffectingCombat("target"))) or isDummy(Unit)) and UnitCanAttack("player", Unit) 
 		then
 			return true
 		end

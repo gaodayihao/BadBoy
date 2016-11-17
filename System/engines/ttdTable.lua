@@ -87,7 +87,7 @@ function getTTD(unit)
 		end
 	end
 	if isDummy() then
-		return 99
+		return 999
 	else
 		return -1
 	end

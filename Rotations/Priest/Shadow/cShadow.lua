@@ -50,6 +50,7 @@ function cShadow:new()
             shadowyInsight = 124430,
             voidForm = 194249,
             surrenderedSoul = 212570,
+            surrenderToMadness = 193223,
             shadowform = 232698,
         }
         self.spell.spec.debuffs         = {

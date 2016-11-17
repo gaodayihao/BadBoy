@@ -31,6 +31,7 @@ function cCharacter:new(class)
 		t18_classTrinket = false,
 	}
 	self.gcd            = 1.5       -- Global Cooldown
+	self.gcdMax         = 1.5       -- Global Cooldown
 	self.glyph          = {}        -- Glyphs
 	self.faction  		= select(1,UnitFactionGroup("player")) -- Faction non-localised name
     self.flask 			= {}
@@ -159,6 +160,7 @@ function cCharacter:new(class)
 	function self.getCharacterInfo()
 
 		self.gcd 				= self.getGlobalCooldown()
+		self.gcdMax				= self.getGlobalCooldownMaximum()
 		self.health 			= getHP("player")
 		self.instance 			= select(2,IsInInstance())
 		self.level 				= UnitLevel("player") -- TODO: EVENT - UNIT_LEVEL
@@ -249,6 +251,16 @@ function cCharacter:new(class)
 		local gcd = getSpellCD(61304) --(1.5 / ((UnitSpellHaste("player")/100)+1))
 		if gcd < 0.75 then
 			return  0.75
+		else
+			return gcd
+		end
+	end
+
+-- Return the Maximum Global Cooldown time
+	function self.getGlobalCooldownMaximum()
+		local gcd = (1.5 / ((UnitSpellHaste("player")/100)+1))
+		if gcd < 0.75 then
+			return 0.75
 		else
 			return gcd
 		end
