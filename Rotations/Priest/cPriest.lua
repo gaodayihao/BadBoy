@@ -28,8 +28,8 @@ function cPriest:new(spec)
         self.spell.class                	= {}        -- Abilities Available To All Specs in Class
         self.spell.class.abilities      	= { 		-- List All Active Abilities/Talents Here that are used by All Specs in Class 
         	dispelMagic = 528,
-            fade = 526,
-            levitate = 1703,
+            fade = 528,
+            levitate = 1706,
             massDispel = 32375,
             mindBender = 200174,
             shadowMend = 186263,

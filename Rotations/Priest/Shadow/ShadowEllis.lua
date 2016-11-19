@@ -230,37 +230,6 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if nonexecute > 0 then
                     return execute / (execute + nonexecute)
                 end
-                -- local execute, nonexecute = 0, 0
-
-                -- for i = 1, #br.friend do
-                --     local specId
-                --     if UnitIsPlayer(br.friend[i].unit) then
-                --         local specIndex = GetSpecialization()
-                --         if specIndex then
-                --             specId = select(1, GetSpecializationInfo(specIndex))
-                --         end
-                --     else
-                --         specId = GetInspectSpecialization(br.friend[i].unit)
-                --     end
-
-                --     if specId == 258 or     -- PRIEST_SHADOW
-                --        specId == 71  or     -- WARRIOR_ARMS
-                --        specId == 72  or     -- WARRIOR_FURY
-                --        specId == 254 then   -- HUNTER_MARKSMANSHIP
-                --         execute = execute + 1
-                --     else
-                --         nonexecute = nonexecute + 1
-                --     end
-                -- end
-
-                -- local divisor = nonexecute + execute
-                -- if divisor > 0 then
-                --     return nonexecute / divisor
-                -- else
-                --     return 0
-                -- end
-
-                -- return 0
                 return 0
             end
 
