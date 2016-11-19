@@ -16,7 +16,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
         -- Cooldown Button
         CooldownModes = {
             [1] = { mode = "Auto", value = 1 , overlay = "Cooldowns Automated", tip = "Automatic Cooldowns - Boss Detection.", highlight = 1, icon = br.player.spell.powerInfusion },
-            [2] = { mode = "On", value = 1 , overlay = "Cooldowns Enabled", tip = "Cooldowns used regardless of target.", highlight = 0, icon = br.player.spell.powerInfusion },
+            [2] = { mode = "On", value = 2 , overlay = "Cooldowns Enabled", tip = "Cooldowns used regardless of target.", highlight = 0, icon = br.player.spell.powerInfusion },
             [3] = { mode = "Off", value = 3 , overlay = "Cooldowns Disabled", tip = "No Cooldowns will be used.", highlight = 0, icon = br.player.spell.powerInfusion }
         };
        	CreateButton("Cooldown",2,0)
@@ -60,6 +60,8 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 --br.ui:createSpinnerWithout(section, LC_DOT_MINIMUM_HEALTH,  3,  1,  5,  1, LC_DOT_MINIMUM_HEALTH_DESCRIPTION)
             -- Body And Soul
                 br.ui:createSpinner(section, LC_BODY_AND_SOUL,  1.5,  0,  5,  0.5, LC_BODY_AND_SOUL_DESCRIPTION)
+            -- Nonexecute Actors
+                br.ui:createSpinnerWithout(section, LC_EXECUTE_ACTORS,  1,  1,  25,  1, LC_EXECUTE_ACTORS_DESCRIPTION)
             br.ui:checkSectionState(section)
         -- Pre-Pull BossMod
             section = br.ui:createSection(br.ui.window.profile, LC_PRE_PULL_BOSSMOD)
@@ -146,7 +148,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local cd                                            = br.player.cd
             local charges                                       = br.player.charges
             local combatTime                                    = getCombatTime()
-            local deadMouse                                     = UnitIsDeadOrGhost("mouseover")
+            --local deadMouse                                     = UnitIsDeadOrGhost("mouseover")
             local debuff                                        = br.player.debuff
             local enemies                                       = br.player.enemies
             local falling, swimming, flying, moving             = getFallTime(), IsSwimming(), IsFlying(), GetUnitSpeed("player")>0
@@ -154,7 +156,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local friendly                                      = friendly or UnitIsFriend("target", "player")
             local gcd                                           = br.player.gcd
             local gcdMax                                        = br.player.gcdMax
-            local hasMouse                                      = ObjectExists("mouseover")
+            --local hasMouse                                      = ObjectExists("mouseover")
             local inCombat                                      = br.player.inCombat
             local inInstance                                    = br.player.instance=="party"
             local inRaid                                        = br.player.instance=="raid"
@@ -168,7 +170,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local pullTimer                                     = br.DBM:getPulltimer()
             local racial                                        = br.player.getRacial()
             local recharge                                      = br.player.recharge
-            local s2mcheck                                      = 0
+            local s2mcheck                                      = 110
             local solo                                          = br.player.instance=="none"
             local spell                                         = br.player.spell
             local SWPmaxTargets                                 = getOptionValue(LC_SWP_MAX_TARGETS)
@@ -177,9 +179,12 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local ttd                                           = getTTD
             local units                                         = br.player.units
             local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
+            local timeToPowerInfusion                           = 78
+            local dieAtNextGCD                                  = false
 
             if currentInsanityDrain == nil then currentInsanityDrain = 0 end
             if insanityDrainStacks == nil then insanityDrainStacks = 0 end
+            if insanityDrainStart == nil then insanityDrainStart = 0 end
             if movingStart == nil then movingStart = 0 end
             if nAP == nil then nAP = -1 end
             if rawHastePct == nil then rawHastePct = 0 end
@@ -214,48 +219,64 @@ if select(2, UnitClass("player")) == "PRIEST" then
             end
 
             function nonexecuteActorsPct()
-                local execute, nonexecute = 0, 0
-
-                for i = 1, #br.friend do
-                    local specId
-                    if UnitIsPlayer(br.friend[i].unit) then
-                        local specIndex = GetSpecialization()
-                        if specIndex then
-                            specId = select(1, GetSpecializationInfo(specIndex))
-                        end
-                    else
-                        specId = GetInspectSpecialization(br.friend[i].unit)
-                    end
-
-                    if specId == 258 or     -- PRIEST_SHADOW
-                       specId == 71  or     -- WARRIOR_ARMS
-                       specId == 72  or     -- WARRIOR_FURY
-                       specId == 254 then   -- HUNTER_MARKSMANSHIP
-                        execute = execute + 1
-                    else
-                        nonexecute = nonexecute + 1
-                    end
+                local execute, nonexecute = getOptionValue(LC_EXECUTE_ACTORS), 0
+                nonexecute = #br.friend - execute
+                if execute > #br.friend then
+                    execute = 1
                 end
-
-                local divisor = nonexecute + execute
-                if divisor > 0 then
-                    return nonexecute / divisor
-                else
-                    return 0
+                if nonexecute < 0 then
+                    nonexecute = 0
                 end
+                if nonexecute > 0 then
+                    return execute / (execute + nonexecute)
+                end
+                -- local execute, nonexecute = 0, 0
 
+                -- for i = 1, #br.friend do
+                --     local specId
+                --     if UnitIsPlayer(br.friend[i].unit) then
+                --         local specIndex = GetSpecialization()
+                --         if specIndex then
+                --             specId = select(1, GetSpecializationInfo(specIndex))
+                --         end
+                --     else
+                --         specId = GetInspectSpecialization(br.friend[i].unit)
+                --     end
+
+                --     if specId == 258 or     -- PRIEST_SHADOW
+                --        specId == 71  or     -- WARRIOR_ARMS
+                --        specId == 72  or     -- WARRIOR_FURY
+                --        specId == 254 then   -- HUNTER_MARKSMANSHIP
+                --         execute = execute + 1
+                --     else
+                --         nonexecute = nonexecute + 1
+                --     end
+                -- end
+
+                -- local divisor = nonexecute + execute
+                -- if divisor > 0 then
+                --     return nonexecute / divisor
+                -- else
+                --     return 0
+                -- end
+
+                -- return 0
                 return 0
             end
 
             function updateInsanityDrainStacks()
-                if br.timer:useTimer("debugInsanityDrainStacks", 1) then
-                    if buff.voidForm then
-                        insanityDrainStacks = insanityDrainStacks + 1
-                    else
+                if buff.voidForm then
+                    if insanityDrainStart == 0 then
+                        insanityDrainStart = GetTime()
                         insanityDrainStacks = 0
+                    else
+                        insanityDrainStacks = GetTime()-insanityDrainStart
                     end
-                    currentInsanityDrain = insanityDrainStacks * 0.55 + 8
+                else
+                    insanityDrainStart = 0
+                    insanityDrainStacks = 0
                 end
+                currentInsanityDrain = insanityDrainStacks * 0.55 + 8
             end
 
             function updateRawHate()
@@ -335,10 +356,12 @@ if select(2, UnitClass("player")) == "PRIEST" then
             end -- End Action List - Auto Target
         -- Action list - Extras
             function actionList_Extra()
+                --print(useCDs())
                 if IsFlying() or IsMounted() then return end
                 if inCombat then
                     analyzeS2M()
                     updateInsanityDrainStacks()
+                    dieAtNextGCD = currentInsanityDrain*(gcdMax + select(4,GetNetStats()) / 1000) > power
                 end
 
                 if bodyAndSoul > -1 and isMoving("player") and not buff.surrenderToMadness then
@@ -403,30 +426,6 @@ if select(2, UnitClass("player")) == "PRIEST" then
             end  -- End Action List - Pre-Combat
         -- Action List - Main
             function actionList_Main()
-                if isCastingSpell(spell.mindFlay) then
-                    local castStartTime = select(5,UnitChannelInfo("player"))
-                    local castEndTime = select(6,UnitChannelInfo("player"))
-                    local castDuration = (castEndTime - castStartTime)/1000
-                    local castTimeRemain = ((castEndTime/1000) - GetTime())
-                    if castTimeRemain < castDuration * (3/4) then
-                        SpellStopCasting()
-                    else
-                        return
-                    end
-                end
-                
-                if isCastingSpell(spell.mindSear) then
-                    local castStartTime = select(5,UnitChannelInfo("player"))
-                    local castEndTime = select(6,UnitChannelInfo("player"))
-                    local castDuration = (castEndTime - castStartTime)/1000
-                    local castTimeRemain = ((castEndTime/1000) - GetTime())
-                    if castTimeRemain < castDuration * (5/6) then
-                        SpellStopCasting()
-                    else
-                        return
-                    end
-                end
-
             -- surrender_to_madness,if=talent.surrender_to_madness.enabled&target.time_to_die<=variable.s2mcheck
                 -- Never automatic use SurrenderToMadness
             -- mindbender,if=talent.mindbender.enabled&!talent.surrender_to_madness.enabled
@@ -512,7 +511,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     end
                 end
             -- shadow_word_pain,if=!ticking&target.time_to_die>10&(active_enemies<5&artifact.sphere_of_insanity.rank),cycle_targets=1
-                if debuff.count.shadowWordPain < SWPmaxTargets or isMoving("player") and artifact.sphereOfInsanity then
+                if (debuff.count.shadowWordPain < SWPmaxTargets or isMoving("player")) and artifact.sphereOfInsanity then
                     for i=1,#enemies.yards40 do
                         local thisUnit = enemies.yards40[i]
                         local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.shadowWordPain,"player") ~= nil
@@ -529,10 +528,12 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 -- ???
             -- mind_sear,if=active_enemies>=2,interrupt=1,chain=1
                 if (#getEnemies("target",10) > 2 and mode.rotation == 1) or mode.rotation == 2 then
+                    if isCastingSpell(spell.mindSear) then return end
                     if cast.mindSear() then return end
                 end
             -- mind_flay,if=!talent.mind_spike.enabled,interrupt=1,chain=1
                 if not talent.mindSpike then
+                    if isCastingSpell(spell.mindFlay) then return end
                     if cast.mindFlay() then return end
                 end
             -- mind_spike,if=talent.mind_spike.enabled
@@ -551,7 +552,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     local castEndTime = select(6,UnitChannelInfo("player"))
                     local castDuration = (castEndTime - castStartTime)/1000
                     local castTimeRemain = ((castEndTime/1000) - GetTime())
-                    if castTimeRemain < castDuration * (3/4) or cd.voidBolt == 0 then
+                    if castTimeRemain < castDuration * (3/4) and cd.voidBolt == 0 then
                         SpellStopCasting()
                     else
                         return
@@ -563,7 +564,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     local castEndTime = select(6,UnitChannelInfo("player"))
                     local castDuration = (castEndTime - castStartTime)/1000
                     local castTimeRemain = ((castEndTime/1000) - GetTime())
-                    if castTimeRemain < castDuration * (5/6) or cd.voidBolt == 0 then
+                    if castTimeRemain < castDuration * (5/6) and cd.voidBolt == 0 then
                         SpellStopCasting()
                     else
                         return
@@ -660,11 +661,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.voidBolt(thisUnit) then return end
                 end
             -- shadow_word_death,if=!talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+10)<100
-                if not talent.reaperOfSouls and currentInsanityDrain * gcdMax > power and (power - (currentInsanityDrain * gcdMax) + 10 ) < 100 then
+                if not talent.reaperOfSouls and dieAtNextGCD and (power - (currentInsanityDrain * gcdMax) + 10 ) < 100 then
                     if cast.shadowWordDeath() then return end
                 end
             -- shadow_word_death,if=talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+30)<100
-                if talent.reaperOfSouls and currentInsanityDrain * gcdMax > power and (power -(currentInsanityDrain * gcdMax) + 30 ) < 100 then
+                if talent.reaperOfSouls and dieAtNextGCD and (power -(currentInsanityDrain * gcdMax) + 30 ) < 100 then
                     if cast.shadowWordDeath() then return end
                 end
             -- wait,sec=action.void_bolt.usable_in,if=action.void_bolt.usable_in<gcd.max*0.28
@@ -757,6 +758,35 @@ if select(2, UnitClass("player")) == "PRIEST" then
             end -- End Action List - vf
         -- Action List - s2m
             function actionList_S2M()
+                if isCastingSpell(spell.mindFlay) then
+                    local castStartTime = select(5,UnitChannelInfo("player"))
+                    local castEndTime = select(6,UnitChannelInfo("player"))
+                    local castDuration = (castEndTime - castStartTime)/1000
+                    local castTimeRemain = ((castEndTime/1000) - GetTime())
+                    if castTimeRemain < castDuration * (3/4) and (cd.voidBolt == 0 or (charges.shadowWordDeath > 0 and insanityDrainStacks > 50)) then
+                        SpellStopCasting()
+                        return
+                    else
+                        return
+                    end
+                end
+                
+                if isCastingSpell(spell.mindSear) then
+                    local castStartTime = select(5,UnitChannelInfo("player"))
+                    local castEndTime = select(6,UnitChannelInfo("player"))
+                    local castDuration = (castEndTime - castStartTime)/1000
+                    local castTimeRemain = ((castEndTime/1000) - GetTime())
+                    if castTimeRemain < castDuration * (5/6) and (cd.voidBolt == 0 or (charges.shadowWordDeath > 0 and insanityDrainStacks > 50)) then
+                        SpellStopCasting()
+                        return
+                    else
+                        return
+                    end
+                end
+
+                if lastSpell == spell.dispersion and insanityDrainStacks > 100 then
+                    if cast.shadowWordDeath() then return end
+                end
             -- shadow_crash,if=talent.shadow_crash.enabled  
                 if talent.shadowCrash then
                     if cast.shadowCrash() then return end
@@ -766,7 +796,9 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.mindBender() then return end
                 end
             -- void_torrent,if=dot.shadow_word_pain.remains>5.5&dot.vampiric_touch.remains>5.5
-                if getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5 then
+                if getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5
+                    and (insanityDrainStacks < 99 or charges.shadowWordDeath == 0)
+                then
                     if cast.voidTorrent() then return end
                 end
             -- berserking,if=buff.voidform.stack>=80
@@ -774,11 +806,17 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if castSpell("player",racial,false,false,false) then return end
                 end
             -- shadow_word_death,if=!talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+15)<100&!buff.power_infusion.up&buff.insanity_drain_stacks.stack<=77&cooldown.shadow_word_death.charges=2
-                if not talent.reaperOfSouls and currentInsanityDrain * gcdMax > power and (power - (currentInsanityDrain * gcdMax)+15)<100 and not buff.powerInfusion and insanityDrainStacks <= 77 and charges.shadowWordDeath == 2 then
+                if not talent.reaperOfSouls and dieAtNextGCD and (power - (currentInsanityDrain * gcdMax)+15)<100 and not buff.powerInfusion and insanityDrainStacks <= timeToPowerInfusion and charges.shadowWordDeath == 2 then
                     if cast.shadowWordDeath() then return end
                 end
             -- shadow_word_death,if=talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+65)<100&!buff.power_infusion.up&buff.insanity_drain_stacks.stack<=77&cooldown.shadow_word_death.charges=2
-                if talent.reaperOfSouls and currentInsanityDrain * gcdMax > power and (power-(currentInsanityDrain*gcdMax)+65)<100 and not buff.powerInfusion and insanityDrainStacks <= 77 and charges.shadowWordDeath == 2 then
+                if talent.reaperOfSouls and 
+                    dieAtNextGCD and 
+                    (power-(currentInsanityDrain*gcdMax)+65)<100 and 
+                    not buff.powerInfusion and 
+                    insanityDrainStacks <= timeToPowerInfusion and 
+                    charges.shadowWordDeath == 2 
+                then
                     if cast.shadowWordDeath() then return end
                 end
             -- void_bolt,if=dot.shadow_word_pain.remains<3.5*gcd&dot.vampiric_touch.remains<3.5*gcd&target.time_to_die>10,cycle_targets=1
@@ -828,17 +866,19 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     end
                 end
             -- void_bolt
-                if cast.voidBolt(thisUnit) then return end
+                if currentInsanityDrain*(gcdMax + select(4,GetNetStats()) / 1000) - 40 < power then
+                    if cast.voidBolt(thisUnit) then return end
+                end
             -- shadow_word_death,if=!talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+15)<100
-                if not talent.reaperOfSouls and currentInsanityDrain * gcdMax > power and (power -(currentInsanityDrain*gcdMax)+15) < 100 then
+                if not talent.reaperOfSouls and dieAtNextGCD and (power -(currentInsanityDrain*gcdMax)+15) < 100 then
                     if cast.shadowWordDeath() then return end
                 end
             -- shadow_word_death,if=talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+65)<100
-                if talent.reaperOfSouls and currentInsanityDrain*gcdMax > power and (power-(currentInsanityDrain*gcdMax)+65) < 100 then
+                if talent.reaperOfSouls and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+65) < 100 then
                     if cast.shadowWordDeath() then return end
                 end
             -- power_infusion,if=buff.insanity_drain_stacks.stack>=77
-                if insanityDrainStacks >= 77 then
+                if insanityDrainStacks >= timeToPowerInfusion and useCDs() then
                     if cast.powerInfusion() then return end
                 end
             -- wait,sec=action.void_bolt.usable_in,if=action.void_bolt.usable_in<gcd.max*0.28
@@ -846,20 +886,34 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     rWait = cd.voidBolt
                     return
                 end
-            -- dispersion,if=current_insanity_drain*gcd.max>insanity&!buff.power_infusion.up
-                if currentInsanityDrain * gcdMax > power and not buff.powerInfusion then
-                    if cast.dispersion() then return end
-                end
             -- mind_blast
-                if cast.mindBlast() then return end
+                -- if cast.mindBlast() then return end
             -- wait,sec=action.mind_blast.usable_in,if=action.mind_blast.usable_in<gcd.max*0.28
-                if cd.mindBlast < gcdMax*0.28 then
-                    rWait = cd.mindBlast
-                    return
+                -- if cd.mindBlast < gcdMax*0.28 then
+                --     rWait = cd.mindBlast
+                --     return
+                -- end
+            -- mind_blast,if=(insanity-current_insanity_drain*action.void_bolt.usable_in)>-30&(insanity-current_insanity_drain*0.6)>0
+                if (power - currentInsanityDrain * cd.voidBolt) > -20 and (power - currentInsanityDrain *0.6) > 0 then
+                    if cast.mindBlast() then return end
                 end
             -- shadow_word_death,if=cooldown.shadow_word_death.charges=2
                 if charges.shadowWordDeath == 2 then
                     if cast.shadowWordDeath() then return end
+                end
+            -- Arcane Torrent
+                if insanityDrainStacks >= timeToPowerInfusion and useCDs() and br.player.race == "BloodElf"
+                    and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+35) < 100 
+                then
+                    if castSpell("player",racial,false,false,false) then return end
+                end
+            -- hasEquiped 130234, Blessed Dawnlight Medallion
+                if insanityDrainStacks >= timeToPowerInfusion and useCDs() and hasEquiped(130234) and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+75) < 100 then
+                    if useItem(2) then return end
+                end
+            -- dispersion,if=current_insanity_drain*gcd.max>insanity&!buff.power_infusion.up
+                if (dieAtNextGCD or cd.voidTorrent < 5.5) and insanityDrainStacks > 70 and not buff.powerInfusion then
+                    if cast.dispersion() then return end
                 end
             -- shadowfiend,if=!talent.mindbender.enabled,if=buff.voidform.stack>15
                 if not talent.mindbender and buff.stack.voidForm > 15 then
@@ -871,22 +925,18 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 end
             -- shadow_word_pain,if=!ticking&(active_enemies<5|talent.auspicious_spirits.enabled|talent.shadowy_insight.enabled|artifact.sphere_of_insanity.rank)
                 if debuff.count.shadowWordPain < SWPmaxTargets or talent.auspiciousSpirits or talent.shadowyInsight or artifact.sphereOfInsanity then
-                    for i=1,#enemies.yards40 do
-                        local thisUnit = enemies.yards40[i]
-                        local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.shadowWordPain,"player") ~= nil
-                        if isInCombat(thisUnit) and not tempestDebuff then
-                            if cast.shadowWordPain(thisUnit) then return end
-                        end
+                    local thisUnit = "target"
+                    local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.shadowWordPain,"player") ~= nil
+                    if not tempestDebuff then
+                        if cast.shadowWordPain(thisUnit) then return end
                     end
                 end
             -- vampiric_touch,if=!ticking&(active_enemies<4|talent.sanlayn.enabled|(talent.auspicious_spirits.enabled&artifact.unleash_the_shadows.rank))
                 if debuff.count.vampiricTouch < VTmaxTargets or talent.sanlaryn or (talent.auspiciousSpirits and artifact.unleashTheShadows) then
-                    for i=1,#enemies.yards40 do
-                        local thisUnit = enemies.yards40[i]
-                        local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.vampiricTouch,"player") ~= nil
-                        if isInCombat(thisUnit) and not tempestDebuff then
-                            if cast.vampiricTouch(thisUnit) then return end 
-                        end
+                    local thisUnit = "target"
+                    local tempestDebuff = UnitDebuffID(thisUnit,spell.spec.debuffs.vampiricTouch,"player") ~= nil
+                    if not tempestDebuff then
+                        if cast.vampiricTouch(thisUnit) then return end 
                     end
                 end
             -- shadow_word_pain,if=!ticking&target.time_to_die>10&(active_enemies<5&(talent.auspicious_spirits.enabled|talent.shadowy_insight.enabled)),cycle_targets=1
@@ -939,6 +989,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.mindSpike() then return end
                 end
             end -- End Action List - s2m
+        
     -----------------
     --- Rotations ---
     -----------------
@@ -956,10 +1007,14 @@ if select(2, UnitClass("player")) == "PRIEST" then
     -----------------------------
             if IsFlying() or IsMounted() then return end
             actionList_AutoTarget()
+            --useItem(2)
+            --UseItemByName(130234)
             if inCombat and isValidUnit("target") 
                     and getDistance("target") < 40 
+            -- hasEquiped 130234, Blessed Dawnlight Medallion
                     and not isCastingSpell(spell.voidTorrent) 
-                    and not isCastingSpell(spell.vampiricTouch) then
+                    and not isCastingSpell(spell.vampiricTouch)
+                    and not isCastingSpell(spell.mindBlast) then
                 if rWait == 0 or br.timer:useTimer("RotationsWait",rWait) then
                     rWait = 0
                     --auto_face

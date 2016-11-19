@@ -34,5 +34,7 @@ LC_VAMPIRIC_EMBRACE = "吸血鬼的拥抱";
 LC_VAMPIRIC_EMBRACE_DESCRIPTION = "|cffFFBB00当血量低于设定百分比时使用|cffFF0000吸血鬼的拥抱";
 LC_VT_MAX_TARGETS = "多目标 吸血之触";
 LC_VT_MAX_TARGETS_DESCRIPTION = "|cffFFBB00吸血之触 目标上限";
+LC_EXECUTE_ACTORS = "Execute Actors";
+LC_EXECUTE_ACTORS_DESCRIPTION = "Execute Actors";
 
 end

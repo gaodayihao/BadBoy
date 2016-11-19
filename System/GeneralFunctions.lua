@@ -2577,7 +2577,8 @@ function useItem(itemID)
 			local slotItemID = GetInventoryItemID("player",itemID)
 			if GetItemCooldown(slotItemID)==0 then
 				if not br.itemSpamDelay or GetTime() > br.itemSpamDelay then
-					UseItemByName((select(1,GetItemInfo(slotItemID))));
+					--UseItemByName((select(1,GetItemInfo(slotItemID))));
+					UseItemByName(slotItemID);
 					br.itemSpamDelay = GetTime() + 1;
 					return true
 				end

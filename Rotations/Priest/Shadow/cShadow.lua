@@ -383,9 +383,9 @@ function cShadow:new()
 
             if self.cd.mindBlast == 0 then
                 if debug then
-                    return castSpell(thisUnit,spellCast,false,true,false,false,false,false,false,true)
+                    return castSpell(thisUnit,spellCast,false,not br.player.buff.surrenderToMadness,false,false,false,false,false,true)
                 else
-                    return castSpell(thisUnit,spellCast,false,true)
+                    return castSpell(thisUnit,spellCast,false,not br.player.buff.surrenderToMadness)
                 end
             elseif debug then
                 return false
@@ -401,9 +401,9 @@ function cShadow:new()
 
             if self.cd.mindFlay == 0 and not UnitChannelInfo("player") then
                 if debug then
-                    return castSpell(thisUnit,spellCast,false,true,false,false,false,false,false,true)
+                    return castSpell(thisUnit,spellCast,false,not br.player.buff.surrenderToMadness,false,false,false,false,false,true)
                 else
-                    return castSpell(thisUnit,spellCast,false,true)
+                    return castSpell(thisUnit,spellCast,false,not br.player.buff.surrenderToMadness)
                 end
             elseif debug then
                 return false
@@ -419,9 +419,9 @@ function cShadow:new()
 
             if getDistance(thisUnit) < 40 and self.cd.mindSear == 0 then
                 if debug then
-                    return castSpell(thisUnit,spellCast,true,true,false,false,false,false,false,true)
+                    return castSpell(thisUnit,spellCast,true,not br.player.buff.surrenderToMadness,false,false,false,false,false,true)
                 else
-                    return castSpell(thisUnit,spellCast,true,true)
+                    return castSpell(thisUnit,spellCast,true,not br.player.buff.surrenderToMadness)
                 end
             elseif debug then
                 return false
@@ -437,9 +437,9 @@ function cShadow:new()
 
             if getDistance(thisUnit) < 40 and self.cd.mindSpike == 0 then
                 if debug then
-                    return castSpell(thisUnit,spellCast,false,true,false,false,false,false,false,true)
+                    return castSpell(thisUnit,spellCast,false,not br.player.buff.surrenderToMadness,false,false,false,false,false,true)
                 else
-                    return castSpell(thisUnit,spellCast,false,true)
+                    return castSpell(thisUnit,spellCast,false,not br.player.buff.surrenderToMadness)
                 end
             elseif debug then
                 return false
@@ -601,9 +601,9 @@ function cShadow:new()
 
             if self.cd.voidEruption == 0 then
                 if debug then
-                    return castSpell(thisUnit,spellCast,false,true,false,false,false,false,false,true)
+                    return castSpell(thisUnit,spellCast,false,not br.player.buff.surrenderToMadness,false,false,false,false,false,true)
                 else
-                    return castSpell(thisUnit,spellCast,false,true)
+                    return castSpell(thisUnit,spellCast,false,not br.player.buff.surrenderToMadness)
                 end
             elseif debug then
                 return false
@@ -637,9 +637,9 @@ function cShadow:new()
 
             if getDistance(thisUnit) < 40 and self.cd.voidTorrent == 0 then
                 if debug then
-                    return castSpell(thisUnit,spellCast,true,true,false,false,false,false,false,true)
+                    return castSpell(thisUnit,spellCast,true,not br.player.buff.surrenderToMadness,false,false,false,false,false,true)
                 else
-                    return castSpell(thisUnit,spellCast,true,true)
+                    return castSpell(thisUnit,spellCast,true,not br.player.buff.surrenderToMadness)
                 end
             elseif debug then
                 return false

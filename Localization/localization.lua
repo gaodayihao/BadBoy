@@ -34,3 +34,5 @@ LC_VAMPIRIC_EMBRACE = "Vampiric Embrace";
 LC_VAMPIRIC_EMBRACE_DESCRIPTION = "|cffFFBB00Vampiric Embrace";
 LC_VT_MAX_TARGETS = "VT Max Targets";
 LC_VT_MAX_TARGETS_DESCRIPTION = "|cffFFBB00Amount of dots to apply";
+LC_EXECUTE_ACTORS = "Execute Actors";
+LC_EXECUTE_ACTORS_DESCRIPTION = "Execute Actors";
