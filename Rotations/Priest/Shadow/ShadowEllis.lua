@@ -26,16 +26,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
             [2] = { mode = "Off", value = 2 , overlay = "Defensive Disabled", tip = "No Defensives will be used.", highlight = 0, icon = br.player.spell.dispersion }
         };
         CreateButton("Defensive",3,0)
-        -- Void Form Button
-        SurrenderToMadnessModes = {
-            [1] = { mode = "", value = 1 , overlay = "", tip = "Surrender To Madness Analyze (s).", highlight = 1, icon = br.player.spell.surrenderToMadness }
-        };
-        CreateButton("SurrenderToMadness",4,0)
         -- Shadow Word:Death Button
         ShadowWordDeathModes = {
             [1] = { mode = "", value = 1 , overlay = "", tip = "Target to die (s)", highlight = 1, icon = br.player.spell.shadowWordDeath }
         };
-        CreateButton("ShadowWordDeath",5,0)
+        CreateButton("ShadowWordDeath",4,0)
     end
 
 ---------------
@@ -61,7 +56,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
             -- Body And Soul
                 br.ui:createSpinner(section, LC_BODY_AND_SOUL,  1.5,  0,  5,  0.5, LC_BODY_AND_SOUL_DESCRIPTION)
             -- Nonexecute Actors
-                br.ui:createSpinnerWithout(section, LC_EXECUTE_ACTORS,  1,  1,  25,  1, LC_EXECUTE_ACTORS_DESCRIPTION)
+                --br.ui:createSpinnerWithout(section, LC_EXECUTE_ACTORS,  1,  1,  25,  1, LC_EXECUTE_ACTORS_DESCRIPTION)
+            -- S2M Check
+                br.ui:createSpinnerWithout(section, LC_S2M_CHECK,  120,  90,  150,  1, LC_S2M_CHECK_DESCRIPTION)
+            -- Artifact
+                br.ui:createDropdown(section, LC_ARTIFACT, {LC_ARTIFACT_EVERY_TIME,LC_ARTIFACT_CD}, 1)
             br.ui:checkSectionState(section)
         -- Pre-Pull BossMod
             section = br.ui:createSection(br.ui.window.profile, LC_PRE_PULL_BOSSMOD)
@@ -73,44 +72,29 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 br.ui:createCheckbox(section,LC_FLASK)
             br.ui:checkSectionState(section)
         -- Cooldown Options
-            section = br.ui:createSection(br.ui.window.profile, "Cooldowns")
-            -- Int Pot
-                br.ui:createCheckbox(section,"Int Pot")
-            -- Trinkets
-                br.ui:createCheckbox(section,"Trinkets")
-            -- Touch of the Void
-                if hasEquiped(128318) then
-                    br.ui:createCheckbox(section,"Touch of the Void")
-                end
-            -- Shadowfiend
-                br.ui:createCheckbox(section,"Shadowfiend / Mind Bender")
-            -- Power Infusion
-                br.ui:createCheckbox(section,"Power Infusion")
+            section = br.ui:createSection(br.ui.window.profile, LC_COOLDOWNS)
+            -- MindBender / Shadowfiend
+                br.ui:createCheckbox(section, LC_MINDBENDER_SHADOWFIEND)
+            -- PowerInfusion
+                br.ui:createCheckbox(section, LC_POWER_INFUSION)
+            -- Dispersion
+                br.ui:createCheckbox(section, LC_DISPERSION)
             br.ui:checkSectionState(section)
-        -- Defensive Options
-            section = br.ui:createSection(br.ui.window.profile, LC_DEFENSIVE)
-            -- Healthstone
-                br.ui:createSpinner(section, "Healthstone",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.")
-            -- Gift of The Naaru
-                if br.player.race == "Draenei" then
-                    br.ui:createSpinner(section, "Gift of the Naaru",  50,  0,  100,  5,  "|cffFFFFFFHealth Percent to Cast At")
-                end
-            -- Power Word: Shield
-                br.ui:createSpinner(section, "Power Word: Shield",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.")
-            -- Dispel Magic
-                br.ui:createCheckbox(section,"Dispel Magic")
-            -- Vampiric Embrace
-                br.ui:createSpinner(section, LC_VAMPIRIC_EMBRACE,  40,  1,  100,  5, LC_VAMPIRIC_EMBRACE_DESCRIPTION)
-            br.ui:checkSectionState(section)
-        -- Toggle Key Options
-            section = br.ui:createSection(br.ui.window.profile, "Toggle Keys")
-            -- Single/Multi Toggle
-                br.ui:createDropdown(section, "Rotation Mode", br.dropOptions.Toggle,  4)
-            -- Cooldown Key Toggle
-                br.ui:createDropdown(section, "Cooldown Mode", br.dropOptions.Toggle,  3)
-            -- Pause Toggle
-                br.ui:createDropdown(section, "Pause Mode", br.dropOptions.Toggle,  6)
-            br.ui:checkSectionState(section)
+        -- -- Defensive Options
+        --     section = br.ui:createSection(br.ui.window.profile, LC_DEFENSIVE)
+        --     -- Healthstone
+        --         br.ui:createSpinner(section, "Healthstone",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.")
+        --     -- Gift of The Naaru
+        --         if br.player.race == "Draenei" then
+        --             br.ui:createSpinner(section, "Gift of the Naaru",  50,  0,  100,  5,  "|cffFFFFFFHealth Percent to Cast At")
+        --         end
+        --     -- Power Word: Shield
+        --         br.ui:createSpinner(section, "Power Word: Shield",  60,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.")
+        --     -- Dispel Magic
+        --         br.ui:createCheckbox(section,"Dispel Magic")
+        --     -- Vampiric Embrace
+        --         br.ui:createSpinner(section, LC_VAMPIRIC_EMBRACE,  40,  1,  100,  5, LC_VAMPIRIC_EMBRACE_DESCRIPTION)
+        --     br.ui:checkSectionState(section)
         end
         optionTable = {{
             [1] = "Rotation Options",
@@ -148,7 +132,6 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local cd                                            = br.player.cd
             local charges                                       = br.player.charges
             local combatTime                                    = getCombatTime()
-            --local deadMouse                                     = UnitIsDeadOrGhost("mouseover")
             local debuff                                        = br.player.debuff
             local enemies                                       = br.player.enemies
             local falling, swimming, flying, moving             = getFallTime(), IsSwimming(), IsFlying(), GetUnitSpeed("player")>0
@@ -156,7 +139,6 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local friendly                                      = friendly or UnitIsFriend("target", "player")
             local gcd                                           = br.player.gcd
             local gcdMax                                        = br.player.gcdMax
-            --local hasMouse                                      = ObjectExists("mouseover")
             local inCombat                                      = br.player.inCombat
             local inInstance                                    = br.player.instance=="party"
             local inRaid                                        = br.player.instance=="raid"
@@ -170,7 +152,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local pullTimer                                     = br.DBM:getPulltimer()
             local racial                                        = br.player.getRacial()
             local recharge                                      = br.player.recharge
-            local s2mcheck                                      = 110
+            local s2mcheck                                      = getOptionValue(LC_S2M_CHECK)
             local solo                                          = br.player.instance=="none"
             local spell                                         = br.player.spell
             local SWPmaxTargets                                 = getOptionValue(LC_SWP_MAX_TARGETS)
@@ -181,6 +163,10 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
             local timeToPowerInfusion                           = 78
             local dieAtNextGCD                                  = false
+            local useMindBenderOrShadowFiend                    = isChecked(LC_MINDBENDER_SHADOWFIEND)
+            local usePowerInfusion                              = isChecked(LC_POWER_INFUSION)
+            local useArtifact                                   = true
+            local useDispersion                                 = isChecked(LC_DISPERSION)
 
             if currentInsanityDrain == nil then currentInsanityDrain = 0 end
             if insanityDrainStacks == nil then insanityDrainStacks = 0 end
@@ -200,6 +186,16 @@ if select(2, UnitClass("player")) == "PRIEST" then
 
             if not isChecked(LC_VT_MAX_TARGETS) then
                 VTmaxTargets = 1
+            end
+
+            if isChecked(LC_ARTIFACT) then
+                if getOptionValue(LC_ARTIFACT) == 1 then
+                    useArtifact = true
+                else
+                    useArtifact = useCDs()
+                end
+            else
+                useArtifact = false
             end
             --if leftCombat == nil then leftCombat = GetTime() end
             --if profileStop == nil then profileStop = false end
@@ -256,6 +252,10 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 end
             end
 
+            function updateTTD()
+                _G["text".."ShadowWordDeath"]:SetText(round2(ttd("target"),0))
+            end
+
             function analyzeS2M()
                 if inCombat then 
                     if not isValidUnit("target") then return end
@@ -286,13 +286,10 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     --s2mcheck = s2mcheck * 0.9 -- 2016/11/15 hotfix
                 -- variable,op=min,name=s2mcheck,value=180
                     s2mcheck = math.min(s2mcheck,180)
-                    --print(s2mcheck)
-                    _G["text".."SurrenderToMadness"]:SetText(round2(s2mcheck,0))
                     _G["text".."ShadowWordDeath"]:SetText(round2(targetTTD,0))
                 else
                     if nAP > -1 then
                         nAP = -1
-                        _G["text".."SurrenderToMadness"]:SetText("")
                         _G["text".."ShadowWordDeath"]:SetText("")
                     end
                     updateRawHate()
@@ -328,12 +325,13 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 --print(useCDs())
                 if IsFlying() or IsMounted() then return end
                 if inCombat then
-                    analyzeS2M()
+                    --analyzeS2M()
+                    updateTTD()
                     updateInsanityDrainStacks()
                     dieAtNextGCD = currentInsanityDrain*(gcdMax + select(4,GetNetStats()) / 1000) > power
                 end
 
-                if bodyAndSoul > -1 and isMoving("player") and not buff.surrenderToMadness then
+                if bodyAndSoul > -1 and isMoving("player") and not buff.surrenderToMadness and talent.bodyAndSoul then
                     if movingStart == 0 then
                         movingStart = GetTime()
                     elseif GetTime() > movingStart + bodyAndSoul then
@@ -398,11 +396,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
             -- surrender_to_madness,if=talent.surrender_to_madness.enabled&target.time_to_die<=variable.s2mcheck
                 -- Never automatic use SurrenderToMadness
             -- mindbender,if=talent.mindbender.enabled&!talent.surrender_to_madness.enabled
-                if useCDs() and talent.mindBender and not talent.surrenderToMadness then
+                if useMindBenderOrShadowFiend and useCDs() and talent.mindBender and not talent.surrenderToMadness then
                     if cast.mindBender() then return end
                 end
             -- mindbender,if=talent.mindbender.enabled&talent.surrender_to_madness.enabled&target.time_to_die>variable.s2mcheck+60
-                if useCDs() and talent.mindBender and talent.surrenderToMadness and ttd("target") > s2mcheck + 60 then
+                if useMindBenderOrShadowFiend and useCDs() and talent.mindBender and talent.surrenderToMadness and ttd("target") > s2mcheck + 60 then
                     if cast.mindBender() then return end
                 end
             -- shadow_word_pain,if=dot.shadow_word_pain.remains<(3+(4%3))*gcd
@@ -547,28 +545,28 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.shadowCrash() then return end
                 end
             --void_torrent,if=dot.shadow_word_pain.remains>5.5&dot.vampiric_touch.remains>5.5&talent.surrender_to_madness.enabled&target.time_to_die>variable.s2mcheck-(buff.insanity_drain_stacks.stack)+60
-                if talent.surrenderToMadness and getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5
+                if useArtifact and talent.surrenderToMadness and getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5
                          and ttd("target") > s2mcheck - insanityDrainStacks + 60 then
                     if cast.voidTorrent() then return end
                 end
             -- void_torrent,if=!talent.surrender_to_madness.enabled
-                if not talent.surrenderToMadness then
+                if useArtifact and not talent.surrenderToMadness then
                     if cast.voidTorrent() then return end
                 end
             -- mindbender,if=talent.mindbender.enabled&!talent.surrender_to_madness.enabled
-                if useCDs() and talent.mindBender and not talent.surrenderToMadness then
+                if useMindBenderOrShadowFiend and useCDs() and talent.mindBender and not talent.surrenderToMadness then
                     if cast.mindBender() then return end
                 end
             -- mindbender,if=talent.mindbender.enabled&talent.surrender_to_madness.enabled&target.time_to_die>variable.s2mcheck-(buff.insanity_drain_stacks.stack)+30
-                if useCDs() and talent.mindBender and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 30 then
+                if useMindBenderOrShadowFiend and useCDs() and talent.mindBender and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 30 then
                     if cast.mindBender() then return end
                 end
             -- power_infusion,if=buff.voidform.stack>=10&buff.insanity_drain_stacks.stack<=30&!talent.surrender_to_madness.enabled
-                if useCDs() and buff.stack.voidForm >= 10 and insanityDrainStacks <= 30 and not talent.surrenderToMadness then
+                if usePowerInfusion and useCDs() and buff.stack.voidForm >= 10 and insanityDrainStacks <= 30 and not talent.surrenderToMadness then
                     if cast.powerInfusion() then return end
                 end
             -- power_infusion,if=buff.voidform.stack>=10&talent.surrender_to_madness.enabled&target.time_to_die>variable.s2mcheck-(buff.insanity_drain_stacks.stack)+25
-                if useCDs() and buff.stack.voidForm >= 10 and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 25 then
+                if usePowerInfusion and useCDs() and buff.stack.voidForm >= 10 and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 25 then
                     if cast.powerInfusion() then return end
                 end
             -- berserking,if=buff.voidform.stack>=10&buff.insanity_drain_stacks.stack<=20&!talent.surrender_to_madness.enabled
@@ -654,7 +652,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.shadowWordDeath() then return end
                 end
             -- shadowfiend,if=!talent.mindbender.enabled,if=buff.voidform.stack>15
-                if useCDs() and not talent.mindBender and buff.stack.voidForm > 15 then
+                if useMindBenderOrShadowFiend and useCDs() and not talent.mindBender and buff.stack.voidForm > 15 then
                     if cast.shadowfiend() then return end
                 end
             -- shadow_word_void,if=(insanity-(current_insanity_drain*gcd.max)+25)<100
@@ -761,11 +759,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.shadowCrash() then return end
                 end
             -- mindbender,if=talent.mindbender.enabled
-                if useCDs() and talent.mindBender then
+                if useMindBenderOrShadowFiend and useCDs() and talent.mindBender then
                     if cast.mindBender() then return end
                 end
             -- void_torrent,if=dot.shadow_word_pain.remains>5.5&dot.vampiric_touch.remains>5.5
-                if getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5
+                if useArtifact and getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5
                     and (insanityDrainStacks < 99 or charges.shadowWordDeath == 0)
                 then
                     if cast.voidTorrent() then return end
@@ -847,7 +845,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.shadowWordDeath() then return end
                 end
             -- power_infusion,if=buff.insanity_drain_stacks.stack>=77
-                if insanityDrainStacks >= timeToPowerInfusion and useCDs() then
+                if usePowerInfusion and insanityDrainStacks >= timeToPowerInfusion and useCDs() then
                     if cast.powerInfusion() then return end
                 end
             -- wait,sec=action.void_bolt.usable_in,if=action.void_bolt.usable_in<gcd.max*0.28
@@ -881,11 +879,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if useItem(2) then return end
                 end
             -- dispersion,if=current_insanity_drain*gcd.max>insanity&!buff.power_infusion.up
-                if (dieAtNextGCD or cd.voidTorrent < 5.5) and insanityDrainStacks > 70 and not buff.powerInfusion then
+                if useDispersion and (dieAtNextGCD or cd.voidTorrent < 5.5) and insanityDrainStacks > 70 and not buff.powerInfusion then
                     if cast.dispersion() then return end
                 end
             -- shadowfiend,if=!talent.mindbender.enabled,if=buff.voidform.stack>15
-                if not talent.mindbender and buff.stack.voidForm > 15 then
+                if useMindBenderOrShadowFiend and useCDs() and not talent.mindbender and buff.stack.voidForm > 15 then
                     if cast.shadowfiend() then return end
                 end
             -- shadow_word_void,if=(insanity-(current_insanity_drain*gcd.max)+75)<100
@@ -970,12 +968,13 @@ if select(2, UnitClass("player")) == "PRIEST" then
             if inRaid and not inCombat and isBoss("target") and isValidUnit("target") then
                 if actionList_PreCombat() then return end
             end
-
     -----------------------------
     --- In Combat - Rotations --- 
     -----------------------------
             if IsFlying() or IsMounted() then return end
-            actionList_AutoTarget()
+            if not isCastingSpell(spell.mindFlay) and not isCastingSpell(spell.mindSear) then
+                actionList_AutoTarget()
+            end
             --useItem(2)
             --UseItemByName(130234)
             if inCombat and isValidUnit("target") 
@@ -984,6 +983,9 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     and not isCastingSpell(spell.voidTorrent) 
                     and not isCastingSpell(spell.vampiricTouch)
                     and not isCastingSpell(spell.mindBlast) then
+
+                if actionList_Cooldowns() then return end
+                
                 if rWait == 0 or br.timer:useTimer("RotationsWait",rWait) then
                     rWait = 0
                     --auto_face

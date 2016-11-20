@@ -288,7 +288,6 @@ function cShadow:new()
             self.mode.rotation  = br.data["Rotation"]
             self.mode.cooldown  = br.data["Cooldown"]
             self.mode.defensive = br.data["Defensive"]
-            self.mode.voidEruption = br.data["VoidEruption"]
         end
 
         -- Create the toggle defined within rotation files

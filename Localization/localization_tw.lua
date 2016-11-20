@@ -22,6 +22,7 @@ LC_PRE_PULL_BOSSMOD = "BOSS开怪前准备";
 LC_PRE_PULL_TIMER = "开怪倒计时";
 LC_PRE_PULL_TIMER_DESCRIPTION =  "|cffFFFFFF在开怪倒计时到达多少秒时进行准备（需要DBM）";
 LC_PROLONGED_POWER = "|cff00BB00延时之力";
+LC_COOLDOWNS = "大技能";
 
 --Priest
 LC_BODY_AND_SOUL = "身心合一";
@@ -34,7 +35,15 @@ LC_VAMPIRIC_EMBRACE = "吸血鬼的拥抱";
 LC_VAMPIRIC_EMBRACE_DESCRIPTION = "|cffFFBB00当血量低于设定百分比时使用|cffFF0000吸血鬼的拥抱";
 LC_VT_MAX_TARGETS = "多目标 吸血之触";
 LC_VT_MAX_TARGETS_DESCRIPTION = "|cffFFBB00吸血之触 目标上限";
-LC_EXECUTE_ACTORS = "Execute Actors";
-LC_EXECUTE_ACTORS_DESCRIPTION = "Execute Actors";
+LC_EXECUTE_ACTORS = "带斩杀队友数";
+LC_EXECUTE_ACTORS_DESCRIPTION = "带斩杀队友数（包括自己）";
+LC_S2M_CHECK = "预估自杀秒数";
+LC_S2M_CHECK_DESCRIPTION = "预估自杀的可持续秒数";
+LC_MINDBENDER_SHADOWFIEND = "摧心魔/暗影魔"
+LC_POWER_INFUSION = "能量灌注"
+LC_ARTIFACT = "神器"
+LC_ARTIFACT_CD = "大技能"
+LC_ARTIFACT_EVERY_TIME = "任何时候"
+LC_DISPERSION = "影散"
 
 end

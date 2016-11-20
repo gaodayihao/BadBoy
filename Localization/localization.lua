@@ -22,6 +22,7 @@ LC_PRE_PULL_BOSSMOD = "Pre-Pull BossMod";
 LC_PRE_PULL_TIMER = "Pre-Pull Timer";
 LC_PRE_PULL_TIMER_DESCRIPTION =  "|cffFFFFFFSet to desired time to start Pre-Pull (DBM Required). Min: 1 / Max: 10 / Interval: 1";
 LC_PROLONGED_POWER = "|cffFF0000Prolonged PowerPotion";
+LC_COOLDOWNS = "Cooldowns";
 
 --Priest
 LC_BODY_AND_SOUL = "Body And Soul";
@@ -36,3 +37,11 @@ LC_VT_MAX_TARGETS = "VT Max Targets";
 LC_VT_MAX_TARGETS_DESCRIPTION = "|cffFFBB00Amount of dots to apply";
 LC_EXECUTE_ACTORS = "Execute Actors";
 LC_EXECUTE_ACTORS_DESCRIPTION = "Execute Actors";
+LC_S2M_CHECK = "S2M Check";
+LC_S2M_CHECK_DESCRIPTION = "S2M Check";
+LC_MINDBENDER_SHADOWFIEND = "MindBender/Shadowfiend"
+LC_POWER_INFUSION = "PowerInfusion"
+LC_ARTIFACT = "Artifact"
+LC_ARTIFACT_CD = "Cooldown"
+LC_ARTIFACT_EVERY_TIME = "Every time"
+LC_DISPERSION = "Dispersion"
