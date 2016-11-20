@@ -48,7 +48,9 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 br.ui:createDropdownWithout(section, "APL Mode", {"|cffFFFFFFSimC","|cffFFFFFFAMR"}, 1, "|cffFFFFFFSet APL Mode to use.")
             	-- Dummy DPS Test
                 br.ui:createSpinner(section, "DPS Testing",  5,  5,  60,  5,  "|cffFFFFFFSet to desired time for test in minuts. Min: 5 / Max: 60 / Interval: 5")            	
-	            -- Hand of Hindeance
+	            -- Greater Blessing of Might
+                br.ui:createCheckbox(section, "Greater Blessing of Might")
+                -- Hand of Hindeance
 	            br.ui:createCheckbox(section, "Hand of Hinderance")
                 -- Artifact 
                 br.ui:createDropdownWithout(section,"Artifact", {"|cff00FF00Everything","|cffFFFF00Cooldowns","|cffFF0000Never"}, 1, "|cffFFFFFFWhen to use Artifact Ability.")
@@ -80,6 +82,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 if br.player.race == "Draenei" then
                     br.ui:createSpinner(section, "Gift of the Naaru",  50,  0,  100,  5,  "|cffFFFFFFHealth Percent to Cast At")
                 end
+                -- Blessing of Protection
+                br.ui:createSpinner(section, "Blessing of Protection",  50,  0,  100,  5,  "|cffFFBB00Health Percentage to use at.")  
                 -- Blinding Light
                 br.ui:createSpinner(section, "Blinding Light - HP", 50, 0, 100, 5, "|cffFFFFFFHealth Percent to Cast At")
                 br.ui:createSpinner(section, "Blinding Light - AoE", 3, 0, 10, 1, "|cffFFFFFFNumber of Units in 5 Yards to Cast At")
@@ -167,20 +171,41 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 			local holyPowerMax 	= br.player.holyPowerMax
 			local inCombat 		= br.player.inCombat
 			local level 		= br.player.level
+            local lowestHP      = br.friend[1].unit
 			local mode 			= br.player.mode
 			local php 			= br.player.health
 			local race 			= br.player.race
 			local racial        = br.player.getRacial()
 			local resable 		= UnitIsPlayer("target") and UnitIsDeadOrGhost("target") and UnitIsFriend("target","player")
+            local solo          = GetNumGroupMembers() == 0
+            local spell         = br.player.spell
 			local talent 		= br.player.talent
 			local units 		= br.player.units			
 
 			if profileStop == nil then profileStop = false end
-			if debuff.judgment[units.dyn5].exists or level < 42 or (cd.judgment > 2 and not debuff.judgment[units.dyn5].exists) then
-				judgmentVar = true
-			else
+            if debuff.judgment[units.dyn5] ~= nil then
+                judgmentExists = debuff.judgment[units.dyn5].exists
+                judgmentRemain = debuff.judgment[units.dyn5].remain
+    			if debuff.judgment[units.dyn5].exists or level < 42 or (cd.judgment > 2 and not debuff.judgment[units.dyn5].exists) then
+    				judgmentVar = true
+                else
+                    judgmentVar = false 
+                end
+            else
+                judgmentExists = false
+                judgmentRemain = 0 
 				judgmentVar = false
-			end 
+            end
+            local greaterBuff = 0
+            for i = 1, #br.friend do
+                local thisUnit = br.friend[i].unit
+                if UnitBuffID(thisUnit,spell.spec.buffs.greaterBlessingOfMight) ~= nil
+                    or UnitBuffID(thisUnit,spell.spec.buffs.greaterBlessingOfKings) ~= nil
+                    or UnitBuffID(thisUnit,spell.spec.buffs.greaterBlessingOfWisdom) ~= nil
+                then
+                    greaterBuff = greaterBuff + 1
+                end
+            end
 
 	--------------------
 	--- Action Lists ---
@@ -191,6 +216,16 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 				if isMoving("target") and not getFacing("target","player") and getDistance("target") > 8 then
 					if cast.handOfHinderance("target") then return end
 				end
+            -- Greater Blessing of Might
+                if isChecked("Greater Blessing of Might") and greaterBuff < 3 then
+                    for i = 1, #br.friend do
+                        local thisUnit = br.friend[i].unit
+                        local unitRole = UnitGroupRolesAssigned(thisUnit)
+                        if UnitBuffID(thisUnit,spell.spec.buffs.greaterBlessingOfMight) == nil and (unitRole == "DAMAGER" or solo) then
+                            if cast.greaterBlessingOfMight(thisUnit) then return end
+                        end
+                    end
+                end
 			end -- End Action List - Extras
 		-- Action List - Defensives
 			local function actionList_Defensive()
@@ -216,6 +251,12 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- Gift of the Naaru
                     if isChecked("Gift of the Naaru") and php <= getOptionValue("Gift of the Naaru") and php > 0 and race == "Draenei" then
                         if castSpell("player",racial,false,false,false) then return end
+                    end
+            -- Blessing of Protection
+                    if isChecked("Blessing of Protection") then
+                        if getHP(lowestHP) < getOptionValue("Blessing of Protection") and inCombat then
+                            if cast.blessingOfProtection(lowestHP) then return end
+                        end
                     end
             -- Blinding Light
             		if isChecked("Blinding Light - HP") and php <= getOptionValue("Blinding Light - HP") and inCombat and #enemies.yards10 > 0 then
@@ -391,7 +432,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                         end
 				-- Execution Sentence
 						-- execution_sentence,if=spell_targets.divine_storm<=3&(cooldown.judgment.remains<gcd*4.5|debuff.judgment.remains>gcd*4.67)&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*2)
-						if #enemies.yards8 <= 3 and (cd.judgment < gcd * 4.5 or debuff.judgment[units.dyn30].remain > gcd * 4.67) and (not talent.crusade or cd.crusade > gcd *2) then
+                        if #enemies.yards8 <= 3 and (cd.judgment < gcd * 4.5 or judgmentRemain > gcd * 4.67) and (not talent.crusade or cd.crusade > gcd *2) then
 							if cast.executionSentence() then return end
 						end
 				-- Racials
@@ -407,8 +448,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 						-- divine_storm,if=debuff.judgment.up&spell_targets.divine_storm>=2&buff.divine_purpose.up&buff.divine_purpose.remains<gcd*2
 						-- divine_storm,if=debuff.judgment.up&spell_targets.divine_storm>=2&holy_power>=5&buff.divine_purpose.react
 						-- divine_storm,if=debuff.judgment.up&spell_targets.divine_storm>=2&holy_power>=5&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
-						if judgmentVar and #enemies.yards8 >= 2 and ((buff.divinePurpose and buff.remain.divinePurpose < gcd * 2)
-							or (holyPower >= 5 and buff.exists.divinePurpose)
+						if judgmentVar and #enemies.yards8 >= 2 and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd * 2)
+							or (holyPower >= 5 and buff.divinePurpose.exists)
 							or (holyPower >= 5 and (not talent.crusade or cd.crusade > gcd * 3)))
 						then
 							if cast.divineStorm() then return end
@@ -417,8 +458,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 						-- justicars_vengeance,if=debuff.judgment.up&buff.divine_purpose.up&buff.divine_purpose.remains<gcd*2&!equipped.whisper_of_the_nathrezim
                         -- justicars_vengeance,if=debuff.judgment.up&holy_power>=5&buff.divine_purpose.react&!equipped.whisper_of_the_nathrezim
                         if isChecked("Justicar's Vengeance") and php < getOptionValue("Justicar's Vengeance") then
-    						if judgmentVar and ((buff.divinePurpose and buff.remain.divinePurpose < gcd * 2 and not hasEquiped(137020)) 
-    							or (holyPower >= 5 and buff.exists.divinePurpose and not hasEquiped(137020))) 
+    						if judgmentVar and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd * 2 and not hasEquiped(137020)) 
+    							or (holyPower >= 5 and buff.divinePurpose.exists and not hasEquiped(137020))) 
     						then
     							if cast.justicarsVengeance() then return end
     						end
@@ -427,8 +468,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 						-- templars_verdict,if=debuff.judgment.up&buff.divine_purpose.up&buff.divine_purpose.remains<gcd*2
 						-- templars_verdict,if=debuff.judgment.up&holy_power>=5&buff.divine_purpose.react
 						-- templars_verdict,if=debuff.judgment.up&holy_power>=5&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
-						if judgmentVar and ((buff.divinePurpose and buff.remain.divinePurpose < gcd * 2)
-							or (holyPower >= 5 and buff.exists.divinePurpose)
+						if judgmentVar and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd * 2)
+							or (holyPower >= 5 and buff.divinePurpose.exists)
 							or (holyPower >= 5 and (not talent.crusade or cd.crusade > gcd * 3)))
 						then
 							if cast.templarsVerdict() then return end
@@ -436,7 +477,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 				-- Divine Storm
 						-- divine_storm,if=debuff.judgment.up&holy_power>=3&spell_targets.divine_storm>=2&(cooldown.wake_of_ashes.remains<gcd*2&artifact.wake_of_ashes.enabled|buff.whisper_of_the_nathrezim.up&buff.whisper_of_the_nathrezim.remains<gcd)&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*4)
 						if judgmentVar and holyPower >= 3 and #enemies.yards8 >= 2 
-							and ((cd.wakeOfAshes < gcd * 2 and artifact.wakeOfAshes) or (buff.whisperOfTheNathrezim and buff.remain.whisperOfTheNathrezim < gcd) or not artifact.wakeOfAshes) 
+							and ((cd.wakeOfAshes < gcd * 2 and artifact.wakeOfAshes) or (buff.whisperOfTheNathrezim.exists and buff.whisperOfTheNathrezim.remain < gcd) or not artifact.wakeOfAshes) 
 							and (not talent.crusade or cd.crusade > gcd * 4) 
 						then
 							if cast.divineStorm() then return end
@@ -444,14 +485,14 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 				-- Justicar's Vengeance
 						-- justicars_vengeance,if=debuff.judgment.up&holy_power>=3&buff.divine_purpose.up&cooldown.wake_of_ashes.remains<gcd*2&artifact.wake_of_ashes.enabled&!equipped.whisper_of_the_nathrezim
 						if isChecked("Justicar's Vengeance") and php < getOptionValue("Justicar's Vengeance") then
-                            if judgmentVar and holyPower >= 3 and buff.exists.divinePurpose and ((cd.wakeOfAshes < gcd * 2 and artifact.wakeOfAshes) or not artifact.wakeOfAshes) and not hasEquiped(137020) then
+                            if judgmentVar and holyPower >= 3 and buff.divinePurpose.exists and ((cd.wakeOfAshes < gcd * 2 and artifact.wakeOfAshes) or not artifact.wakeOfAshes) and not hasEquiped(137020) then
     							if cast.justicarsVengeance() then return end
     						end
                         end
 				-- Templar's Verdict
 						-- templars_verdict,if=debuff.judgment.up&holy_power>=3&(cooldown.wake_of_ashes.remains<gcd*2&artifact.wake_of_ashes.enabled|buff.whisper_of_the_nathrezim.up&buff.whisper_of_the_nathrezim.remains<gcd)&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*4)
 						if judgmentVar and holyPower >= 3 
-							and ((cd.wakeOfAshes < gcd * 2 and artifact.wakeOfAshes) or (buff.whisperOfTheNathrezim and buff.remain.whisperOfTheNathrezim < gcd) or not artifact.wakeOfAshes) 
+							and ((cd.wakeOfAshes < gcd * 2 and artifact.wakeOfAshes) or (buff.whisperOfTheNathrezim.exists and buff.whisperOfTheNathrezim.remain < gcd) or not artifact.wakeOfAshes) 
 							and (not talent.crusade or cd.crusade < gcd * 4) 
 						then
 							if cast.templarsVerdict() then return end
@@ -494,8 +535,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 						-- divine_storm,if=debuff.judgment.up&spell_targets.divine_storm>=2&buff.divine_purpose.react
 						-- divine_storm,if=debuff.judgment.up&spell_targets.divine_storm>=2&buff.the_fires_of_justice.react&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
 						-- divine_storm,if=debuff.judgment.up&spell_targets.divine_storm>=2&holy_power>=4&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*4)
-						if judgmentVar and #enemies.yards8 >= 2 and (buff.divinePurpose
-							or (buff.theFiresOfJustice and (not talent.crusade or cd.crusade > gcd * 3))
+						if judgmentVar and #enemies.yards8 >= 2 and (buff.divinePurpose.exists
+							or (buff.theFiresOfJustice.exists and (not talent.crusade or cd.crusade > gcd * 3))
 							or (holyPower >= 4 and (not talent.crusade or cd.crusade > gcd * 4)))
 						then
 							if cast.divineStorm() then return end
@@ -503,7 +544,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 				-- Justicar's Vengeance
 						-- justicars_vengeance,if=debuff.judgment.up&buff.divine_purpose.react&!equipped.whisper_of_the_nathrezim
                         if isChecked("Justicar's Vengeance") and php < getOptionValue("Justicar's Vengeance") then
-    						if judgmentVar and buff.exists.divinePurpose and not hasEquiped(137020) then
+    						if judgmentVar and buff.divinePurpose.exists and not hasEquiped(137020) then
     							if cast.justicarsVengeance() then return end
     						end
                         end
@@ -511,8 +552,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 						-- templars_verdict,if=debuff.judgment.up&buff.divine_purpose.react
 						-- templars_verdict,if=debuff.judgment.up&buff.the_fires_of_justice.react&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
 						-- templars_verdict,if=debuff.judgment.up&holy_power>=4&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*4)
-						if judgmentVar and (buff.divinePurpose
-							or (buff.theFiresOfJustice and (not talent.crusade or cd.crusade > gcd * 3))
+						if judgmentVar and (buff.divinePurpose.exists
+							or (buff.theFiresOfJustice.exists and (not talent.crusade or cd.crusade > gcd * 3))
 							or (holyPower >= 4 and (not talent.crusade or cd.crusade > gcd * 4)))
 						then
 							if cast.templarsVerdict() then return end
@@ -548,24 +589,24 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 						if cast.judgment("target") then return end
 			-- Consecration
 						-- if not HasBuff(Judgment)
-						if not debuff.judgment[units.dyn30].exists and #enemies.yards8 >= 3 then
+						if not judgmentExists and #enemies.yards8 >= 3 then
 							if cast.consecration() then return end
 						end
 			-- Justicar's Vengeance
 						-- if HasBuff(DivinePurpose) and TargetsInRadius(DivineStorm) <= 3
                         if isChecked("Justicar's Vengeance") and php < getOptionValue("Justicar's Vengeance") then
-    						if buff.exists.divinePurpose and #enemies.yards8 <= 3 then
+    						if buff.divinePurpose.exists and #enemies.yards8 <= 3 then
     							if cast.justicarsVengeance(units.dyn5) then return end
     						end
                         end
 			-- Divine Storm
 						-- if (AlternatePower >= 4 or HasBuff(DivinePurpose) or HasBuff(Judgment)) and TargetsInRadius(DivineStorm) > 2
-						if (holyPower >= 3 or buff.exists.divinePurpose or debuff.judgment[units.dyn30].exists) and #enemies.yards8 > 2 then
+						if (holyPower >= 3 or buff.divinePurpose.exists or judgmentExists) and #enemies.yards8 > 2 then
 							if cast.divineStorm() then return end
 						end
 			-- Templar's Verdict
 						-- if (AlternatePower >= 4 or HasBuff(DivinePurpose) or HasBuff(Judgment))
-						if (holyPower >= 3 or buff.exists.divinePurpose or debuff.judgment[units.dyn30].exists) then
+						if (holyPower >= 3 or buff.divinePurpose.exists or judgmentExists) then
 							if cast.templarsVerdict(units.dyn5) then return end
 						end
 			-- Wake of Ashes
