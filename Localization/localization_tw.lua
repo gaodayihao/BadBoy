@@ -45,5 +45,12 @@ LC_ARTIFACT = "神器"
 LC_ARTIFACT_CD = "大技能"
 LC_ARTIFACT_EVERY_TIME = "任何时候"
 LC_DISPERSION = "影散"
+LC_TIME_TO_USE_POWER_INFUSION = "开启能量灌注的时机"
+LC_DISPERSION_DESCRIPTION = "|cffFFBB00在开启自杀时间大于70秒，下一个GCD将会死亡前自动使用影散"
+LC_TIME_TO_USE_POWER_INFUSION_DESCRIPTION = "|cffFFBB00开启能量灌注的时机，以秒为单位，并不一定等于当前层数"
+LC_ARCANE_TORRENT = "奥术洪流"
+LC_ARCANE_TORRENT_DESCRIPTION = "|cffFFBB00在开启自杀时间大于所设置的开启能量灌注的秒数，下一个GCD将会死亡前自动使用奥术洪流"
+LC_BLESSED_DAWNLIGHT_MEDALLION = "使用项链"
+LC_BLESSED_DAWNLIGHT_MEDALLION_DESCRIPTION = "|cffFFBB00在开启自杀时间大于所设置的开启能量灌注的秒数，下一个GCD将会死亡前自动使用项链"
 
 end

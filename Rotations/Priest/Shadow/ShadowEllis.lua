@@ -57,8 +57,6 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 br.ui:createSpinner(section, LC_BODY_AND_SOUL,  1.5,  0,  5,  0.5, LC_BODY_AND_SOUL_DESCRIPTION)
             -- Nonexecute Actors
                 --br.ui:createSpinnerWithout(section, LC_EXECUTE_ACTORS,  1,  1,  25,  1, LC_EXECUTE_ACTORS_DESCRIPTION)
-            -- S2M Check
-                br.ui:createSpinnerWithout(section, LC_S2M_CHECK,  120,  90,  150,  1, LC_S2M_CHECK_DESCRIPTION)
             -- Artifact
                 br.ui:createDropdown(section, LC_ARTIFACT, {LC_ARTIFACT_EVERY_TIME,LC_ARTIFACT_CD}, 1)
             br.ui:checkSectionState(section)
@@ -73,12 +71,24 @@ if select(2, UnitClass("player")) == "PRIEST" then
             br.ui:checkSectionState(section)
         -- Cooldown Options
             section = br.ui:createSection(br.ui.window.profile, LC_COOLDOWNS)
+            -- S2M Check
+                br.ui:createSpinnerWithout(section, LC_S2M_CHECK,  120,  90,  150,  1, LC_S2M_CHECK_DESCRIPTION)
+            -- Time to use PowerInfusion
+                br.ui:createSpinnerWithout(section, LC_TIME_TO_USE_POWER_INFUSION,  78,  50,  150,  1, LC_TIME_TO_USE_POWER_INFUSION_DESCRIPTION)
             -- MindBender / Shadowfiend
                 br.ui:createCheckbox(section, LC_MINDBENDER_SHADOWFIEND)
             -- PowerInfusion
                 br.ui:createCheckbox(section, LC_POWER_INFUSION)
             -- Dispersion
-                br.ui:createCheckbox(section, LC_DISPERSION)
+                br.ui:createCheckbox(section, LC_DISPERSION, LC_DISPERSION_DESCRIPTION)
+                if br.player.race == "BloodElf" then
+                -- Arcane Torrent
+                    br.ui:createCheckbox(section, LC_ARCANE_TORRENT, LC_ARCANE_TORRENT_DESCRIPTION)
+                end
+                if hasEquiped(130234) then
+                -- Blessed Dawnlight Medallion
+                    br.ui:createCheckbox(section, LC_BLESSED_DAWNLIGHT_MEDALLION, LC_BLESSED_DAWNLIGHT_MEDALLION_DESCRIPTION)
+                end
             br.ui:checkSectionState(section)
         -- -- Defensive Options
         --     section = br.ui:createSection(br.ui.window.profile, LC_DEFENSIVE)
@@ -161,12 +171,14 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local ttd                                           = getTTD
             local units                                         = br.player.units
             local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
-            local timeToPowerInfusion                           = 78
+            local timeToPowerInfusion                           = getOptionValue(LC_TIME_TO_USE_POWER_INFUSION)
             local dieAtNextGCD                                  = false
             local useMindBenderOrShadowFiend                    = isChecked(LC_MINDBENDER_SHADOWFIEND)
             local usePowerInfusion                              = isChecked(LC_POWER_INFUSION)
             local useArtifact                                   = true
             local useDispersion                                 = isChecked(LC_DISPERSION)
+            local useArcaneTorrent                              = isChecked(LC_ARCANE_TORRENT)
+            local useBlessedDawnlightMedallion                  = isChecked(LC_BLESSED_DAWNLIGHT_MEDALLION)
 
             if currentInsanityDrain == nil then currentInsanityDrain = 0 end
             if insanityDrainStacks == nil then insanityDrainStacks = 0 end
@@ -869,13 +881,13 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.shadowWordDeath() then return end
                 end
             -- Arcane Torrent
-                if insanityDrainStacks >= timeToPowerInfusion and useCDs() and br.player.race == "BloodElf"
+                if useArcaneTorrent and insanityDrainStacks >= timeToPowerInfusion and useCDs() and br.player.race == "BloodElf"
                     and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+35) < 100 
                 then
                     if castSpell("player",racial,false,false,false) then return end
                 end
             -- hasEquiped 130234, Blessed Dawnlight Medallion
-                if insanityDrainStacks >= timeToPowerInfusion and useCDs() and hasEquiped(130234) and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+75) < 100 then
+                if useBlessedDawnlightMedallion and insanityDrainStacks >= timeToPowerInfusion and useCDs() and hasEquiped(130234) and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+75) < 100 then
                     if useItem(2) then return end
                 end
             -- dispersion,if=current_insanity_drain*gcd.max>insanity&!buff.power_infusion.up
@@ -972,9 +984,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
     --- In Combat - Rotations --- 
     -----------------------------
             if IsFlying() or IsMounted() then return end
-            if not isCastingSpell(spell.mindFlay) and not isCastingSpell(spell.mindSear) then
-                actionList_AutoTarget()
-            end
+            actionList_AutoTarget()
             --useItem(2)
             --UseItemByName(130234)
             if inCombat and isValidUnit("target") 
@@ -989,7 +999,12 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if rWait == 0 or br.timer:useTimer("RotationsWait",rWait) then
                     rWait = 0
                     --auto_face
-                    if autoFacing and not isMoving("player") and not getFacing("player","target",120) then
+                    if autoFacing 
+                        and not isMoving("player") 
+                        and not getFacing("player","target",120) 
+                        and not isCastingSpell(spell.mindFlay) 
+                        and not isCastingSpell(spell.mindSear) 
+                    then
                         FaceDirection(GetAnglesBetweenObjects("player", "target"), true)
                     end
 

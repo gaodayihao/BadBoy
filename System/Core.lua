@@ -256,7 +256,8 @@ function BadRotationsUpdate(self)
 		return
 	end
 
-	if br.timer:useTimer("UnitUpdate", 1/(getOptionValue(LC_UNITS_TPS) or 5)) then
+	local rd = math.random(80,120)
+	if br.timer:useTimer("UnitUpdate", 1/(getOptionValue(LC_UNITS_TPS) or 5) * (rd/100)) then
 		-- prevent ticking when firechack isnt loaded
 		-- if user click power button, stop everything from pulsing.
 		-- pulse enemiesEngine
@@ -277,7 +278,7 @@ function BadRotationsUpdate(self)
 		br:AcceptQueues()
 	end
 	
-	if br.timer:useTimer("RotationUpdate", 1/(getOptionValue(LC_ROTATION_TPS) or 15)) then
+	if br.timer:useTimer("RotationUpdate", 1/(getOptionValue(LC_ROTATION_TPS) or 15) * (rd/100)) then
 		--[[Class/Spec Selector]]
 	    br.selectedProfile = br.data.options[br.selectedSpec]["Rotation".."Drop"] or 1
 		local functionSelector = {
