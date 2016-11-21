@@ -143,6 +143,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local charges                                       = br.player.charges
             local combatTime                                    = getCombatTime()
             local debuff                                        = br.player.debuff
+            local dieAtNextGCD                                  = false
             local enemies                                       = br.player.enemies
             local falling, swimming, flying, moving             = getFallTime(), IsSwimming(), IsFlying(), GetUnitSpeed("player")>0
             local flaskBuff                                     = getBuffRemain("player",br.player.flask.wod.buff.intellectBig)
@@ -168,17 +169,16 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local SWPmaxTargets                                 = getOptionValue(LC_SWP_MAX_TARGETS)
             local talent                                        = br.player.talent
             local thp                                           = getHP(br.player.units.dyn40)
+            local timeToPowerInfusion                           = getOptionValue(LC_TIME_TO_USE_POWER_INFUSION)
             local ttd                                           = getTTD
             local units                                         = br.player.units
-            local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
-            local timeToPowerInfusion                           = getOptionValue(LC_TIME_TO_USE_POWER_INFUSION)
-            local dieAtNextGCD                                  = false
+            local useArcaneTorrent                              = isChecked(LC_ARCANE_TORRENT)
+            local useArtifact                                   = true
+            local useBlessedDawnlightMedallion                  = isChecked(LC_BLESSED_DAWNLIGHT_MEDALLION)
+            local useDispersion                                 = isChecked(LC_DISPERSION)
             local useMindBenderOrShadowFiend                    = isChecked(LC_MINDBENDER_SHADOWFIEND)
             local usePowerInfusion                              = isChecked(LC_POWER_INFUSION)
-            local useArtifact                                   = true
-            local useDispersion                                 = isChecked(LC_DISPERSION)
-            local useArcaneTorrent                              = isChecked(LC_ARCANE_TORRENT)
-            local useBlessedDawnlightMedallion                  = isChecked(LC_BLESSED_DAWNLIGHT_MEDALLION)
+            local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
 
             if currentInsanityDrain == nil then currentInsanityDrain = 0 end
             if insanityDrainStacks == nil then insanityDrainStacks = 0 end
