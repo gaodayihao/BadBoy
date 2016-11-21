@@ -42,13 +42,15 @@ function cGuardian:new()
             rageOfTheSleeper            = 200851,
         }
         self.spell.spec.buffs           = {
+            frenziedRegeneration        = 22842,
             galacticGuardian            = 213708,
             ironfur                     = 192081,
             markOfUrsol                 = 192083,
             pulverize                   = 158792,
-            frenziedRegeneration        = 22842,
+            survivalInstincts           = 61336,
         }
         self.spell.spec.debuffs         = {
+            moonfireGuardian            = 164812,
             thrash                      = 192090,
         }
         self.spell.spec.glyphs          = {
