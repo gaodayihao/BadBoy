@@ -570,7 +570,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.mindBender() then return end
                 end
             -- mindbender,if=talent.mindbender.enabled&talent.surrender_to_madness.enabled&target.time_to_die>variable.s2mcheck-(buff.insanity_drain_stacks.stack)+30
-                if useMindBenderOrShadowFiend and useCDs() and talent.mindBender and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 30 then
+                if useMindBenderOrShadowFiend and useCDs() and talent.mindBender and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 80 then
                     if cast.mindBender() then return end
                 end
             -- power_infusion,if=buff.voidform.stack>=10&buff.insanity_drain_stacks.stack<=30&!talent.surrender_to_madness.enabled
@@ -578,7 +578,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.powerInfusion() then return end
                 end
             -- power_infusion,if=buff.voidform.stack>=10&talent.surrender_to_madness.enabled&target.time_to_die>variable.s2mcheck-(buff.insanity_drain_stacks.stack)+25
-                if usePowerInfusion and useCDs() and buff.stack.voidForm >= 10 and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 25 then
+                if usePowerInfusion and useCDs() and buff.stack.voidForm >= 10 and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 80 then
                     if cast.powerInfusion() then return end
                 end
             -- berserking,if=buff.voidform.stack>=10&buff.insanity_drain_stacks.stack<=20&!talent.surrender_to_madness.enabled

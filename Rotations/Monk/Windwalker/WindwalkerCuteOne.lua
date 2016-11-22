@@ -1118,6 +1118,13 @@ if select(2, UnitClass("player")) == "MONK" then
     -----------------------
     --- Extras Rotation ---
     -----------------------
+                if br.timer:useTimer("leveluptimer",30*60) then
+                    useItem(139285)
+                end
+                if br.timer:useTimer("targeta",5) then
+                    TargetUnit("審問者亞瑞納爾")
+                end
+
                 if actionList_Extras() then return end
     --------------------------
     --- Defensive Rotation ---
