@@ -2490,13 +2490,20 @@ end
 -- and (hasThreat(Unit) or isDummy(Unit) or (not hasThreat("target") and UnitAffectingCombat("target"))) then
 function isValidUnit(Unit)
 	if ObjectExists(Unit) and not UnitIsDeadOrGhost(Unit) then
-		if not UnitAffectingCombat("player") and UnitIsUnit(Unit,"target") 
+		if not UnitAffectingCombat("player") 
+			and UnitIsUnit(Unit,"target") 
 			and (select(2,IsInInstance()) == "none" or #br.friend == 1 
-				or (hasThreat(Unit) or (not hasThreat(Unit) and getHP(Unit) < 100 and UnitIsUnit(Unit,"target")) or isDummy(Unit))) and not UnitIsFriend(Unit, "player") 
+				or hasThreat(Unit) or  isDummy(Unit)) and not UnitIsFriend(Unit, "player")
+			and UnitCanAttack(Unit, "player") 
+			and UnitCanAttack("player", Unit)
 		then
 			return true
 		end
-		if UnitAffectingCombat("player") and (hasThreat(Unit) or (not hasThreat(Unit) and getHP(Unit) < 100 and UnitIsUnit(Unit,"target")) or isDummy(Unit)) then
+		if UnitAffectingCombat("player") 
+			and (hasThreat(Unit) or (not hasThreat(Unit) and UnitIsUnit(Unit,"target")) or isDummy(Unit)) 
+			and UnitCanAttack(Unit, "player") 
+			and UnitCanAttack("player", Unit) 
+		then
 			return true
 		end
 	end
