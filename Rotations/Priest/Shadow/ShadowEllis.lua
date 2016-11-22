@@ -775,7 +775,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.mindBender() then return end
                 end
             -- void_torrent,if=dot.shadow_word_pain.remains>5.5&dot.vampiric_touch.remains>5.5
-                if useArtifact and getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5 and insanityDrainStacks >= 45
+                if useArtifact and getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5
                     and (insanityDrainStacks < 99 or charges.shadowWordDeath == 0)
                 then
                     if cast.voidTorrent() then return end
@@ -881,7 +881,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.shadowWordDeath() then return end
                 end
             -- Arcane Torrent
-                if useArcaneTorrent and insanityDrainStacks >= 66 and useCDs() and br.player.race == "BloodElf"
+                if useArcaneTorrent and insanityDrainStacks >= timeToPowerInfusion and useCDs() and br.player.race == "BloodElf"
                     and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+35) < 100 
                 then
                     if castSpell("player",racial,false,false,false) then return end
