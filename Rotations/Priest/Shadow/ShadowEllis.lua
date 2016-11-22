@@ -775,7 +775,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.mindBender() then return end
                 end
             -- void_torrent,if=dot.shadow_word_pain.remains>5.5&dot.vampiric_touch.remains>5.5
-                if useArtifact and getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5
+                if useArtifact and getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5 and insanityDrainStacks >= 45
                     and (insanityDrainStacks < 99 or charges.shadowWordDeath == 0)
                 then
                     if cast.voidTorrent() then return end
