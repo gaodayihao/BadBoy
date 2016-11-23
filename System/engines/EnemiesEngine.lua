@@ -55,7 +55,7 @@ function EnemiesEngine()
                     br.debug.cpu.enemiesEngine.unitTargets = br.debug.cpu.enemiesEngine.unitTargets + 1
 					-- sanity checks
 					-- if getSanity(thisUnit) == true then --and isValidUnit(thisUnit) then
-					if isValidUnit(thisUnit) then
+					if getSanity(thisUnit) then
                         br.debug.cpu.enemiesEngine.sanityTargets = br.debug.cpu.enemiesEngine.sanityTargets + 1
                         -- get the unit distance
 						--local _, ObjectPosition1 = pcall(ObjectPosition,"player")
@@ -246,9 +246,9 @@ function EnemiesEngine()
 	end
 	-- returns true if Unit is a valid enemy
 	function getSanity(unit)
-		if  UnitIsVisible(unit) == true and getCreatureType(unit) == true
-			and (((UnitCanAttack(unit, "player") == true and  UnitCanAttack("player", unit) == true) or isDummy(unit)) and getLineOfSight(unit, "player")) 
-			and UnitIsDeadOrGhost(unit) == false
+		if  UnitIsVisible(unit) and getCreatureType(unit)
+			and ((UnitCanAttack("player", unit) and (isDummy(unit) or isEnnemy(unit))) and getLineOfSight(unit, "player")) 
+			and not UnitIsDeadOrGhost(unit)
 		then
 			return true
 		else
