@@ -74,7 +74,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             -- S2M Check
                 br.ui:createSpinnerWithout(section, LC_S2M_CHECK,  120,  90,  150,  1, LC_S2M_CHECK_DESCRIPTION)
             -- Time to use PowerInfusion
-                br.ui:createSpinnerWithout(section, LC_TIME_TO_USE_POWER_INFUSION,  78,  50,  150,  1, LC_TIME_TO_USE_POWER_INFUSION_DESCRIPTION)
+                br.ui:createSpinnerWithout(section, LC_TIME_TO_USE_POWER_INFUSION,  60,  50,  150,  1, LC_TIME_TO_USE_POWER_INFUSION_DESCRIPTION)
             -- MindBender / Shadowfiend
                 br.ui:createCheckbox(section, LC_MINDBENDER_SHADOWFIEND)
             -- PowerInfusion
@@ -253,7 +253,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     insanityDrainStart = 0
                     insanityDrainStacks = 0
                 end
-                currentInsanityDrain = insanityDrainStacks * 0.55 + 8
+                currentInsanityDrain = (insanityDrainStacks-1) * 0.55 + 8
             end
 
             function updateRawHate()
@@ -293,7 +293,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if talent.sanlaryn then
                         sanlarynNum = 1
                     end
-                    s2mcheck = 0.8 * (135+((rawHastePct*25)*(2+(1*reaperOfSoulsNum)+(2*artifact.rank.massHysteria)-(1*sanlarynNum))))
+                    s2mcheck = 0.8 * (130+((rawHastePct*25)*(2+(1*reaperOfSoulsNum)+(2*artifact.rank.massHysteria)-(1*sanlarynNum))))
                                 -(actorsFightTimeMod*nAP)
                     --s2mcheck = s2mcheck * 0.9 -- 2016/11/15 hotfix
                 -- variable,op=min,name=s2mcheck,value=180
@@ -339,9 +339,10 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if inCombat then
                     --analyzeS2M()
                     updateTTD()
-                    updateInsanityDrainStacks()
-                    dieAtNextGCD = currentInsanityDrain*(gcdMax + select(4,GetNetStats()) / 1000) > power
+                    dieAtNextGCD = currentInsanityDrain*(gcdMax + getLatency()) > power
                 end
+
+                updateInsanityDrainStacks()
 
                 if bodyAndSoul > -1 and isMoving("player") and not buff.surrenderToMadness and talent.bodyAndSoul then
                     if movingStart == 0 then
@@ -578,7 +579,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.powerInfusion() then return end
                 end
             -- power_infusion,if=buff.voidform.stack>=10&talent.surrender_to_madness.enabled&target.time_to_die>variable.s2mcheck-(buff.insanity_drain_stacks.stack)+25
-                if usePowerInfusion and useCDs() and buff.stack.voidForm >= 10 and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 80 then
+                if usePowerInfusion and useCDs() and buff.stack.voidForm >= 10 and talent.surrenderToMadness and ttd("target") > s2mcheck - insanityDrainStacks + 41 then
                     if cast.powerInfusion() then return end
                 end
             -- berserking,if=buff.voidform.stack>=10&buff.insanity_drain_stacks.stack<=20&!talent.surrender_to_madness.enabled
@@ -742,7 +743,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     local castEndTime = select(6,UnitChannelInfo("player"))
                     local castDuration = (castEndTime - castStartTime)/1000
                     local castTimeRemain = ((castEndTime/1000) - GetTime())
-                    if castTimeRemain < castDuration * (3/4) and (cd.voidBolt == 0 or (charges.shadowWordDeath > 0 and insanityDrainStacks > 50)) then
+                    if castTimeRemain < castDuration * (3/4) and 
+                        (cd.voidBolt == 0 or 
+                        (charges.shadowWordDeath > 0 and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+75) < 100) or
+                        (dieAtNextGCD and cd.dispersion == 0)) 
+                    then
                         SpellStopCasting()
                         return
                     else
@@ -755,7 +760,11 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     local castEndTime = select(6,UnitChannelInfo("player"))
                     local castDuration = (castEndTime - castStartTime)/1000
                     local castTimeRemain = ((castEndTime/1000) - GetTime())
-                    if castTimeRemain < castDuration * (5/6) and (cd.voidBolt == 0 or (charges.shadowWordDeath > 0 and insanityDrainStacks > 50)) then
+                    if castTimeRemain < castDuration * (5/6) and 
+                        (cd.voidBolt == 0 or 
+                        (charges.shadowWordDeath > 0 and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+75) < 100) or
+                        (dieAtNextGCD and cd.dispersion == 0)) 
+                    then
                         SpellStopCasting()
                         return
                     else
@@ -763,7 +772,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     end
                 end
 
-                if lastSpell == spell.dispersion and insanityDrainStacks > 100 then
+                if lastSpell == spell.dispersion and insanityDrainStacks > 95 then
                     if cast.shadowWordDeath() then return end
                 end
             -- shadow_crash,if=talent.shadow_crash.enabled  
@@ -776,7 +785,6 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 end
             -- void_torrent,if=dot.shadow_word_pain.remains>5.5&dot.vampiric_touch.remains>5.5
                 if useArtifact and getDebuffRemain("target",spell.shadowWordPain,"player") > 5.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 5.5
-                    and (insanityDrainStacks < 99 or charges.shadowWordDeath == 0)
                 then
                     if cast.voidTorrent() then return end
                 end
@@ -784,14 +792,18 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if buff.stack.voidForm >= 80 and br.player.race == "Troll" then
                     if castSpell("player",racial,false,false,false) then return end
                 end
-            -- shadow_word_death,if=!talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+15)<100&!buff.power_infusion.up&buff.insanity_drain_stacks.stack<=77&cooldown.shadow_word_death.charges=2
+            -- dispersion,if=dot.shadow_word_pain.remains>7.5&dot.vampiric_touch.remains>7.5&buff.voidform.stack<10
+                if getDebuffRemain("target",spell.shadowWordPain,"player") > 7.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 7.5 and buff.stack.voidForm >= 5 and buff.stack.voidForm <= 10 then
+                    if cast.dispersion() then return end
+                end
+            -- shadow_word_death,if=!talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+15)<100&!buff.power_infusion.up&buff.insanity_drain_stacks.stack<=60&cooldown.shadow_word_death.charges=2
                 if not talent.reaperOfSouls and dieAtNextGCD and (power - (currentInsanityDrain * gcdMax)+15)<100 and not buff.powerInfusion and insanityDrainStacks <= timeToPowerInfusion and charges.shadowWordDeath == 2 then
                     if cast.shadowWordDeath() then return end
                 end
-            -- shadow_word_death,if=talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+65)<100&!buff.power_infusion.up&buff.insanity_drain_stacks.stack<=77&cooldown.shadow_word_death.charges=2
+            -- shadow_word_death,if=talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+75)<100&!buff.power_infusion.up&buff.insanity_drain_stacks.stack<=60&cooldown.shadow_word_death.charges=2
                 if talent.reaperOfSouls and 
                     dieAtNextGCD and 
-                    (power-(currentInsanityDrain*gcdMax)+65)<100 and 
+                    (power-(currentInsanityDrain*gcdMax)+75)<100 and 
                     not buff.powerInfusion and 
                     insanityDrainStacks <= timeToPowerInfusion and 
                     charges.shadowWordDeath == 2 
@@ -852,12 +864,15 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if not talent.reaperOfSouls and dieAtNextGCD and (power -(currentInsanityDrain*gcdMax)+15) < 100 then
                     if cast.shadowWordDeath() then return end
                 end
-            -- shadow_word_death,if=talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+65)<100
-                if talent.reaperOfSouls and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+65) < 100 then
+            -- shadow_word_death,if=talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+75)<100
+                if talent.reaperOfSouls and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+75) < 100 then
                     if cast.shadowWordDeath() then return end
                 end
-            -- power_infusion,if=buff.insanity_drain_stacks.stack>=77
-                if usePowerInfusion and insanityDrainStacks >= timeToPowerInfusion and useCDs() then
+            -- power_infusion,if=cooldown.shadow_word_death.charges=0&cooldown.shadow_word_death.remains>3*gcd.max
+                if usePowerInfusion and useCDs() and
+                    charges.shadowWordDeath == 0 and 
+                    cd.shadowWordDeath > 3*gcdMax
+                then
                     if cast.powerInfusion() then return end
                 end
             -- wait,sec=action.void_bolt.usable_in,if=action.void_bolt.usable_in<gcd.max*0.28
@@ -887,7 +902,14 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if castSpell("player",racial,false,false,false) then return end
                 end
             -- hasEquiped 130234, Blessed Dawnlight Medallion
-                if useBlessedDawnlightMedallion and insanityDrainStacks >= timeToPowerInfusion and useCDs() and hasEquiped(130234) and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+75) < 100 then
+                if useBlessedDawnlightMedallion and 
+                    insanityDrainStacks >= timeToPowerInfusion and 
+                    useCDs() and 
+                    hasEquiped(130234) and 
+                    dieAtNextGCD and 
+                    (power-(currentInsanityDrain*gcdMax)+75) < 100
+                    and lastSpell ~= racial
+                then
                     if useItem(2) then return end
                 end
             -- dispersion,if=current_insanity_drain*gcd.max>insanity&!buff.power_infusion.up
@@ -959,7 +981,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if (#getEnemies("target",10) > 2 and mode.rotation == 1) or mode.rotation == 2 then
                     if cast.mindSear() then return end
                 end
-            -- mind_flay,if=!talent.mind_spike.enabled,chain=1,interrupt_immediate=1,interrupt_if=action.void_bolt.usable
+            -- mind_flay,if=!talent.mind_spike.enabled,chain=1,interrupt_immediate=1,interrupt_if=((current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+75)<100&cooldown.shadow_word_death.charges>=1)|action.void_bolt.usable)&ticks>=2
                 if not talent.mindSpike then
                     if cast.mindFlay() then return end
                 end
@@ -990,7 +1012,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             if inCombat and isValidUnit("target") 
                     and getDistance("target") < 40 
             -- hasEquiped 130234, Blessed Dawnlight Medallion
-                    and not isCastingSpell(spell.voidTorrent) 
+                    and not isCastingSpell(spell.voidTorrent) and (lastSpell ~= spell.voidTorrent or br.timer:useTimer("voidTorrentMutex",2))
                     and not isCastingSpell(spell.vampiricTouch)
                     and not isCastingSpell(spell.mindBlast) then
 
