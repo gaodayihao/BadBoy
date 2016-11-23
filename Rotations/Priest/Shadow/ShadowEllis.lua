@@ -31,6 +31,12 @@ if select(2, UnitClass("player")) == "PRIEST" then
             [1] = { mode = "", value = 1 , overlay = "", tip = "Target to die (s)", highlight = 1, icon = br.player.spell.shadowWordDeath }
         };
         CreateButton("ShadowWordDeath",4,0)
+        -- Void Form Button
+        VoidEruptionModes = {
+            [1] = { mode = "On", value = 1 , overlay = "Void Eruption Enabled", tip = "Void Eruption will be used.", highlight = 1, icon = br.player.spell.voidEruption },
+            [2] = { mode = "Off", value = 2 , overlay = "Void Eruption Disabled", tip = "Void Eruption will not be used.", highlight = 0, icon = br.player.spell.voidEruption }
+        };
+        CreateButton("VoidEruption",5,0)
     end
 
 ---------------
@@ -178,6 +184,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local useDispersion                                 = isChecked(LC_DISPERSION)
             local useMindBenderOrShadowFiend                    = isChecked(LC_MINDBENDER_SHADOWFIEND)
             local usePowerInfusion                              = isChecked(LC_POWER_INFUSION)
+            local useVoidEruption                               = br.player.mode.voidEruption == 1
             local VTmaxTargets                                  = getOptionValue(LC_VT_MAX_TARGETS)
 
             if currentInsanityDrain == nil then currentInsanityDrain = 0 end
@@ -425,7 +432,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if cast.vampiricTouch("target") then return end
                 end
             -- void_eruption,if=insanity>=85|(talent.auspicious_spirits.enabled&insanity>=(80-shadowy_apparitions_in_flight*4))
-                if (talent.legacyOfTheVoid and power >= 70) or power >= 100 then --can't do this
+                if useVoidEruption and ((talent.legacyOfTheVoid and power >= 70) or power >= 100) then --can't do this
                     if cast.voidEruption() then return end
                 end
             -- shadow_crash,if=talent.shadow_crash.enabled
