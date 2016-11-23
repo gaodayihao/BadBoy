@@ -74,7 +74,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             -- S2M Check
                 br.ui:createSpinnerWithout(section, LC_S2M_CHECK,  120,  90,  150,  1, LC_S2M_CHECK_DESCRIPTION)
             -- Time to use PowerInfusion
-                br.ui:createSpinnerWithout(section, LC_TIME_TO_USE_POWER_INFUSION,  60,  50,  150,  1, LC_TIME_TO_USE_POWER_INFUSION_DESCRIPTION)
+                --br.ui:createSpinnerWithout(section, LC_TIME_TO_USE_POWER_INFUSION,  60,  50,  150,  1, LC_TIME_TO_USE_POWER_INFUSION_DESCRIPTION)
             -- MindBender / Shadowfiend
                 br.ui:createCheckbox(section, LC_MINDBENDER_SHADOWFIEND)
             -- PowerInfusion
@@ -169,7 +169,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local SWPmaxTargets                                 = getOptionValue(LC_SWP_MAX_TARGETS)
             local talent                                        = br.player.talent
             local thp                                           = getHP(br.player.units.dyn40)
-            local timeToPowerInfusion                           = getOptionValue(LC_TIME_TO_USE_POWER_INFUSION)
+            local timeToPowerInfusion                           = 60 --[[ getOptionValue(LC_TIME_TO_USE_POWER_INFUSION) ]]
             local ttd                                           = getTTD
             local units                                         = br.player.units
             local useArcaneTorrent                              = isChecked(LC_ARCANE_TORRENT)
