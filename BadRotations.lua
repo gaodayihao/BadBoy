@@ -349,7 +349,7 @@ function br:PulseUI()
 	-- enemies
     br.pulse:makeEnTable()
 	-- ttd
-    --br.pulse:ttd()
+    br.pulse:ttd()
 	-- allies
     if isChecked("HE Active") then
 	    br.friend:Update()
