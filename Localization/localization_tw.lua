@@ -30,14 +30,14 @@ LC_BODY_AND_SOUL_DESCRIPTION = "|cffFFBB00在玩家移动时，延时n秒使用|
 
 --Shawdow Priest
 LC_ARCANE_TORRENT = "奥术洪流"
-LC_ARCANE_TORRENT_DESCRIPTION = "|cffFFBB00在开启自杀时间大于所设置的开启能量灌注的秒数，下一个GCD将会死亡前自动使用奥术洪流"
+LC_ARCANE_TORRENT_DESCRIPTION = "|cffFFBB00在开启自杀后下一个GCD将会死亡前自动使用奥术洪流"
 LC_ARTIFACT = "神器"
 LC_ARTIFACT_CD = "大技能"
 LC_ARTIFACT_EVERY_TIME = "任何时候"
 LC_BLESSED_DAWNLIGHT_MEDALLION = "使用项链"
-LC_BLESSED_DAWNLIGHT_MEDALLION_DESCRIPTION = "|cffFFBB00在开启自杀时间大于所设置的开启能量灌注的秒数，下一个GCD将会死亡前自动使用项链"
+LC_BLESSED_DAWNLIGHT_MEDALLION_DESCRIPTION = "|cffFFBB00在开启自杀后下一个GCD将会死亡前自动使用项链"
 LC_DISPERSION = "影散"
-LC_DISPERSION_DESCRIPTION = "|cffFFBB00在开启自杀时间大于70秒，下一个GCD将会死亡前自动使用影散"
+LC_DISPERSION_DESCRIPTION = "|cffFFBB00让系统自动判断使用影散的时机"
 LC_EXECUTE_ACTORS = "带斩杀队友数";
 LC_EXECUTE_ACTORS_DESCRIPTION = "带斩杀队友数（包括自己）";
 LC_MINDBENDER_SHADOWFIEND = "摧心魔/暗影魔"
