@@ -2488,18 +2488,19 @@ function isValidTarget(Unit)
 	end
 end
 function isValidUnit(Unit)
-	local combat = UnitAffectingCombat("player")
 	local threat = hasThreat(Unit)
-	local myTarget = UnitIsUnit(Unit,"target")
-	local dummy = isDummy(Unit) ~= nil
-	local canAttackUnit = UnitCanAttack("player",Unit)
-	local canAttackPlayer = UnitCanAttack(Unit,"player")
-	local inAggroRange = getDistance(Unit) < 20
 	local creatureType = UnitCreatureType(Unit)
 	local trivial = creatureType == "Critter" or creatureType == "Non-combat Pet" or creatureType == "Gas Cloud"
-	if ObjectExists(Unit) and not UnitIsDeadOrGhost(Unit) and not UnitIsFriend(Unit, "player") 
-		and not trivial and (threat or dummy or (not threat and canAttackUnit and (myTarget or inAggroRange))) 
+	if not trivial and 
+		not UnitIsFriend(Unit, "player") and 
+		ObjectExists(Unit) and
+		not UnitIsDeadOrGhost(Unit) and 
+		UnitCanAttack("player",Unit) and 
+		(threat or isDummy(Unit) or (not threat and (UnitIsUnit(Unit,"target") or inAggroRange))) 
 	then
+		local combat = UnitAffectingCombat("player")
+		local inAggroRange = getDistance(Unit) < 20
+		local canAttackPlayer = UnitCanAttack(Unit,"player")
 		if combat or (not combat and inAggroRange and canAttackPlayer) then
 			return true
 		end
