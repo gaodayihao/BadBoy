@@ -2491,6 +2491,7 @@ function isValidUnit(Unit)
 	local threat = hasThreat(Unit)
 	local creatureType = UnitCreatureType(Unit)
 	local trivial = creatureType == "Critter" or creatureType == "Non-combat Pet" or creatureType == "Gas Cloud"
+	local inAggroRange = getDistance(Unit) < 20
 	if not trivial and 
 		not UnitIsFriend(Unit, "player") and 
 		ObjectExists(Unit) and
@@ -2499,7 +2500,6 @@ function isValidUnit(Unit)
 		(threat or isDummy(Unit) or (not threat and (UnitIsUnit(Unit,"target") or inAggroRange))) 
 	then
 		local combat = UnitAffectingCombat("player")
-		local inAggroRange = getDistance(Unit) < 20
 		local canAttackPlayer = UnitCanAttack(Unit,"player")
 		if combat or (not combat and inAggroRange and canAttackPlayer) then
 			return true
