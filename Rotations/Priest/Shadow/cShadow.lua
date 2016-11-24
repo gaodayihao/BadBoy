@@ -1,9 +1,9 @@
 --- Shadow Class
--- Inherit from: ../cCharacter.lua and ../cWarrior.lua
+-- Inherit from: ../cCharacter.lua and ../cPriest.lua
 cShadow = {}
 cShadow.rotations = {}
 
--- Creates Shadow Warrior
+-- Creates Shadow Priest
 function cShadow:new()
     if GetSpecializationInfo(GetSpecialization()) == 258 then
         local self = cPriest:new("Shadow")
