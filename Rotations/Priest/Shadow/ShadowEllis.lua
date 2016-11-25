@@ -194,6 +194,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
             if nAP == nil then nAP = -1 end
             if rawHastePct == nil then rawHastePct = 0 end
             if rWait == nil then rWait = 0 end  -- Rotations Wait
+            if forceDelay == nil then forceDelay = false end
 
             if isChecked(LC_BODY_AND_SOUL) and not buff.surrenderToMadness then
                 bodyAndSoul = getOptionValue(LC_BODY_AND_SOUL)
@@ -346,7 +347,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if inCombat then
                     --analyzeS2M()
                     updateTTD()
-                    dieAtNextGCD = currentInsanityDrain*(gcdMax + getLatency()) > power
+                    dieAtNextGCD = currentInsanityDrain*(gcdMax + math.min(0.05,getLatency())) > power
                 end
 
                 updateInsanityDrainStacks()
@@ -745,6 +746,10 @@ if select(2, UnitClass("player")) == "PRIEST" then
             end -- End Action List - vf
         -- Action List - s2m
             function actionList_S2M()
+                if forceDelay and br.timer:useTimer("forceDelay",0.5) then
+                    forceDelay = false
+                end
+
                 if isCastingSpell(spell.mindFlay) then
                     local castStartTime = select(5,UnitChannelInfo("player"))
                     local castEndTime = select(6,UnitChannelInfo("player"))
@@ -864,7 +869,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     end
                 end
             -- void_bolt
-                if currentInsanityDrain*(gcdMax + select(4,GetNetStats()) / 1000) - 40 < power then
+                if currentInsanityDrain*(gcdMax + math.min(0.05,getLatency())) - 40 < power then
                     if cast.voidBolt(thisUnit) then return end
                 end
             -- shadow_word_death,if=!talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+15)<100
@@ -920,7 +925,12 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if useItem(2) then return end
                 end
             -- dispersion,if=current_insanity_drain*gcd.max>insanity&!buff.power_infusion.up
-                if useDispersion and (dieAtNextGCD or cd.voidTorrent < 5.5) and insanityDrainStacks > 70 and not buff.powerInfusion then
+                if not forceDelay and 
+                    useDispersion and 
+                    dieAtNextGCD and 
+                    insanityDrainStacks > 70 and 
+                    not buff.powerInfusion 
+                then
                     if cast.dispersion() then return end
                 end
             -- shadowfiend,if=!talent.mindbender.enabled,if=buff.voidform.stack>15
