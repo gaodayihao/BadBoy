@@ -85,6 +85,8 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                     br.ui:createCheckbox(section, LC_HORN_OF_WINTER,LC_HORN_OF_WINTER_DESCRIPTION)
             -- Empower Rune Weapon / Hungering Rune Weapon
                     br.ui:createCheckbox(section, LC_RUNE_WEAPON,LC_RUNE_WEAPON_DESCRIPTION)
+            -- Breath of Sindragosa
+                    br.ui:createCheckbox(section,LC_BREATH_OF_SINDRAGOSA,LC_BREATH_OF_SINDRAGOSA_DESCRIPTION)
             br.ui:checkSectionState(section)
             -------------------------
             --- DEFENSIVE OPTIONS ---
@@ -258,7 +260,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                     if isChecked(LC_OBLITERATION) and cast.obliteration() then return true end
             -- Breath of Sindragosa
                 -- Breath of Sindragosa,if=runic_power>=50
-                    if power >= 50 then
+                    if isChecked(LC_BREATH_OF_SINDRAGOSA) and power >= 50 then
                         if cast.breathOfSindragosa() then return true end
                     end
                 end
@@ -344,11 +346,11 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 if actionList_Core() then return end
             -- Horn of Winter
                 -- Horn of Winter,if=talent.breath_of_sindragosa.enabled&cooldown.breath_of_sindragosa.remains>15
-                if isChecked(LC_HORN_OF_WINTER) and talent.hornOfWinter and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
+                if useCDs() and isChecked(LC_HORN_OF_WINTER) and talent.hornOfWinter and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
                     if cast.hornOfWinter() then return end
                 end
                 -- Horn of Winter,if=!talent.breath_of_sindragosa.enabled
-                if isChecked(LC_HORN_OF_WINTER) and talent.hornOfWinter and not talent.breathOfSindragosa then
+                if useCDs() and isChecked(LC_HORN_OF_WINTER) and talent.hornOfWinter and not talent.breathOfSindragosa then
                     if cast.hornOfWinter() then return end
                 end
             -- Frost Strike
@@ -407,11 +409,11 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 if actionList_Core() then return end
             -- Horn of Winter
                 -- Horn of Winter,if=talent.breath_of_sindragosa.enabled&cooldown.breath_of_sindragosa.remains>15
-                if isChecked(LC_HORN_OF_WINTER) and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
+                if useCDs() and isChecked(LC_HORN_OF_WINTER) and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
                     if cast.hornOfWinter() then return end
                 end
                 -- Horn of Winter,if=!talent.breath_of_sindragosa.enabled
-                if isChecked(LC_HORN_OF_WINTER) and not talent.breathOfSindragosa then
+                if useCDs() and isChecked(LC_HORN_OF_WINTER) and not talent.breathOfSindragosa then
                     if cast.hornOfWinter() then return end
                 end
             -- Frost Strike
@@ -452,7 +454,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             -- Do core rotation
                 if actionList_Core() then return end
             -- Horn of Winter
-                if isChecked(LC_HORN_OF_WINTER) and cast.hornOfWinter() then return end
+                if useCDs() and isChecked(LC_HORN_OF_WINTER) and cast.hornOfWinter() then return end
             -- Empower Rune Weapon / Hungering Rune Weapon
                 -- if=runic_power<=70
                 if isChecked(LC_RUNE_WEAPON) and runes == 0 and power <= 70 then

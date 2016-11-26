@@ -71,6 +71,8 @@ LC_MIND_FREEZE = "Mind Freeze";
 LC_MIND_FREEZE_DESCRIPTION = "Mind Freeze";
 
 --Frost DeathKnight
+LC_BREATH_OF_SINDRAGOSA = "Breath of Sindragosa"
+LC_BREATH_OF_SINDRAGOSA_DESCRIPTION = "Automatic use Breath of Sindragosa"
 LC_HORN_OF_WINTER = "Horn of Winter";
 LC_HORN_OF_WINTER_DESCRIPTION = "Automatic use Horn of Winter";
 LC_OBLITERATION = "Obliteration";
