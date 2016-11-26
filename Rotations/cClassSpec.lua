@@ -1,12 +1,14 @@
 
 function cFileBuild(cFileName,self)
     -- Make tables if not existing
-    if self.artifact        == nil then self.artifact           = {} end        -- Artifact Trait Info
-    if self.artifact.rank   == nil then self.artifact.rank      = {} end        -- Artifact Trait Rank
-    if self.cast            == nil then self.cast               = {} end        -- Cast Spell Functions
-    if self.cast.debug      == nil then self.cast.debug         = {} end        -- Cast Spell Debugging
-    if self.charges.frac    == nil then self.charges.frac       = {} end        -- Charges Fractional
-    if self.charges.max     == nil then self.charges.max        = {} end        -- Charges Maximum 
+    if self.artifact        == nil then self.artifact           = {} end                                      -- Artifact Trait Info
+    if self.artifact.rank   == nil then self.artifact.rank      = {} end                                      -- Artifact Trait Rank
+    if self.cast            == nil then self.cast               = {} end                                      -- Cast Spell Functions
+    if self.cast.debug      == nil then self.cast.debug         = {} end                                      -- Cast Spell Debugging
+    if self.charges.frac    == nil then self.charges.frac       = {} end                                      -- Charges Fractional
+    if self.charges.max     == nil then self.charges.max        = {} end                                      -- Charges Maximum
+    if self.detect          == nil then self.detect             = {} end                                      -- Detect
+    if self.detect.rage     == nil then self.detect.rage        = {["y8"]=8,["y20"]=20,["y40"]=40} end        -- Detect Rage
 
     -- Update Power
     self.mana           = UnitPower("player", 0)
@@ -75,48 +77,20 @@ function cFileBuild(cFileName,self)
         local minRange = select(5,GetSpellInfo(spellName))
         local maxRange = select(6,GetSpellInfo(spellName))
         if SpellHasRange(spellName) then
-            if maxRange > 0 then
-                self.units["dyn"..tostring(maxRange)]           = dynamicTarget(maxRange,  true)
-                self.units["dyn"..tostring(maxRange).."AoE"]    = dynamicTarget(maxRange,  false)
-                self.enemies["yards"..tostring(maxRange)]       = getEnemies("player",maxRange)
-                self.enemies["yards"..tostring(maxRange).."t"]  = getEnemies(self.units["dyn"..tostring(maxRange)],maxRange)
-            else
-                self.units.dyn5         = dynamicTarget(5, true)
-                self.units.dyn5AoE      = dynamicTarget(5, false)
-                self.enemies.yards5     = getEnemies("player",5)
-                self.enemies.yards5t    = getEnemies(self.units.dyn5,5)
-            end
+            if maxRange <= 0 then maxRange = 5 end
         else
-            self.units.dyn5         = dynamicTarget(5, true)
-            self.units.dyn5AoE      = dynamicTarget(5, false)
-            self.enemies.yards5     = getEnemies("player",5)
-            self.enemies.yards5t    = getEnemies(self.units.dyn5,5)
+            maxRange = 5
+        end
+        if not self.detect.rage["y"..tostring(maxRange)] then
+            self.detect.rage["y"..tostring(maxRange)] = maxRange
         end
     end
-    -- Unit/Enemies Table Common Checks Independant of Spells
-    if self.units.dyn8 == nil then -- Common AoE Effect Range
-        self.units.dyn8         = dynamicTarget(8, true)
-        self.units.dyn8AoE      = dynamicTarget(8, false)
-    end
-    if self.enemies.yards8 == nil then
-        self.enemies.yards8     = getEnemies("player",8)
-        self.enemies.yards8t    = getEnemies(self.units.dyn8,8)
-    end
-    if self.units.dyn20 == nil then -- Common Aggro Range
-        self.units.dyn20         = dynamicTarget(20, true)
-        self.units.dyn20AoE      = dynamicTarget(20, false)
-    end
-    if self.enemies.yards20 == nil then
-        self.enemies.yards20     = getEnemies("player",20)
-        self.enemies.yards20t    = getEnemies(self.units.dyn20,20)
-    end
-    if self.units.dyn40 == nil then -- Limit of Debuff Tracking
-        self.units.dyn40         = dynamicTarget(40, true)
-        self.units.dyn40AoE      = dynamicTarget(40, false)
-    end
-    if self.enemies.yards40 == nil then
-        self.enemies.yards40     = getEnemies("player",40)
-        self.enemies.yards40t    = getEnemies(self.units.dyn40,40)
+    
+    for k,v in pairs(self.detect.rage) do
+        self.units["dyn"..tostring(v)]           = dynamicTarget(v,  true)
+        self.units["dyn"..tostring(v).."AoE"]    = dynamicTarget(v,  false)
+        self.enemies["yards"..tostring(v)]       = getEnemies("player",v)
+        self.enemies["yards"..tostring(v).."t"]  = getEnemies(self.units["dyn"..tostring(v)],v)
     end
 
     if not UnitAffectingCombat("player") then

@@ -233,15 +233,15 @@ function cCharacter:new(class)
 		            self.units.dyn40AoE = dynamicTarget(40,false) -- used for most heals
 		        end
         	else
-	            -- Normal
-	            self.units.dyn5  = dynamicTarget(5,true) -- Melee
-	            self.units.dyn30 = dynamicTarget(30,true) -- used for most range attacks
-	            self.units.dyn40 = dynamicTarget(40,true) -- used for most heals
+	            -- -- Normal
+	            -- self.units.dyn5  = dynamicTarget(5,true) -- Melee
+	            -- self.units.dyn30 = dynamicTarget(30,true) -- used for most range attacks
+	            -- self.units.dyn40 = dynamicTarget(40,true) -- used for most heals
 
-	            -- AoE
-	            self.units.dyn5AoE  = dynamicTarget(5,false) -- Melee
-	            self.units.dyn30AoE = dynamicTarget(30,false) -- used for most range attacks
-	            self.units.dyn40AoE = dynamicTarget(40,false) -- used for most heals
+	            -- -- AoE
+	            -- self.units.dyn5AoE  = dynamicTarget(5,false) -- Melee
+	            -- self.units.dyn30AoE = dynamicTarget(30,false) -- used for most range attacks
+	            -- self.units.dyn40AoE = dynamicTarget(40,false) -- used for most heals
 	        end
         end
 	end

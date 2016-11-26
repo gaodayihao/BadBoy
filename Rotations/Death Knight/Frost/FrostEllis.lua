@@ -49,6 +49,8 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 br.ui:createCheckbox(section, LC_AUTO_TARGET, LC_AUTO_TARGET_DESCRIPTION)
             -- Auto Facing
                 br.ui:createCheckbox(section, LC_AUTO_FACING, LC_AUTO_FACING_DESCRIPTION)
+            -- Pillar of Frost
+                br.ui:createCheckbox(section, LC_PILLAR_OF_FROST, LC_PILLAR_OF_FROST_DESCRIPTION)
             br.ui:checkSectionState(section)
             ------------------------
             --- Pre-Pull BossMod ---
@@ -65,6 +67,24 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             --- COOLDOWN OPTIONS ---
             ------------------------
             section = br.ui:createSection(br.ui.window.profile, LC_COOLDOWNS)
+            -- Arcane Torrent
+                if br.player.race == "BloodElf" then
+                    br.ui:createCheckbox(section, LC_ARCANE_TORRENT,LC_ARCANE_TORRENT_DESCRIPTION)
+                end
+            -- Blood Fury
+                if br.player.race == "Orc" then
+                    br.ui:createCheckbox(section, LC_BLOOD_FURY,LC_BLOOD_FURY_DESCRIPTION)
+                end
+            -- Berserking
+                if br.player.race == "Troll" then
+                    br.ui:createCheckbox(section, LC_BERSERKING,LC_BERSERKING_DESCRIPTION)
+                end
+            -- Obliteration
+                    br.ui:createCheckbox(section, LC_OBLITERATION,LC_OBLITERATION_DESCRIPTION)
+            -- Horn of Winter
+                    br.ui:createCheckbox(section, LC_HORN_OF_WINTER,LC_HORN_OF_WINTER_DESCRIPTION)
+            -- Empower Rune Weapon / Hungering Rune Weapon
+                    br.ui:createCheckbox(section, LC_RUNE_WEAPON,LC_RUNE_WEAPON_DESCRIPTION)
             br.ui:checkSectionState(section)
             -------------------------
             --- DEFENSIVE OPTIONS ---
@@ -81,6 +101,10 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             --- INTERRUPT OPTIONS ---
             -------------------------
             section = br.ui:createSection(br.ui.window.profile, LC_INTERRUPTS)
+            -- Mind Freeze
+                br.ui:createCheckbox(section, LC_MIND_FREEZE, LC_MIND_FREEZE_DESCRIPTION)
+            -- Interrupt Percentage
+                br.ui:createSpinnerWithout(section, LC_INTERRUPTS_AT,  0,  0,  95,  5,  LC_INTERRUPTS_AT_DESCRIPTION)
             br.ui:checkSectionState(section)
         end
         optionTable = {{
@@ -123,6 +147,8 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             local enemies                                       = br.player.enemies
             local falling, swimming, flying                     = getFallTime(), IsSwimming(), IsFlying()
             local flaskBuff                                     = getBuffRemain("player",br.player.flask.wod.buff.agilityBig)
+            local forceAOE                                      = br.player.mode.rotation == 2
+            local forceSingle                                   = br.player.mode.rotation == 3
             local friendly                                      = UnitIsFriend("target", "player")
             local gcd                                           = br.player.gcd
             local healPot                                       = getHealthPot()
@@ -197,28 +223,39 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             end -- End Action List - Defensive
         -- Action List - Interrupts
             function actionList_Interrupts()
+                if useInterrupts() then
+                    for i=1, #enemies.yards15 do
+                        thisUnit = enemies.yards15[i]
+                        if canInterrupt(thisUnit,getOptionValue(LC_INTERRUPTS_AT)) then
+                        -- Mind Freeze
+                            if isChecked(LC_MIND_FREEZE) then
+                                if cast.mindFreeze(thisUnit) then return end
+                            end
+                        end
+                    end
+                end
             end -- End Action List - Interrupts
         -- Action List - Cooldowns
             function actionList_Cooldowns()
                 if useCDs() then
             -- Arcane Torrent
                 -- arcane_torrent,if=runic_power.deficit>20
-                    if br.player.race == "BloodElf" and getSpellCD(racial)==0 and powerDeficit > 20 then
+                    if isChecked(LC_ARCANE_TORRENT) and getSpellCD(racial)==0 and powerDeficit > 20 then
                         if castSpell("player",racial,false,false,false) then return true end
                     end
             -- Blood Fury
                 -- blood_fury,if=!talent.breath_of_sindragosa.enabled|dot.breath_of_sindragosa.ticking
-                    if (br.player.race == "Orc" and getSpellCD(racial)==0 and (not talent.breathOfSindragosa or buff.breathOfSindragosa.exists)) then
+                    if isChecked(LC_BLOOD_FURY) and getSpellCD(racial)==0 and (not talent.breathOfSindragosa or buff.breathOfSindragosa.exists) then
                         if castSpell("player",racial,false,false,false) then return true end
                     end
             -- Berserking
                 -- berserking,if=buff.pillar_of_frost.up
-                    if br.player.race == "Troll" and getSpellCD(racial)==0 and buff.pillarOfFrost.exists then
+                    if isChecked(LC_BERSERKING) and getSpellCD(racial)==0 and buff.pillarOfFrost.exists then
                         if castSpell("player",racial,false,false,false) then return true end
                     end
             -- Obliteration
                 -- Obliteration
-                    if cast.obliteration() then return true end
+                    if isChecked(LC_OBLITERATION) and cast.obliteration() then return true end
             -- Breath of Sindragosa
                 -- Breath of Sindragosa,if=runic_power>=50
                     if power >= 50 then
@@ -239,22 +276,25 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 end
             -- Remorseless Winter
                 -- Remorseless Winter,if=(spell_targets.remorseless_winter>=2|talent.gathering_storm.enabled)&!(talent.frostscythe.enabled&buff.killing_machine.react&spell_targets.frostscythe>=2)
-                if (#enemies.yards8 >=2 or talent.gatheringStorm) and not (talent.frostscythe and buff.killingMachine.exists and #getFacingUnits("player",enemies.yards8,120) >= 2) then
+                if (#enemies.yards8 >=2 or talent.gatheringStorm or forceAOE) and 
+                    not (talent.frostscythe and buff.killingMachine.exists and #getFacingUnits("player",enemies.yards8,120) >= 2) and
+                    not forceSingle
+                then
                     if cast.remorselessWinter() then return true end
                 end
             -- Frostscythe
                 -- Frostscythe,if=(buff.killing_machine.react&spell_targets.frostscythe>=2)
-                if talent.frostscythe and buff.killingMachine.exists and #getFacingUnits("player",enemies.yards8,120) >= 2 then
+                if talent.frostscythe and buff.killingMachine.exists and (#getFacingUnits("player",enemies.yards8,120) >= 2 or forceAOE) and not forceSingle then
                     if cast.frostscythe() then return true end
                 end
             -- Glacial Advance
                 -- Glacial Advance,if=spell_targets.glacial_advance>=2
-                if #getFacingUnits("player",enemies.yards20,25) >= 2 then
+                if (#getFacingUnits("player",enemies.yards20,25) >= 2 or forceAOE) and not forceSingle then
                     if cast.glacialAdvance() then return true end
                 end
             -- Frostscythe
                 -- Frostscythe,if=spell_targets.frostscythe>=3
-                if talent.frostscythe and #getFacingUnits("player",enemies.yards8,120) >= 3 then
+                if talent.frostscythe and (#getFacingUnits("player",enemies.yards8,120) >= 3 or forceAOE) and not forceSingle then
                     if cast.frostscythe() then return true end
                 end
             -- Obliterate
@@ -267,10 +307,12 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 if cast.obliterate() then return true end
             -- Glacial Advance
                 -- Glacial Advance
-                if cast.glacialAdvance() then return true end
+                if not forceSingle then
+                    if cast.glacialAdvance() then return true end
+                end
             -- Remorseless Winter
                 -- Remorseless Winter,if=talent.frozen_pulse.enabled
-                if talent.frozenPulse then
+                if talent.frozenPulse and not forceSingle then
                     if cast.remorselessWinter() then return true end
                 end
             end -- End Action List - Core rotation
@@ -302,11 +344,11 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 if actionList_Core() then return end
             -- Horn of Winter
                 -- Horn of Winter,if=talent.breath_of_sindragosa.enabled&cooldown.breath_of_sindragosa.remains>15
-                if talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
+                if isChecked(LC_HORN_OF_WINTER) and talent.hornOfWinter and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
                     if cast.hornOfWinter() then return end
                 end
                 -- Horn of Winter,if=!talent.breath_of_sindragosa.enabled
-                if not talent.breathOfSindragosa then
+                if isChecked(LC_HORN_OF_WINTER) and talent.hornOfWinter and not talent.breathOfSindragosa then
                     if cast.hornOfWinter() then return end
                 end
             -- Frost Strike
@@ -320,7 +362,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 end
             -- Empower Rune Weapon / Hungering Rune Weapon
                 -- if=talent.breath_of_sindragosa.enabled&cooldown.breath_of_sindragosa.remains>15
-                if runes == 0 and useCDs() and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
+                if isChecked(LC_RUNE_WEAPON) and runes == 0 and useCDs() and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
                     if talent.hungeringRuneWeapon then
                         if cast.hungeringRuneWeapon() then return end
                     else
@@ -328,7 +370,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                     end
                 end
                 -- if=!talent.breath_of_sindragosa.enabled
-                if runes == 0 and useCDs() and not talent.breathOfSindragosa then
+                if isChecked(LC_RUNE_WEAPON) and runes == 0 and useCDs() and not talent.breathOfSindragosa then
                     if talent.hungeringRuneWeapon then
                         if cast.hungeringRuneWeapon() then return end
                     else
@@ -365,11 +407,11 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 if actionList_Core() then return end
             -- Horn of Winter
                 -- Horn of Winter,if=talent.breath_of_sindragosa.enabled&cooldown.breath_of_sindragosa.remains>15
-                if talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
+                if isChecked(LC_HORN_OF_WINTER) and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
                     if cast.hornOfWinter() then return end
                 end
                 -- Horn of Winter,if=!talent.breath_of_sindragosa.enabled
-                if not talent.breathOfSindragosa then
+                if isChecked(LC_HORN_OF_WINTER) and not talent.breathOfSindragosa then
                     if cast.hornOfWinter() then return end
                 end
             -- Frost Strike
@@ -383,7 +425,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 end
             -- Empower Rune Weapon / Hungering Rune Weapon
                 -- if=talent.breath_of_sindragosa.enabled&cooldown.breath_of_sindragosa.remains>15
-                if runes == 0 and useCDs() and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
+                if isChecked(LC_RUNE_WEAPON) and runes == 0 and useCDs() and talent.breathOfSindragosa and cd.breathOfSindragosa > 15 then
                     if talent.hungeringRuneWeapon then
                         if cast.hungeringRuneWeapon() then return end
                     else
@@ -391,7 +433,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                     end
                 end
                 -- if=!talent.breath_of_sindragosa.enabled
-                if runes == 0 and useCDs() and not talent.breathOfSindragosa then
+                if isChecked(LC_RUNE_WEAPON) and runes == 0 and useCDs() and not talent.breathOfSindragosa then
                     if talent.hungeringRuneWeapon then
                         if cast.hungeringRuneWeapon() then return end
                     else
@@ -410,10 +452,10 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             -- Do core rotation
                 if actionList_Core() then return end
             -- Horn of Winter
-                if cast.hornOfWinter() then return end
+                if isChecked(LC_HORN_OF_WINTER) and cast.hornOfWinter() then return end
             -- Empower Rune Weapon / Hungering Rune Weapon
                 -- if=runic_power<=70
-                if runes == 0 and power <= 70 then
+                if isChecked(LC_RUNE_WEAPON) and runes == 0 and power <= 70 then
                     if talent.hungeringRuneWeapon then
                         if cast.hungeringRuneWeapon() then return end
                     else
@@ -458,7 +500,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                     end
             -- Pillar of Frost
                 -- Pillar of Frost
-                    if cast.pillarOfFrost() then return end
+                    if isChecked(LC_PILLAR_OF_FROST) and cast.pillarOfFrost() then return end
             -- Start Action List
                     if buff.breathOfSindragosa.exists then
                         actionList_Bos()
