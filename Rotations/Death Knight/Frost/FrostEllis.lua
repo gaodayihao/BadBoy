@@ -133,43 +133,30 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
     --------------
     --- Locals ---
     --------------
-            local artifact                                      = br.player.artifact
             local autoFacing                                    = isChecked(LC_AUTO_FACING)
             local autoTarget                                    = isChecked(LC_AUTO_TARGET)
             local buff                                          = br.player.buff
             local canFlask                                      = canUse(br.player.flask.wod.agilityBig)
             local cast                                          = br.player.cast
-            local castable                                      = br.player.cast.debug
             local cd                                            = br.player.cd
-            local charges                                       = br.player.charges
             local combatTime                                    = getCombatTime()
-            local deadMouse, hasMouse, playerMouse              = UnitIsDeadOrGhost("mouseover"), ObjectExists("mouseover"), UnitIsPlayer("mouseover")
-            local deadtar, attacktar, hastar, playertar         = UnitIsDeadOrGhost("target"), UnitCanAttack("player", "target"), ObjectExists("target"), UnitIsPlayer("target")
             local debuff                                        = br.player.debuff
             local enemies                                       = br.player.enemies
-            local falling, swimming, flying                     = getFallTime(), IsSwimming(), IsFlying()
             local flaskBuff                                     = getBuffRemain("player",br.player.flask.wod.buff.agilityBig)
             local forceAOE                                      = br.player.mode.rotation == 2
             local forceSingle                                   = br.player.mode.rotation == 3
-            local friendly                                      = UnitIsFriend("target", "player")
-            local gcd                                           = br.player.gcd
             local healPot                                       = getHealthPot()
             local inCombat                                      = br.player.inCombat
             local inInstance                                    = br.player.instance=="party"
             local inRaid                                        = br.player.instance=="raid"
-            local lastSpell                                     = lastSpellCast
             local lastTarget                                    = lastSpellTarget
-            local level                                         = br.player.level
             local maxRunes                                      = br.player.runes
             local mode                                          = br.player.mode
-            local perk                                          = br.player.perk
             local php                                           = br.player.health
-            local power, powmax, powgen, powerDeficit           = br.player.power, br.player.powerMax, br.player.powerRegen, br.player.powerDeficit
+            local power, powerDeficit                           = br.player.power, br.player.powerDeficit
             local pullTimer                                     = br.DBM:getPulltimer()
             local racial                                        = br.player.getRacial()
-            local recharge                                      = br.player.recharge
             local runes                                         = 0
-            local solo                                          = br.player.instance=="none"
             local spell                                         = br.player.spell
             local talent                                        = br.player.talent
             local ttd                                           = getTTD
