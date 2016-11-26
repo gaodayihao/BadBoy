@@ -141,7 +141,7 @@ function cFileBuild(cFileName,self)
         -- Setup debuff table per valid unit and per debuff
         for i = 1, #self.enemies.yards40 do
             local thisUnit = self.enemies.yards40[i]
-            if hasThreat(thisUnit) or (not hasThreat(thisUnit) and getHP(thisUnit) < 100 and UnitIsUnit(thisUnit,"target")) or isDummy(thisUnit) then
+            --if hasThreat(thisUnit) or (not hasThreat(thisUnit) and getHP(thisUnit) < 100 and UnitIsUnit(thisUnit,"target")) or isDummy(thisUnit) then
                 if self.debuff[k][thisUnit]         == nil then self.debuff[k][thisUnit]            = {} end
                 if self.debuff[k][thisUnit].applied == nil then self.debuff[k][thisUnit].applied    = 0 end
                 self.debuff[k][thisUnit].exists         = UnitDebuffID(thisUnit,v,"player") ~= nil
@@ -151,7 +151,7 @@ function cFileBuild(cFileName,self)
                 self.debuff[k][thisUnit].stack          = getDebuffStacks(thisUnit,v,"player")
                 self.debuff[k][thisUnit].calc           = self.getSnapshotValue(v)
                 if UnitIsUnit(thisUnit,"target") then self.debuff[k]["target"] = self.debuff[k][thisUnit] end
-            end
+            --end
         end
         -- Remove non-valid entries
         for c,v in pairs(self.debuff[k]) do

@@ -1,8 +1,8 @@
-if select(3, UnitClass("player")) == 6 then
-    function FrostDK()
-        if br.player == nil or br.player.profile ~= "Frost" then
-            br.player = cFrost:new("Frost")
-            setmetatable(br.player, {__index = cFrost})
+function DeathKnightFrost() -- Change to ClassSpec() (IE: MageFire())
+    if GetSpecializationInfo(GetSpecialization()) == 251 then -- Change to spec id
+        if br.player == nil or br.player.profile ~= "Frost" then -- Change "Frost" to spec (IE: "Fire")
+            br.player = cFrost:new("Frost") -- Change cFrost to cSpec (IE: cFire) and Change "Fury" to spec (IE: "Fire")
+            setmetatable(br.player, {__index = cFrost}) -- Change cFrost to cSpec (IE: cFire)
 
             br.player:createOptions()
             br.player:createToggles()
@@ -10,6 +10,5 @@ if select(3, UnitClass("player")) == 6 then
         end
 
         br.player:update()
-
-    end --Rogue Function End
-end --Class Check End
+    end
+end

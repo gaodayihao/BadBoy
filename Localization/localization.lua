@@ -17,6 +17,7 @@ LC_DOT_MINIMUM_HEALTH = "Dot minimun health";
 LC_DOT_MINIMUM_HEALTH_DESCRIPTION = "|cffFFBB00Dot minimun health (in million) to apply";
 LC_FLASK = "Flask";
 LC_GENERAL = "General";
+LC_INTERRUPTS = "Interrupts";
 LC_OLD_WAR = "|cffFFFF00Old War";
 LC_POTION = "Potion";
 LC_PRE_PULL_BOSSMOD = "Pre-Pull BossMod";
@@ -52,3 +53,11 @@ LC_VAMPIRIC_EMBRACE = "Vampiric Embrace";
 LC_VAMPIRIC_EMBRACE_DESCRIPTION = "|cffFFBB00Vampiric Embrace";
 LC_VT_MAX_TARGETS = "VT Max Targets";
 LC_VT_MAX_TARGETS_DESCRIPTION = "|cffFFBB00Amount of dots to apply";
+
+--Frost DeathKnight
+LC_DARK_SUCCOR = "Dark Succor";
+LC_DARK_SUCCOR_DESCRIPTION = "Dark Succor";
+LC_DEATH_STRIKE = "Death Strike";
+LC_DEATH_STRIKE_DESCRIPTION = "Death Strike";
+LC_ICEBOUND_FORTITUDE = "Icebound Fortitude"; 
+LC_ICEBOUND_FORTITUDE_DESCRIPTION = "Icebound Fortitude";

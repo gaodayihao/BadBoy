@@ -349,7 +349,7 @@ function cCharacter:new(class)
 			NightElf = 58984, -- Shadowmeld
 			Worgen   = 68992, -- Darkflight
 			-- Horde
-			BloodElf = 129597, -- Arcane Torrent
+			BloodElf = 50613, -- Arcane Torrent
 			Goblin   = 69041, -- Rocket Barrage
 			Orc      = 33702, -- Blood Fury
 			Tauren   = 20549, -- War Stomp

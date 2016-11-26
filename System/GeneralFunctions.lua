@@ -1276,6 +1276,27 @@ function getFallTime()
 	end
 	return fallTime
 end
+function getFacingUnits(Unit1,Units,Degrees)
+	if Units == nil and br.player.enemies and br.player.enemies.yards8 then
+		Units = br.player.enemies.yards8
+	end
+	if Units == nil then
+		return {}
+	end
+	if Degrees == nil then
+		Degrees = 90
+	end
+	if Unit1 == nil then
+		Unit1 = "player"
+	end
+	local result = {}
+	for i = 1,#Units do
+		if getFacing(Unit1,Units[i],Degrees) then
+			tinsert(result,Units[i])
+		end
+	end
+	return result
+end
 -- if getFacing("target","player") == false then
 function getFacing(Unit1,Unit2,Degrees)
 	if Degrees == nil then

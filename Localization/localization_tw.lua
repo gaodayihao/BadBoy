@@ -17,7 +17,8 @@ LC_DOT_MINIMUM_HEALTH = "Dot最小血量";
 LC_DOT_MINIMUM_HEALTH_DESCRIPTION = "|cffFFBB00多线输出下Dot施放最小血量（百万）";
 LC_FLASK = "合剂";
 LC_GENERAL = "常规";
-LC_OLD_WAR = "|cff00BB00上古战神";
+LC_INTERRUPTS = "打断";
+LC_OLD_WAR = "|cffFFFF00上古战神";
 LC_POTION = "爆发药水";
 LC_PRE_PULL_BOSSMOD = "BOSS开怪前准备";
 LC_PRE_PULL_TIMER = "开怪倒计时";
@@ -52,5 +53,13 @@ LC_VAMPIRIC_EMBRACE = "吸血鬼的拥抱";
 LC_VAMPIRIC_EMBRACE_DESCRIPTION = "|cffFFBB00当血量低于设定百分比时使用|cffFF0000吸血鬼的拥抱";
 LC_VT_MAX_TARGETS = "多目标 吸血之触";
 LC_VT_MAX_TARGETS_DESCRIPTION = "|cffFFBB00吸血之触 目标上限";
+
+--Frost DeathKnight
+LC_DARK_SUCCOR = "黑暗救赎";
+LC_DARK_SUCCOR_DESCRIPTION = "|cffFFBB00当HP少于设定值时，使用黑暗救赎触发的免费|cffFF0000死亡打击";
+LC_DEATH_STRIKE = "死亡打击";
+LC_DEATH_STRIKE_DESCRIPTION = "|cffFFBB00当HP少于设定值时，使用|cffFF0000死亡打击";
+LC_ICEBOUND_FORTITUDE = "冰锢坚韧"; 
+LC_ICEBOUND_FORTITUDE_DESCRIPTION = "|cffFFBB00当HP少于设定值时，使用|cffFF0000冰锢坚韧";
 
 end

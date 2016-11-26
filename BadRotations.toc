@@ -84,7 +84,8 @@ Rotations\Death Knight\cDeathKnight.lua
 
 Rotations\Death Knight\Frost\cFrost.lua
 Rotations\Death Knight\Frost\Frost.lua
-Rotations\Death Knight\Frost\FrostCuteOne.lua
+Rotations\Death Knight\Frost\FrostEllis.lua
+## Rotations\Death Knight\Frost\FrostCuteOne.lua
 
 Rotations\Death Knight\Blood\cBlood.lua
 Rotations\Death Knight\Blood\Blood.lua

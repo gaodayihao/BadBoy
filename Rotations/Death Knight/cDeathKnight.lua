@@ -20,6 +20,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
 			deathGrip 					= 49576,
 			deathStrike 				= 49998,
 			frostBreath 				= 190780,
+			iceboundFortitude			= 48792,
 			mindFreeze 					= 47528,
 			pathOfFrost 				= 3714,
 			raiseAlly 					= 61999,
@@ -29,6 +30,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
 	        artificialStamina 			= 211309,
 	    }
 	    self.spell.class.buffs          = {        -- Buffs Available To All Specs in Class
+            darkSuccor                  = 101568,
 	    	pathOfFrost 				= 3714,
 	    	wraithWalk 					= 212552
 	    }

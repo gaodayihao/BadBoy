@@ -911,7 +911,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if useArcaneTorrent and insanityDrainStacks >= timeToPowerInfusion and useCDs() and br.player.race == "BloodElf"
                     and dieAtNextGCD and (power-(currentInsanityDrain*gcdMax)+35) < 100 
                 then
-                    if castSpell("player",racial,false,false,false) then return end
+                    if getSpellCD(racial)==0 and castSpell("player",racial,false,false,false) then return end
                 end
             -- hasEquiped 130234, Blessed Dawnlight Medallion
                 if useBlessedDawnlightMedallion and 
