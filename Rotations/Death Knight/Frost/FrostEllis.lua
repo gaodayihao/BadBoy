@@ -229,17 +229,17 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 if useCDs() then
             -- Arcane Torrent
                 -- arcane_torrent,if=runic_power.deficit>20
-                    if isChecked(LC_ARCANE_TORRENT) and getSpellCD(racial)==0 and powerDeficit > 20 then
+                    if br.player.race == "BloodElf" and isChecked(LC_ARCANE_TORRENT) and getSpellCD(racial)==0 and powerDeficit > 20 then
                         if castSpell("player",racial,false,false,false) then return true end
                     end
             -- Blood Fury
                 -- blood_fury,if=!talent.breath_of_sindragosa.enabled|dot.breath_of_sindragosa.ticking
-                    if isChecked(LC_BLOOD_FURY) and getSpellCD(racial)==0 and (not talent.breathOfSindragosa or buff.breathOfSindragosa.exists) then
+                    if br.player.race == "Orc" and isChecked(LC_BLOOD_FURY) and getSpellCD(racial)==0 and (not talent.breathOfSindragosa or buff.breathOfSindragosa.exists) then
                         if castSpell("player",racial,false,false,false) then return true end
                     end
             -- Berserking
                 -- berserking,if=buff.pillar_of_frost.up
-                    if isChecked(LC_BERSERKING) and getSpellCD(racial)==0 and buff.pillarOfFrost.exists then
+                    if br.player.race == "Troll" and isChecked(LC_BERSERKING) and getSpellCD(racial)==0 and buff.pillarOfFrost.exists then
                         if castSpell("player",racial,false,false,false) then return true end
                     end
             -- Obliteration
