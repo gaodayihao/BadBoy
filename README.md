@@ -78,7 +78,7 @@ Raidable means if its good to raid with.
 |:----|------:|:-------|:---:|:-----:|
 ||||
 | **Death Knight** |||
-|Frost|100% (SimC)||7.1|:interrobang:
+|Frost|100% (SimC)|Ellis|7.1|:interrobang:
 |Blood|95%|CuteOne/Vilt|7.1|:white_check_mark:
 |Unholy|0%||7.0|
 ||||
