@@ -269,7 +269,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                         end
                     end
             -- Hammer of Justice
-                    if isChecked(LC_HAMMER_OF_JUSTICE_HP) and php <= getOptionValue(LC_HAMMER_OF_JUSTICE_HP) and inCombat then
+                    if isChecked(LC_HAMMER_OF_JUSTICE_HP) and php <= getOptionValue(LC_HAMMER_OF_JUSTICE_HP) and inCombat and not isBoss() then
                         if cast.hammerOfJustice() then return end
                     end
             -- Redemption
