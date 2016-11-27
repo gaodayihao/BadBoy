@@ -22,7 +22,7 @@ function cRetribution:new()
             bladeOfJustice              = 184575,
             cleanseToxins               = 213644,
             consecration                = 205228,
-            crusade                     = 224668,
+            crusade                     = 231895,
             divineHammer                = 198034,
             divineStorm                 = 53385,
             executionSentence           = 213757,
@@ -30,7 +30,7 @@ function cRetribution:new()
             greaterBlessingOfKings      = 203538,
             greaterBlessingOfMight      = 203528,
             greaterBlessingOfWisdom     = 203539,
-            handOfHinderance            = 183218,
+            handOfHindrance             = 183218,
             holyWrath                   = 210220,
             justicarsVengeance          = 215661,
             rebuke                      = 96231,
@@ -62,6 +62,8 @@ function cRetribution:new()
             wrathOfTheAshbringer        = 186945,
         }
         self.spell.spec.buffs           = {
+            avengingWrath               = 31884,
+            crusade                     = 231895,
             divinePurpose               = 223819,
             greaterBlessingOfMight      = 203528,
             greaterBlessingOfKings      = 203538,

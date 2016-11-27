@@ -180,6 +180,7 @@ Rotations\Paladin\Protection\protectionSimC.lua
 
 Rotations\Paladin\Retribution\cRetribution.lua
 Rotations\Paladin\Retribution\Retribution.lua
+Rotations\Paladin\Retribution\RetributionEllis.lua
 Rotations\Paladin\Retribution\RetributionCuteOne.lua
 
 ## Priest ---------------------------------------------------
@@ -194,8 +195,8 @@ Rotations\Priest\Holy\Holy.lua
 
 Rotations\Priest\Shadow\cShadow.lua
 Rotations\Priest\Shadow\Shadow.lua
-Rotations\Priest\Shadow\ShadowCpoworks.lua
 Rotations\Priest\Shadow\ShadowEllis.lua
+Rotations\Priest\Shadow\ShadowCpoworks.lua
 
 ## Rogue ---------------------------------------------------
 Rotations\Rogue\cRogue.lua

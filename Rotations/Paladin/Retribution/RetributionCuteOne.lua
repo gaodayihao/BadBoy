@@ -51,7 +51,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 	            -- Greater Blessing of Might
                 br.ui:createCheckbox(section, "Greater Blessing of Might")
                 -- Hand of Hindeance
-	            br.ui:createCheckbox(section, "Hand of Hinderance")
+	            br.ui:createCheckbox(section, "Hand of Hindrance")
                 -- Artifact 
                 br.ui:createDropdownWithout(section,"Artifact", {"|cff00FF00Everything","|cffFFFF00Cooldowns","|cffFF0000Never"}, 1, "|cffFFFFFFWhen to use Artifact Ability.")
             br.ui:checkSectionState(section)
@@ -214,9 +214,9 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
 	--------------------
 		-- Action List - Extras
 			local function actionList_Extras()
-			-- Hand of Hinderance
+			-- Hand of Hindrance
 				if isMoving("target") and not getFacing("target","player") and getDistance("target") > 8 then
-					if cast.handOfHinderance("target") then return end
+					if cast.handOfHindrance("target") then return end
 				end
             -- Greater Blessing of Might
                 if isChecked("Greater Blessing of Might") and greaterBuff < 3 then

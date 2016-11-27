@@ -111,6 +111,7 @@ Raidable means if its good to raid with.
 |Holy|0%||7.0|
 |Protection|0%||7.0|
 |Retribution|100%|CuteOne|7.1|:interrobang:
+|Retribution|100%|Ellis|7.1|:white_check_mark:
 ||||
 | **Priest** |||
 |Discipline|0%|Cpoworks|7.0|:interrobang::x:
