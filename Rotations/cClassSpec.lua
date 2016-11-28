@@ -76,16 +76,14 @@ function cFileBuild(cFileName,self)
         local spellName = GetSpellInfo(v)
         local minRange = select(5,GetSpellInfo(spellName))
         local maxRange = select(6,GetSpellInfo(spellName))
-        if SpellHasRange(spellName) then
-            if maxRange <= 0 then maxRange = 5 end
-        else
+        if maxRange == nil or maxRange <= 0 then
             maxRange = 5
         end
         if not self.detect.rage["y"..tostring(maxRange)] then
             self.detect.rage["y"..tostring(maxRange)] = maxRange
         end
     end
-    
+    -- Unit/Enemies Table Common Checks Independant of Spells
     for k,v in pairs(self.detect.rage) do
         self.units["dyn"..tostring(v)]           = dynamicTarget(v,  true)
         self.units["dyn"..tostring(v).."AoE"]    = dynamicTarget(v,  false)
@@ -233,29 +231,25 @@ function cFileBuild(cFileName,self)
         self.cast[k] = function(thisUnit,debug,minUnits,effectRng)
             local minRange = select(5,GetSpellInfo(spellName))
             local maxRange = select(6,GetSpellInfo(spellName))
-            if thisUnit == nil then
-                if IsHelpfulSpell(spellName) then thisUnit = "player" end
-            end
-            if SpellHasRange(spellName) then
-                if thisUnit == nil then
-                    if IsHarmfulSpell(spellName) then 
-                        if maxRange > 0 then
-                            thisUnit = self.units["dyn"..tostring(maxRange)]
-                        else
-                            thisUnit = self.units.dyn5
-                        end
+            if IsHelpfulSpell(spellName) then 
+                thisUnit = "player"
+                amIinRange = true 
+            elseif thisUnit == nil then
+                if IsUsableSpell(v) and isKnown(v) then
+                    if maxRange ~= nil and maxRange > 0 then
+                        thisUnit = self.units["dyn"..tostring(maxRange)]
+                        amIinRange = getDistance(thisUnit) < maxRange 
+                    else
+                        thisUnit = self.units.dyn5
+                        amIinRange = getDistance(thisUnit) < 5  
                     end
                 end
-                if IsSpellInRange(spellName,thisUnit) == 0 then
-                    amIinRange = false 
-                else
-                    amIinRange = true
-                end
-            else
+            elseif thisUnit == "best" then
                 amIinRange = true
-                if thisUnit == nil then
-                    if IsHarmfulSpell(spellName) then thisUnit = self.units.dyn5 end
-                end
+            elseif IsSpellInRange(spellName,thisUnit) == nil then
+                amIinRange = true
+            else
+                amIinRange = IsSpellInRange(spellName,thisUnit) == 1
             end
             if minUnits == nil then minUnits = 1 end
             if effectRng == nil then effectRng = 8 end
@@ -282,10 +276,6 @@ function cFileBuild(cFileName,self)
             end
         end
         -- Build Cast Debug
-        if IsHarmfulSpell(spellName) then
-            self.cast.debug[k] = self.cast[k]("target","debug")
-        else
-            self.cast.debug[k] = self.cast[k]("player","debug")
-        end
+        self.cast.debug[k] = self.cast[k](nil,"debug")
     end
 end

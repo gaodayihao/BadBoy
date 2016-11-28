@@ -782,6 +782,41 @@ function castSpell(Unit,SpellID,FacingCheck,MovementCheck,SpamAllowed,KnownSkip,
 	end
 	return false
 end
+-- Cast Spell Queue
+function castQueue()
+	local spellCast = br.player.queue[1].id
+    local spellName = GetSpellInfo(br.player.queue[1].id)
+    local minRange 	= select(5,GetSpellInfo(spellName))
+    local maxRange 	= select(6,GetSpellInfo(spellName))
+    if IsHelpfulSpell(spellName) then 
+        thisUnit = "player"
+        amIinRange = true 
+    elseif br.player.queue[1].target == nil then
+        if IsUsableSpell(spellCast) and isKnown(spellCast) then
+            if maxRange ~= nil and maxRange > 0 then
+                thisUnit = dynamicTarget(maxRange,  true)
+                amIinRange = getDistance(thisUnit) < maxRange 
+            else
+                thisUnit = dynamicTarget(5,  true)
+                amIinRange = getDistance(thisUnit) < 5  
+            end
+        end
+    elseif IsSpellInRange(spellName,thisUnit) == nil then
+        amIinRange = true
+    else
+        amIinRange = IsSpellInRange(spellName,thisUnit) == 1
+    end
+    if IsUsableSpell(spellCast) and getSpellCD(spellCast) == 0 and isKnown(spellCast) and amIinRange then
+        if UnitIsDeadOrGhost(thisUnit) then
+            if thisUnit == nil then thisUnit = "player" end
+            castSpell(thisUnit,spellCast,false,false,false,false,true)
+        else
+            if thisUnit == nil then thisUnit = "player" end
+            castSpell(thisUnit,spellCast,false,false,false)
+        end
+    end
+    return
+end
 --[[castSpellMacro(Unit,SpellID,FacingCheck,MovementCheck,SpamAllowed,KnownSkip)
 Parameter 	Value
 First 	 	UnitID 			Enter valid UnitID
@@ -2511,7 +2546,7 @@ end
 function isValidUnit(Unit)
 	local threat = hasThreat(Unit)
 	local creatureType = UnitCreatureType(Unit)
-	local trivial = creatureType == "Critter" or creatureType == "Non-combat Pet" or creatureType == "Gas Cloud"
+	local trivial = creatureType == "Critter" or creatureType == "Non-combat Pet" or creatureType == "Gas Cloud" or creatureType == "Wild Pet"
 	if not trivial and 
 		not UnitIsFriend(Unit, "player") and 
 		ObjectExists(Unit) and
@@ -2592,6 +2627,7 @@ function pause(skipCastingCheck)
 	else
 		pausekey = SpecificToggle("Pause Mode")
 	end
+	-- DPS Testing
 	if isChecked("DPS Testing") then
 		if GetObjectExists("target") and isInCombat("player") then
 			if getCombatTime() >= (tonumber(getOptionValue("DPS Testing"))*60) and isDummy() then
@@ -2610,10 +2646,12 @@ function pause(skipCastingCheck)
 			end
 		end
 	end
+	-- Pause Toggle
 	if br.data['Pause'] == 1 then
 		ChatOverlay("\124cFFED0000 -- Paused -- ")
 		return true
 	end
+	-- Pause Hold/Auto
 	if (pausekey and GetCurrentKeyBoardFocus() == nil and isChecked("Pause Mode"))
 		or profileStop
 		or (IsMounted() and (ObjectExists("target") and GetObjectID("target") ~= 56877) and not UnitBuffID("player",164222) and not UnitBuffID("player",165803) and not UnitBuffID("player",157059) and not UnitBuffID("player",157060))
@@ -2637,7 +2675,7 @@ function pause(skipCastingCheck)
 			if UnitExists("pet") and UnitAffectingCombat("pet") then PetFollow() end
 			return true
 		end
-	else 
+	else
 		return false
 	end
 end
