@@ -189,8 +189,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 end
             end
 
-            if debuff.judgment[units.dyn5] ~= nil then
-                if debuff.judgment[units.dyn5].exists or level < 3 then
+            if debuff.judgment["target"] ~= nil then
+                if debuff.judgment["target"].exists or level < 3 then
                     judgmentUp = true
                 else
                     judgmentUp = false 
@@ -198,6 +198,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             else
                 judgmentUp = false
             end
+            
+            
 
             autoUseCrusade = useCDs() and isChecked(LC_AVENGING_WRATH_CRUSADE)
     --------------------
