@@ -290,7 +290,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             end -- End Action List - Defensive
         -- Action List - Interrupts
             local function actionList_Interrupts()
-                if useInterrupts() then
+                if useInterrupts() and br.timer:useTimer("Interrupts",0.5) then
                     local interruptAt = getOptionValue(LC_INTERRUPTS_AT)
                     for i = 1, #enemies.yards10 do
                         local thisUnit = enemies.yards10[i]
@@ -314,7 +314,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                                 and race == "Tauren" 
                                 and not isBoss() 
                                 and getSpellCD(racial)==0 
-                                and not isMoving("player") and lastSpell ~= spell.rebuke then
+                                and not isMoving("player") then
                                 if castSpell("player",racial,false,false,false) then return true end
                             end
                         end
@@ -417,7 +417,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
         -- Justicar's Vengeance
             -- if=debuff.judgment.up&buff.divine_purpose.up&buff.divine_purpose.remains<gcd*2&!equipped.whisper_of_the_nathrezim
             -- if=debuff.judgment.up&holy_power>=5&buff.divine_purpose.react&!equipped.whisper_of_the_nathrezim
-                if talent.justicarsVengeance and talent.justicarsVengeance and judgmentUp and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd*2 and not hasEquiped(137020))
+                if talent.justicarsVengeance and judgmentUp and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd*2 and not hasEquiped(137020))
                     or (holyPower >=5 and buff.divinePurpose.exists and not hasEquiped(137020)))
                 then
                     if cast.justicarsVengeance() then return end
