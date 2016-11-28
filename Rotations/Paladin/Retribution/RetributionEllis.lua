@@ -50,6 +50,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 br.ui:createCheckbox(section, LC_AUTO_FACING, LC_AUTO_FACING_DESCRIPTION)
             -- Artifact
                 br.ui:createDropdown(section, LC_ARTIFACT, {LC_ARTIFACT_EVERY_TIME,LC_ARTIFACT_CD}, 1)
+            -- Greater Blessing
+                br.ui:createCheckbox(section, LC_GREATER_BLESSING, LC_GREATER_BLESSING_DESCRIPTION)
             br.ui:checkSectionState(section)
             -- ------------------------
             -- --- Pre-Pull BossMod ---
@@ -149,6 +151,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             local artifact                                                      = br.player.artifact
             local autoFacing                                                    = isChecked(LC_AUTO_FACING)
             local autoTarget                                                    = isChecked(LC_AUTO_TARGET)
+            local autoUseCrusade                                                = false
             local buff                                                          = br.player.buff
             local cast                                                          = br.player.cast
             local cd                                                            = br.player.cd
@@ -194,6 +197,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             else
                 judgmentUp = false
             end
+
+            autoUseCrusade = useCDs() and isChecked(LC_AVENGING_WRATH_CRUSADE)
     --------------------
     --- Action Lists ---
     --------------------
@@ -209,14 +214,14 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 then
                     if cast.handOfHindrance("target") then return true end
                 end
-
-                if solo and (not buff.greaterBlessingOfMight.exists or buff.greaterBlessingOfMight.remain < 60*10) then
+                local useGreaterBlessing = isChecked(LC_GREATER_BLESSING)
+                if useGreaterBlessing and solo and (not buff.greaterBlessingOfMight.exists or buff.greaterBlessingOfMight.remain < 60*10) then
                     if cast.greaterBlessingOfMight() then return true end
                 end
-                if solo and (not buff.greaterBlessingOfKings.exists or buff.greaterBlessingOfKings.remain < 60*10) then
+                if useGreaterBlessing and solo and (not buff.greaterBlessingOfKings.exists or buff.greaterBlessingOfKings.remain < 60*10) then
                     if cast.greaterBlessingOfKings() then return true end
                 end
-                if solo and (not buff.greaterBlessingOfWisdom.exists or buff.greaterBlessingOfWisdom.remain < 60*10) then
+                if useGreaterBlessing and solo and (not buff.greaterBlessingOfWisdom.exists or buff.greaterBlessingOfWisdom.remain < 60*10) then
                     if cast.greaterBlessingOfWisdom() then return true end
                 end
             end -- End Action List - Extras
@@ -301,7 +306,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                                 if cast.blindingLight() then return true end
                             end
             -- War Stomp
-                            if isChecked(LC_WAR_STOMP) and distance < 8 and race == "Tauren" and not isBoss() and getSpellCD(racial)==0 then
+                            if isChecked(LC_WAR_STOMP) and distance < 8 and race == "Tauren" and not isBoss() and getSpellCD(racial)==0 and not isMoving("player") then
                                 if castSpell("player",racial,false,false,false) then return true end
                             end
                         end
@@ -397,7 +402,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- if=debuff.judgment.up&spell_targets.divine_storm>=2&holy_power>=5&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
                 if judgmentUp and #enemies.yards8 >= 2 and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd*2)
                     or (holyPower >=5 and buff.divinePurpose.exists)
-                    or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3)))
+                    or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3 or not autoUseCrusade)))
                 then
                     if cast.divineStorm() then return end
                 end
@@ -415,7 +420,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- if=debuff.judgment.up&holy_power>=5&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
                 if judgmentUp and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd*2)
                     or (holyPower >= 5 and buff.divinePurpose.exists)
-                    or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3)))
+                    or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3 or not autoUseCrusade)))
                 then
                     if cast.templarsVerdict() then return end
                 end
@@ -423,7 +428,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- if=debuff.judgment.up&holy_power>=3&spell_targets.divine_storm>=2&(cooldown.wake_of_ashes.remains<gcd*2&artifact.wake_of_ashes.enabled|buff.whisper_of_the_nathrezim.up&buff.whisper_of_the_nathrezim.remains<gcd)&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*4)
                 if judgmentUp and holyPower>=3 and #enemies.yards8 >= 2 
                     and (cd.wakeOfAshes < gcd*2 and artifact.wakeOfAshes or buff.whisperOfTheNathrezim.exists and buff.whisperOfTheNathrezim.remain < gcd)
-                    and (not talent.crusade or cd.crusade > gcd * 4)
+                    and (not talent.crusade or cd.crusade > gcd * 4 or not autoUseCrusade)
                 then
                     if cast.divineStorm() then return end
                 end
@@ -436,7 +441,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- if=debuff.judgment.up&holy_power>=3&(cooldown.wake_of_ashes.remains<gcd*2&artifact.wake_of_ashes.enabled|buff.whisper_of_the_nathrezim.up&buff.whisper_of_the_nathrezim.remains<gcd)&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*4)
                 if judgmentUp and holyPower >=3 
                     and (cd.wakeOfAshes < gcd*2 and artifact.wakeOfAshes or buff.whisperOfTheNathrezim.exists and buff.whisperOfTheNathrezim.remain < gcd)
-                    and (not talent.crusade or cd.crusade > gcd *4)
+                    and (not talent.crusade or cd.crusade > gcd *4 or not autoUseCrusade)
                 then
                     if cast.templarsVerdict() then return end
                 end
@@ -489,7 +494,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                     (buff.divinePurpose.exists
                         or (buff.theFiresOfJustice.exists and (not talent.crusade or cd.crusade > gcd *3))
                         or ((holyPower >= 4 or ((talent.zeal and charges.frac.zeal <= 1.34 or charges.frac.crusaderStrike <= 1.34)
-                            and (talent.divineHammer and cd.divineHammer > gcd or cd.bladeOfJustice > gcd))) and (not talent.crusade or cd.crusade > gcd*4))) 
+                            and (talent.divineHammer and cd.divineHammer > gcd or cd.bladeOfJustice > gcd))) and (not talent.crusade or cd.crusade > gcd*4 or not autoUseCrusade))) 
                 then
                     if cast.divineStorm() then return end
                 end
@@ -504,9 +509,9 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- if=debuff.judgment.up&(holy_power>=4|((cooldown.zeal.charges_fractional<=1.34|cooldown.crusader_strike.charges_fractional<=1.34)&(cooldown.divine_hammer.remains>gcd|cooldown.blade_of_justice.remains>gcd)))&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*4)
                 if judgmentUp and
                     (buff.divinePurpose.exists
-                        or (buff.theFiresOfJustice.exists and (not talent.crusade or cd.crusade > gcd *3))
+                        or (buff.theFiresOfJustice.exists and (not talent.crusade or cd.crusade > gcd *3 or not autoUseCrusade))
                         or ((holyPower >= 4 or ((talent.zeal and charges.frac.zeal <= 1.34 or charges.frac.crusaderStrike <= 1.34)
-                            and (talent.divineHammer and cd.divineHammer > gcd or cd.bladeOfJustice > gcd))) and (not talent.crusade or cd.crusade > gcd*4))) 
+                            and (talent.divineHammer and cd.divineHammer > gcd or cd.bladeOfJustice > gcd))) and (not talent.crusade or cd.crusade > gcd*4 or not autoUseCrusade))) 
                 then
                     if cast.templarsVerdict() then return end
                 end
@@ -522,12 +527,12 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 end
         -- Divine Storm
             -- if=debuff.judgment.up&holy_power>=3&spell_targets.divine_storm>=2&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*5)
-                if judgmentUp and holyPower >=3 and #enemies.yards8 >= 2 and (not talent.crusade or cd.crusade > gcd * 5) then
+                if judgmentUp and holyPower >=3 and #enemies.yards8 >= 2 and (not talent.crusade or cd.crusade > gcd * 5 or not autoUseCrusade) then
                     if cast.divineStorm() then return end
                 end
         -- Templar's Verdict
             -- if=debuff.judgment.up&holy_power>=3&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*5)
-                if judgmentUp and holyPower >=3 and (not talent.crusade or cd.crusade > gcd * 5) then
+                if judgmentUp and holyPower >=3 and (not talent.crusade or cd.crusade > gcd * 5 or not autoUseCrusade) then
                     if cast.templarsVerdict() then return end
                 end
             end -- End Action List - Default
