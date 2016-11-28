@@ -97,6 +97,7 @@ function cShaman:new(spec)
         function self.getClassDynamicUnits()
             local dynamicTarget = dynamicTarget
 
+            self.units.dyn5 	= dynamicTarget(5, true)
             self.units.dyn8 	= dynamicTarget(8, true)
 			self.units.dyn8AoE 	= dynamicTarget(8, false)
 			self.units.dyn10 	= dynamicTarget(10, true)
