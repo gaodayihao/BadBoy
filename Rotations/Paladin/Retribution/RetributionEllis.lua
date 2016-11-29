@@ -202,6 +202,20 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             
 
             autoUseCrusade = useCDs() and isChecked(LC_AVENGING_WRATH_CRUSADE)
+    -----------------------
+    --- Custom Function ---
+    -----------------------
+            local function divineStormValid()
+                if #enemies.yards8 >=3 then return true end
+                if #enemies.yards8 < 2 then return false end
+                for i=1,#enemies.yards8 do
+                    local theUnit = enemies.yards8[i]
+                    if not debuff.judgment[theUnit].exists then
+                        return false
+                    end
+                end
+                return true
+            end
     --------------------
     --- Action Lists ---
     --------------------
@@ -408,7 +422,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- if=debuff.judgment.up&spell_targets.divine_storm>=2&buff.divine_purpose.up&buff.divine_purpose.remains<gcd*2
             -- if=debuff.judgment.up&spell_targets.divine_storm>=2&holy_power>=5&buff.divine_purpose.react
             -- if=debuff.judgment.up&spell_targets.divine_storm>=2&holy_power>=5&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
-                if judgmentUp and #enemies.yards8 >= 2 and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd*2)
+                if judgmentUp and divineStormValid() and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd*2)
                     or (holyPower >=5 and buff.divinePurpose.exists)
                     or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3 or not autoUseCrusade)))
                 then
@@ -434,7 +448,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 end
         -- Divine Storm
             -- if=debuff.judgment.up&holy_power>=3&spell_targets.divine_storm>=2&(cooldown.wake_of_ashes.remains<gcd*2&artifact.wake_of_ashes.enabled|buff.whisper_of_the_nathrezim.up&buff.whisper_of_the_nathrezim.remains<gcd)&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*4)
-                if judgmentUp and holyPower>=3 and #enemies.yards8 >= 2 
+                if judgmentUp and holyPower>=3 and divineStormValid() 
                     and (cd.wakeOfAshes < gcd*2 and artifact.wakeOfAshes or buff.whisperOfTheNathrezim.exists and buff.whisperOfTheNathrezim.remain < gcd)
                     and (not talent.crusade or cd.crusade > gcd * 4 or not autoUseCrusade)
                 then
@@ -498,7 +512,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- if=debuff.judgment.up&spell_targets.divine_storm>=2&buff.divine_purpose.react
             -- if=debuff.judgment.up&spell_targets.divine_storm>=2&buff.the_fires_of_justice.react&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
             -- if=debuff.judgment.up&spell_targets.divine_storm>=2&(holy_power>=4|((cooldown.zeal.charges_fractional<=1.34|cooldown.crusader_strike.charges_fractional<=1.34)&(cooldown.divine_hammer.remains>gcd|cooldown.blade_of_justice.remains>gcd)))&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*4)
-                if judgmentUp and #enemies.yards8 >= 2 and 
+                if judgmentUp and divineStormValid() and 
                     (buff.divinePurpose.exists
                         or (buff.theFiresOfJustice.exists and (not talent.crusade or cd.crusade > gcd *3))
                         or ((holyPower >= 4 or ((talent.zeal and charges.frac.zeal <= 1.34 or charges.frac.crusaderStrike <= 1.34)
@@ -535,7 +549,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 end
         -- Divine Storm
             -- if=debuff.judgment.up&holy_power>=3&spell_targets.divine_storm>=2&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*5)
-                if judgmentUp and holyPower >=3 and #enemies.yards8 >= 2 and (not talent.crusade or cd.crusade > gcd * 5 or not autoUseCrusade) then
+                if judgmentUp and holyPower >=3 and divineStormValid() and (not talent.crusade or cd.crusade > gcd * 5 or not autoUseCrusade) then
                     if cast.divineStorm() then return end
                 end
         -- Templar's Verdict
