@@ -53,7 +53,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- Greater Blessing
                 br.ui:createCheckbox(section, LC_GREATER_BLESSING, LC_GREATER_BLESSING_DESCRIPTION)
             -- Judgment ignore
-                br.ui:createSpinner(section, LC_JUDGMENT_IGNORE,  3,  1,  10,  1, LC_JUDGMENT_IGNORE_DESCRIPTION)
+                br.ui:createCheckbox(section, LC_JUDGMENT_IGNORE, LC_JUDGMENT_IGNORE_DESCRIPTION)
             br.ui:checkSectionState(section)
             -- ------------------------
             -- --- Pre-Pull BossMod ---
@@ -197,12 +197,11 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 if debuff.judgment["target"].exists or (#enemies.yards8 > 3 and cd.judgment > gcd * 2) or level < 3 then
                     judgmentUp = true
                 else
-                    judgmentUp = isChecked(LC_JUDGMENT_IGNORE) and cd.judgment > getOptionValue(LC_JUDGMENT_IGNORE) 
+                    judgmentUp = isChecked(LC_JUDGMENT_IGNORE) and cd.judgment > 12/(1+GetHaste()/100)-8
                 end
             else
-                judgmentUp = isChecked(LC_JUDGMENT_IGNORE) and cd.judgment > getOptionValue(LC_JUDGMENT_IGNORE)
+                judgmentUp = isChecked(LC_JUDGMENT_IGNORE) and cd.judgment > 12/(1+GetHaste()/100)-8
             end
-            
             autoUseCrusade = useCDs() and isChecked(LC_AVENGING_WRATH_CRUSADE)
     -----------------------
     --- Custom Function ---
