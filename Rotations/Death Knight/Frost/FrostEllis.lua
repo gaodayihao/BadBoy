@@ -52,17 +52,17 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             -- Pillar of Frost
                 br.ui:createCheckbox(section, LC_PILLAR_OF_FROST, LC_PILLAR_OF_FROST_DESCRIPTION)
             br.ui:checkSectionState(section)
-            ------------------------
-            --- Pre-Pull BossMod ---
-            ------------------------
-            section = br.ui:createSection(br.ui.window.profile, LC_PRE_PULL_BOSSMOD)
-            -- Pre-Pull Timer
-                br.ui:createSpinner(section, LC_PRE_PULL_TIMER,  3,  1,  10,  1,  LC_PRE_PULL_TIMER_DESCRIPTION)
-            -- Potion
-                br.ui:createDropdown(section, LC_POTION, {LC_OLD_WAR,LC_PROLONGED_POWER}, 1)
-            -- Flask
-                br.ui:createCheckbox(section,LC_FLASK)
-            br.ui:checkSectionState(section)
+            -- ------------------------
+            -- --- Pre-Pull BossMod ---
+            -- ------------------------
+            -- section = br.ui:createSection(br.ui.window.profile, LC_PRE_PULL_BOSSMOD)
+            -- -- Pre-Pull Timer
+            --     br.ui:createSpinner(section, LC_PRE_PULL_TIMER,  3,  1,  10,  1,  LC_PRE_PULL_TIMER_DESCRIPTION)
+            -- -- Potion
+            --     br.ui:createDropdown(section, LC_POTION, {LC_OLD_WAR,LC_PROLONGED_POWER}, 1)
+            -- -- Flask
+            --     br.ui:createCheckbox(section,LC_FLASK)
+            -- br.ui:checkSectionState(section)
             ------------------------
             --- COOLDOWN OPTIONS ---
             ------------------------
@@ -105,6 +105,10 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             section = br.ui:createSection(br.ui.window.profile, LC_INTERRUPTS)
             -- Mind Freeze
                 br.ui:createCheckbox(section, LC_MIND_FREEZE, LC_MIND_FREEZE_DESCRIPTION)
+            -- War Stomp
+                if br.player.race == "Tauren" then
+                    br.ui:createCheckbox(section,LC_WAR_STOMP)
+                end
             -- Interrupt Percentage
                 br.ui:createSpinnerWithout(section, LC_INTERRUPTS_AT,  0,  0,  95,  5,  LC_INTERRUPTS_AT_DESCRIPTION)
             br.ui:checkSectionState(section)
@@ -155,6 +159,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             local php                                           = br.player.health
             local power, powerDeficit                           = br.player.power, br.player.powerDeficit
             local pullTimer                                     = br.DBM:getPulltimer()
+            local race                                          = br.player.race
             local racial                                        = br.player.getRacial()
             local runes                                         = 0
             local spell                                         = br.player.spell
@@ -195,8 +200,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             end -- End Action List - Auto Target
         -- Action List - Extras
             function actionList_Extras()
-                if useInterrupts() then
-                end
+                
             end -- End Action List - Extras
         -- Action List - Defensive
             function actionList_Defensive()
@@ -212,13 +216,22 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             end -- End Action List - Defensive
         -- Action List - Interrupts
             function actionList_Interrupts()
-                if useInterrupts() then
+                if useInterrupts() and br.timer:useTimer("Interrupts",0.5) then
                     for i=1, #enemies.yards15 do
                         thisUnit = enemies.yards15[i]
                         if canInterrupt(thisUnit,getOptionValue(LC_INTERRUPTS_AT)) then
                         -- Mind Freeze
                             if isChecked(LC_MIND_FREEZE) then
                                 if cast.mindFreeze(thisUnit) then return end
+                            end
+                        -- War Stomp
+                            if isChecked(LC_WAR_STOMP) 
+                                and getDistance(thisUnit) < 8 
+                                and race == "Tauren" 
+                                and not isBoss() 
+                                and getSpellCD(racial)==0 
+                                and not isMoving("player") then
+                                if castSpell("player",racial,false,false,false) then return true end
                             end
                         end
                     end

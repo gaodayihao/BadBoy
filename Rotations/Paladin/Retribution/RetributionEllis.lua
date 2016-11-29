@@ -159,6 +159,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             local combatTime                                                    = getCombatTime()
             local debuff                                                        = br.player.debuff
             local enemies                                                       = br.player.enemies
+            local forceAOE                                                      = br.player.mode.rotation == 2
+            local forceSingle                                                   = br.player.mode.rotation == 3
             local gcd                                                           = br.player.gcdMax
             local hastar                                                        = ObjectExists("target")
             local healPot                                                       = getHealthPot()
@@ -206,6 +208,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
     --- Custom Function ---
     -----------------------
             local function divineStormValid()
+                if forceAOE then return true end
+                if forceSingle then return false end
                 if #enemies.yards8 >=3 then return true end
                 if #enemies.yards8 < 2 then return false end
                 for i=1,#enemies.yards8 do
@@ -266,10 +270,10 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                         end
                     end
             -- Blinding Light
-                    if isChecked(LC_BLINDING_LIGHT_HP) and php <= getOptionValue(LC_BLINDING_LIGHT_HP) and inCombat and #enemies.yards10 > 0 then
+                    if talent.blindingLight and isChecked(LC_BLINDING_LIGHT_HP) and php <= getOptionValue(LC_BLINDING_LIGHT_HP) and inCombat and #enemies.yards10 > 0 then
                         if cast.blindingLight() then return end
                     end
-                    if isChecked(LC_BLINDING_LIGHT_AOE) and #enemies.yards10 >= getOptionValue(LC_BLINDING_LIGHT_AOE) and inCombat then
+                    if talent.blindingLight and isChecked(LC_BLINDING_LIGHT_AOE) and #enemies.yards10 >= getOptionValue(LC_BLINDING_LIGHT_AOE) and inCombat then
                         if cast.blindingLight() then return end
                     end
             -- Divine Shield
@@ -319,7 +323,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                                 if cast.hammerOfJustice(thisUnit) then return true end
                             end
             -- Blinding Light
-                            if isChecked(LC_BLINDING_LIGHT) and distance < 10 and not isBoss() then
+                            if talent.blindingLight and isChecked(LC_BLINDING_LIGHT) and distance < 10 and not isBoss() then
                                 if cast.blindingLight() then return true end
                             end
             -- War Stomp
