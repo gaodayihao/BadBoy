@@ -94,7 +94,7 @@ Raidable means if its good to raid with.
 ||||
 | **Hunter** |||
 |Beastmaster|0%|Cpoworks|7.1|:interrobang::x:
-|Marksmanship|20% (SimC/AMR)|Cpoworks|7.1|:interrobang::x:
+|Marksmanship|70% (SimC/AMR)|Cpoworks|7.1|:heavy_check_mark:
 |Survival|0%|Cpoworks|7.1|:interrobang::x:
 ||||
 | **Mage** |||
@@ -114,9 +114,9 @@ Raidable means if its good to raid with.
 |Retribution|100%|Ellis|7.1|:white_check_mark:
 ||||
 | **Priest** |||
-|Discipline|0%|Cpoworks|7.0|:interrobang::x:
+|Discipline|70%|Cpoworks/Svs|7.1|:heavy_check_mark:
 |Holy|0%|||
-|Shadow|70%|Cpoworks|7.0|:heavy_check_mark:
+|Shadow|70%|Cpoworks/Svs|7.1|:heavy_check_mark:
 |Shadow|100%(SimC)|Ellis|7.1|:white_check_mark:
 ||||
 | **Rogue** |||
