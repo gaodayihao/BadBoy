@@ -72,13 +72,19 @@ LC_DARK_SUCCOR_DESCRIPTION = "Dark Succor";
 LC_DEATH_STRIKE = "Death Strike";
 LC_DEATH_STRIKE_DESCRIPTION = "Death Strike";
 LC_ICEBOUND_FORTITUDE = "Icebound Fortitude"; 
-LC_ICEBOUND_FORTITUDE_DESCRIPTION = "Icebound Fortitude";
+LC_ICEBOUND_FORTITUDE_DESCRIPTION = "|cffFFFFFFHealth Percent to Cast At";
 LC_MIND_FREEZE = "Mind Freeze";
 LC_MIND_FREEZE_DESCRIPTION = "Mind Freeze";
 
 --Frost DeathKnight
+LC_BLINDING_SLEET = "Blinding Sleet"
+LC_BLINDING_SLEET_DESCRIPTION = "Blinding Sleet"
+LC_BLINDING_SLEET_HP = "Blinding Sleet - HP"
+LC_BLINDING_SLEET_HP_DESCRIPTION = "|cffFFFFFFHealth Percent to Cast At"
 LC_BREATH_OF_SINDRAGOSA = "Breath of Sindragosa"
 LC_BREATH_OF_SINDRAGOSA_DESCRIPTION = "Automatic use Breath of Sindragosa"
+LC_CHAINS_OF_ICE = "Chains of Ice";
+LC_CHAINS_OF_ICE_DESCRIPTION = "Automatic use Chains of Ice";
 LC_HORN_OF_WINTER = "Horn of Winter";
 LC_HORN_OF_WINTER_DESCRIPTION = "Automatic use Horn of Winter";
 LC_OBLITERATION = "Obliteration";

@@ -51,6 +51,8 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 br.ui:createCheckbox(section, LC_AUTO_FACING, LC_AUTO_FACING_DESCRIPTION)
             -- Pillar of Frost
                 br.ui:createCheckbox(section, LC_PILLAR_OF_FROST, LC_PILLAR_OF_FROST_DESCRIPTION)
+            -- Chains of Ice
+                br.ui:createCheckbox(section, LC_CHAINS_OF_ICE, LC_CHAINS_OF_ICE_DESCRIPTION)
             br.ui:checkSectionState(section)
             -- ------------------------
             -- --- Pre-Pull BossMod ---
@@ -93,11 +95,13 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             -------------------------
             section = br.ui:createSection(br.ui.window.profile, LC_DEFENSIVE)
             -- Dark Succor
-                br.ui:createSpinner(section, LC_DARK_SUCCOR,  85,  60,  90,  5,  LC_DARK_SUCCOR_DESCRIPTION)
+                br.ui:createSpinner(section, LC_DARK_SUCCOR,  85,  10,  100,  5,  LC_DARK_SUCCOR_DESCRIPTION)
             -- Death Strike
-                br.ui:createSpinner(section, LC_DEATH_STRIKE,  50,  30,  90,  5,  LC_DEATH_STRIKE_DESCRIPTION)
+                br.ui:createSpinner(section, LC_DEATH_STRIKE,  50, 10,  100,  5,  LC_DEATH_STRIKE_DESCRIPTION)
             -- Icebound Fortitude
-                br.ui:createSpinner(section, LC_ICEBOUND_FORTITUDE,  40,  20,  90,  5,  LC_ICEBOUND_FORTITUDE_DESCRIPTION)
+                br.ui:createSpinner(section, LC_ICEBOUND_FORTITUDE,  40,  10,  100,  5,  LC_ICEBOUND_FORTITUDE_DESCRIPTION)
+            -- Blinding Sleet
+                br.ui:createSpinner(section, LC_BLINDING_SLEET_HP,  60,  10,  100,  5,  LC_BLINDING_SLEET_HP_DESCRIPTION)
             br.ui:checkSectionState(section)
             -------------------------
             --- INTERRUPT OPTIONS ---
@@ -105,6 +109,8 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             section = br.ui:createSection(br.ui.window.profile, LC_INTERRUPTS)
             -- Mind Freeze
                 br.ui:createCheckbox(section, LC_MIND_FREEZE, LC_MIND_FREEZE_DESCRIPTION)
+            -- Blinding Sleet
+                br.ui:createCheckbox(section, LC_BLINDING_SLEET,  LC_BLINDING_SLEET_DESCRIPTION)
             -- War Stomp
                 if br.player.race == "Tauren" then
                     br.ui:createCheckbox(section,LC_WAR_STOMP)
@@ -200,19 +206,36 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
             end -- End Action List - Auto Target
         -- Action List - Extras
             function actionList_Extras()
-                
+                if inCombat 
+                    and isMoving("target") 
+                    and not getFacing("target","player") 
+                    and getDistance("target") > 8 
+                    and getDistance("target") < 30
+                    and isValidUnit("target") 
+                    and isChecked(LC_CHAINS_OF_ICE)
+                then
+                    if cast.chainsOfIce("target") then return true end
+                end
             end -- End Action List - Extras
         -- Action List - Defensive
             function actionList_Defensive()
-              if buff.darkSuccor.exists and isChecked(LC_DARK_SUCCOR) and php < getOptionValue(LC_DARK_SUCCOR) then
-                  if cast.deathStrike() then return true end
-              end
-              if isChecked(LC_DEATH_STRIKE) and php < getOptionValue(LC_DEATH_STRIKE) then
-                  if cast.deathStrike() then return true end
-              end
-              if isChecked(LC_ICEBOUND_FORTITUDE) and php < getOptionValue(LC_ICEBOUND_FORTITUDE) then
-                  if cast.iceboundFortitude() then return true end
-              end
+                if buff.darkSuccor.exists and isChecked(LC_DARK_SUCCOR) and php < getOptionValue(LC_DARK_SUCCOR) then
+                    if cast.deathStrike() then return true end
+                end
+                if isChecked(LC_DEATH_STRIKE) and php < getOptionValue(LC_DEATH_STRIKE) then
+                    if cast.deathStrike() then return true end
+                end
+                if isChecked(LC_ICEBOUND_FORTITUDE) and php < getOptionValue(LC_ICEBOUND_FORTITUDE) then
+                    if cast.iceboundFortitude() then return true end
+                end
+                if talent.blindingSleet 
+                    and inCombat 
+                    and isChecked(LC_BLINDING_SLEET_HP) 
+                    and php < getOptionValue(LC_BLINDING_SLEET_HP) 
+                    and #getFacingUnits("player",enemies.yards8,60) > 1 
+                then
+                    if cast.blindingSleet() then return true end
+                end
             end -- End Action List - Defensive
         -- Action List - Interrupts
             function actionList_Interrupts()
@@ -222,7 +245,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                         if canInterrupt(thisUnit,getOptionValue(LC_INTERRUPTS_AT)) then
                         -- Mind Freeze
                             if isChecked(LC_MIND_FREEZE) then
-                                if cast.mindFreeze(thisUnit) then return end
+                                if cast.mindFreeze(thisUnit) then return true end
                             end
                         -- War Stomp
                             if isChecked(LC_WAR_STOMP) 
@@ -233,6 +256,14 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                                 and not isMoving("player") then
                                 if castSpell("player",racial,false,false,false) then return true end
                             end
+                        -- Blinding Sleet
+                            if talent.blindingSleet 
+                                and isChecked(LC_BLINDING_SLEET) 
+                                and getFacing("player",thisUnit,60) 
+                                and getDistance(thisUnit) < 12 
+                            then
+                                if cast.blindingSleet(thisUnit) then return true end
+                            end
                         end
                     end
                 end
@@ -242,17 +273,17 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                 if useCDs() then
             -- Arcane Torrent
                 -- arcane_torrent,if=runic_power.deficit>20
-                    if br.player.race == "BloodElf" and isChecked(LC_ARCANE_TORRENT) and getSpellCD(racial)==0 and powerDeficit > 20 then
+                    if race == "BloodElf" and isChecked(LC_ARCANE_TORRENT) and getSpellCD(racial)==0 and powerDeficit > 20 then
                         if castSpell("player",racial,false,false,false) then return true end
                     end
             -- Blood Fury
                 -- blood_fury,if=!talent.breath_of_sindragosa.enabled|dot.breath_of_sindragosa.ticking
-                    if br.player.race == "Orc" and isChecked(LC_BLOOD_FURY) and getSpellCD(racial)==0 and (not talent.breathOfSindragosa or buff.breathOfSindragosa.exists) then
+                    if race == "Orc" and isChecked(LC_BLOOD_FURY) and getSpellCD(racial)==0 and (not talent.breathOfSindragosa or buff.breathOfSindragosa.exists) then
                         if castSpell("player",racial,false,false,false) then return true end
                     end
             -- Berserking
                 -- berserking,if=buff.pillar_of_frost.up
-                    if br.player.race == "Troll" and isChecked(LC_BERSERKING) and getSpellCD(racial)==0 and buff.pillarOfFrost.exists then
+                    if race == "Troll" and isChecked(LC_BERSERKING) and getSpellCD(racial)==0 and buff.pillarOfFrost.exists then
                         if castSpell("player",racial,false,false,false) then return true end
                     end
             -- Obliteration

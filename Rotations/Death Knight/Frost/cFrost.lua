@@ -19,7 +19,9 @@ function cFrost:new()
 
         self.spell.spec                 = {}
         self.spell.spec.abilities       = {
+            blindingSleet               = 207167,
             breathOfSindragosa          = 152279,
+            chainsOfIce                 = 45524,
             empowerRuneWeapon           = 47568,
             frostscythe                 = 207230,
             frostStrike                 = 49143,
@@ -44,6 +46,7 @@ function cFrost:new()
             rime                        = 59052,
         }
         self.spell.spec.debuffs         = {
+            chainsOfIce                 = 45524,
             frostFever                  = 55095,
             razorice                    = 51714,
         }
@@ -51,27 +54,27 @@ function cFrost:new()
 
         }
         self.spell.spec.talents         = {
-            shatteringStrikes           = 207057,
+            abominationsMight           = 207161,
+            avalanche                   = 207142,
+            blindingSleet               = 207167,
+            breathOfSindragosa          = 152279,
+            freezingFog                 = 207060,
+            frostscythe                 = 207230,
+            frozenPulse                 = 194909,
+            gatheringStorm              = 194912,
+            glacialAdvance              = 194913,
+            hornOfWinter                = 57330,
+            hungeringRuneWeapon         = 207127,
+            icecap                      = 207126,
             icyTalons                   = 194878,
             murderousEfficiency         = 207061,
-            freezingFog                 = 207060,
-            frozenPulse                 = 194909,
-            hornOfWinter                = 57330,
-            icecap                      = 207126,
-            hungeringRuneWeapon         = 207127,
-            avalanche                   = 207142,
-            abominationsMight           = 207161,
-            blindingSleet               = 207167,
-            winterIsComing              = 207170,
-            volatileShielding           = 207188,
-            permafrost                  = 207200,
-            whiteWalker                 = 212765,
-            frostscythe                 = 207230,
-            runicAttenuation            = 207104,
-            gatheringStorm              = 194912,
             obliteration                = 207256,
-            breathOfSindragosa          = 152279,
-            glacialAdvance              = 194913,
+            permafrost                  = 207200,
+            runicAttenuation            = 207104,
+            shatteringStrikes           = 207057,
+            volatileShielding           = 207188,
+            whiteWalker                 = 212765,
+            winterIsComing              = 207170,
         }
         -- Merge all spell ability tables into self.spell
         self.spell = mergeSpellTables(self.spell, self.characterSpell, self.spell.class.abilities, self.spell.spec.abilities)
