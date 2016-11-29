@@ -52,6 +52,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 br.ui:createDropdown(section, LC_ARTIFACT, {LC_ARTIFACT_EVERY_TIME,LC_ARTIFACT_CD}, 1)
             -- Greater Blessing
                 br.ui:createCheckbox(section, LC_GREATER_BLESSING, LC_GREATER_BLESSING_DESCRIPTION)
+            -- Judgment ignore
+                br.ui:createSpinner(section, LC_JUDGMENT_IGNORE,  5,  1,  10,  1, LC_JUDGMENT_IGNORE_DESCRIPTION)
             br.ui:checkSectionState(section)
             -- ------------------------
             -- --- Pre-Pull BossMod ---
@@ -192,6 +194,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             end
 
             if debuff.judgment["target"] ~= nil then
+                if isChecked(LC_JUDGMENT_IGNORE) and cd.judgment > getOptionValue(LC_JUDGMENT_IGNORE) then judgmentUp = true end
                 if debuff.judgment["target"].exists or (#enemies.yards8 > 3 and cd.judgment > gcd * 2) or level < 3 then
                     judgmentUp = true
                 else
