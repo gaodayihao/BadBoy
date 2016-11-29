@@ -194,7 +194,6 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             end
 
             if debuff.judgment["target"] ~= nil then
-                if isChecked(LC_JUDGMENT_IGNORE) and cd.judgment > getOptionValue(LC_JUDGMENT_IGNORE) then judgmentUp = true end
                 if debuff.judgment["target"].exists or (#enemies.yards8 > 3 and cd.judgment > gcd * 2) or level < 3 then
                     judgmentUp = true
                 else
@@ -203,6 +202,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             else
                 judgmentUp = false
             end
+            
+            if isChecked(LC_JUDGMENT_IGNORE) and cd.judgment > getOptionValue(LC_JUDGMENT_IGNORE) then judgmentUp = true end
             
             
 
