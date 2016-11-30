@@ -154,8 +154,8 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local falling, swimming, flying, moving             = getFallTime(), IsSwimming(), IsFlying(), GetUnitSpeed("player")>0
             local flaskBuff                                     = getBuffRemain("player",br.player.flask.wod.buff.intellectBig)
             local friendly                                      = friendly or UnitIsFriend("target", "player")
-            local gcd                                           = br.player.gcd
-            local gcdMax                                        = br.player.gcdMax
+            local gcd                                           = br.player.gcdMax
+            local gcdMax                                        = 1.5
             local inCombat                                      = br.player.inCombat
             local inInstance                                    = br.player.instance=="party"
             local inRaid                                        = br.player.instance=="raid"
