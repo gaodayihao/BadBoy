@@ -427,7 +427,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- if=debuff.judgment.up&spell_targets.divine_storm>=2&holy_power>=5&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
                 if judgmentUp and divineStormValid() and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd*2)
                     or (holyPower >=5 and buff.divinePurpose.exists)
-                    or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3 or not autoUseCrusade)))
+                    or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3 or not autoUseCrusade))
+                    or (holyPower >=3 and talent.crusade and buff.crusade.exists and buff.crusade.remain < gcd))
                 then
                     if cast.divineStorm() then return end
                 end
@@ -445,7 +446,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- if=debuff.judgment.up&holy_power>=5&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)
                 if judgmentUp and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd*2)
                     or (holyPower >= 5 and buff.divinePurpose.exists)
-                    or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3 or not autoUseCrusade)))
+                    or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3 or not autoUseCrusade))
+                    or (holyPower >=3 and talent.crusade and buff.crusade.exists and buff.crusade.remain < gcd))
                 then
                     if cast.templarsVerdict() then return end
                 end
