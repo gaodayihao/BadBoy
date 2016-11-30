@@ -332,11 +332,24 @@ function br.pulse:dispDist()
 end
 function br.pulse:makeEnTable()
     if br.pulse.makeTable then
-        makeEnemiesTable(maxDistance)
+        makeEnemiesTable(40)
     end
 end
 function br.pulse:ttd()
     TTDRefresh()
+end
+function br.pulse:queue()
+	-- Queue Casting
+	if isChecked("Queue Casting") and not UnitChannelInfo("player") then
+		if br.player ~= nil then
+			if br.player.queue ~= nil then
+				if #br.player.queue > 0 and br.player.queue[1].id ~= lastSpellCast then
+				    castQueue();
+				    return
+				end
+			end
+		end
+	end
 end
 --[[Updating UI]]
 function br:PulseUI()
@@ -361,6 +374,8 @@ function br:PulseUI()
     br.pulse:makeEnTable()
 	-- ttd
     br.pulse:ttd()
+    -- queue
+    br.pulse:queue()
 	-- allies
     if isChecked("HE Active") then
 	    br.friend:Update()
@@ -369,16 +384,6 @@ function br:PulseUI()
 	-- PokeEngine()
 	ProfessionHelper()
 	SalvageHelper()
-	-- Queue Casting
-	if isChecked("Queue Casting") and not UnitChannelInfo("player") then
-		if br.player ~= nil then
-			if br.player.queue ~= nil then
-				if #br.player.queue > 0 and br.player.queue[1].id ~= lastSpellCast then
-				    castQueue();
-				    return
-				end
-			end
-		end
-	end
+	
 end
 
