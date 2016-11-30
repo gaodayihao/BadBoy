@@ -7,8 +7,8 @@ function cFileBuild(cFileName,self)
     if self.cast.debug      == nil then self.cast.debug         = {} end                                      -- Cast Spell Debugging
     if self.charges.frac    == nil then self.charges.frac       = {} end                                      -- Charges Fractional
     if self.charges.max     == nil then self.charges.max        = {} end                                      -- Charges Maximum
-    if self.detect          == nil then self.detect             = {} end                                      -- Detect
-    if self.detect.rage     == nil then self.detect.rage        = {["y8"]=8,["y20"]=20} end        -- Detect Rage
+    -- if self.detect          == nil then self.detect             = {} end                                      -- Detect
+    -- if self.detect.rage     == nil then self.detect.rage        = {["y8"]=8,["y20"]=20} end        -- Detect Rage
 
     -- Update Power
     self.mana           = UnitPower("player", 0)
@@ -33,6 +33,20 @@ function cFileBuild(cFileName,self)
     self.powerRegen     = getRegen("player")
     self.timeToMax      = getTimeToMax("player")
 
+    -- Build Best Unit per Range
+    for i = 40, 5, -1 do
+        self.units["dyn"..tostring(i)]                  = dynamicTarget(i, true)
+        self.units["dyn"..tostring(i).."AoE"]           = dynamicTarget(i, false)
+        if i == 40 then
+            self.enemies["yards"..tostring(i)]              = getEnemies("player",i)
+            self.enemies["yards"..tostring(i).."t"]         = getEnemies(self.units["dyn"..tostring(i)],i)
+        elseif i < 40 then
+            local theseUnits = self.enemies["yards"..tostring(i + 1)]
+            self.enemies["yards"..tostring(i)]      = getTableEnemies("player",i,theseUnits)
+            self.enemies["yards"..tostring(i).."t"] = getTableEnemies(self.units["dyn"..tostring(i)],i,theseUnits)
+        end
+    end
+
     -- Select class/spec Spell List
     if cFileName == "class" then
         ctype = self.spell.class
@@ -41,33 +55,33 @@ function cFileBuild(cFileName,self)
         ctype = self.spell.spec
     end
 
-    -- Build Unit/Enemies Tables per Spell Range
-    for k,v in pairs(ctype.abilities) do
-        local spellCast = v
-        local spellName = GetSpellInfo(v)
-        local minRange = select(5,GetSpellInfo(spellName))
-        local maxRange = select(6,GetSpellInfo(spellName))
-        if maxRange == nil or maxRange <= 0 then
-            maxRange = 5
-        end
-        if not self.detect.rage["y"..tostring(maxRange)] then
-            self.detect.rage["y"..tostring(maxRange)] = maxRange
-        end
-    end
-    -- Unit/Enemies Table Common Checks Independant of Spells
-    self.units.dyn40 = dynamicTarget(40,  true)
-    self.units.dyn40AoE = dynamicTarget(40,  false)
-    self.enemies.yards40 = getEnemies("player",40)
-    self.enemies.yards40t  = getEnemies(self.units.dyn40,40)
-    local theseUnits = self.enemies.yards40
-    for k,v in pairs(self.detect.rage) do
-        if v ~= 40 then
-            self.units["dyn"..tostring(v)]           = dynamicTarget(v,  true)
-            self.units["dyn"..tostring(v).."AoE"]    = dynamicTarget(v,  false)
-            self.enemies["yards"..tostring(v)]       = getTableEnemies("player",v,theseUnits)
-            self.enemies["yards"..tostring(v).."t"]  = getTableEnemies(self.units["dyn"..tostring(v)],v,theseUnits)
-        end
-    end
+    -- -- Build Unit/Enemies Tables per Spell Range
+    -- for k,v in pairs(ctype.abilities) do
+    --     local spellCast = v
+    --     local spellName = GetSpellInfo(v)
+    --     local minRange = select(5,GetSpellInfo(spellName))
+    --     local maxRange = select(6,GetSpellInfo(spellName))
+    --     if maxRange == nil or maxRange <= 0 then
+    --         maxRange = 5
+    --     end
+    --     if not self.detect.rage["y"..tostring(maxRange)] then
+    --         self.detect.rage["y"..tostring(maxRange)] = maxRange
+    --     end
+    -- end
+    -- -- Unit/Enemies Table Common Checks Independant of Spells
+    -- self.units.dyn40 = dynamicTarget(40,  true)
+    -- self.units.dyn40AoE = dynamicTarget(40,  false)
+    -- self.enemies.yards40 = getEnemies("player",40)
+    -- self.enemies.yards40t  = getEnemies(self.units.dyn40,40)
+    -- local theseUnits = self.enemies.yards40
+    -- for k,v in pairs(self.detect.rage) do
+    --     if v ~= 40 then
+    --         self.units["dyn"..tostring(v)]           = dynamicTarget(v,  true)
+    --         self.units["dyn"..tostring(v).."AoE"]    = dynamicTarget(v,  false)
+    --         self.enemies["yards"..tostring(v)]       = getTableEnemies("player",v,theseUnits)
+    --         self.enemies["yards"..tostring(v).."t"]  = getTableEnemies(self.units["dyn"..tostring(v)],v,theseUnits)
+    --     end
+    -- end
 
     if not UnitAffectingCombat("player") then
         -- Build Artifact Info
