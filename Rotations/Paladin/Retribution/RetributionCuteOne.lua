@@ -50,8 +50,10 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 br.ui:createSpinner(section, "DPS Testing",  5,  5,  60,  5,  "|cffFFFFFFSet to desired time for test in minuts. Min: 5 / Max: 60 / Interval: 5")               
                 -- Greater Blessing of Might
                 br.ui:createCheckbox(section, "Greater Blessing of Might")
+                -- Hand of Freedom
+                br.ui:createCheckbox(section, "Hand of Freedom")
                 -- Hand of Hindrance
-	            br.ui:createCheckbox(section, "Hand of Hindrance")
+                br.ui:createCheckbox(section, "Hand of Hindrance")
                 -- Artifact 
                 br.ui:createDropdownWithout(section,"Artifact", {"|cff00FF00Everything","|cffFFFF00Cooldowns","|cffFF0000Never"}, 1, "|cffFFFFFFWhen to use Artifact Ability.")
             br.ui:checkSectionState(section)
@@ -61,6 +63,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             section = br.ui:createSection(br.ui.window.profile,  "Cooldowns")
                 -- Racial
                 br.ui:createCheckbox(section,"Racial")
+                -- Trinkets
+                br.ui:createCheckbox(section,"Trinkets")
                 -- Holy Wrath
                 br.ui:createCheckbox(section,"Holy Wrath")
                 -- Avenging Wrath
@@ -211,15 +215,19 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 end
             end
 
-	--------------------
-	--- Action Lists ---
-	--------------------
-		-- Action List - Extras
-			local function actionList_Extras()
-			-- Hand of Hindrance
-				if isMoving("target") and not getFacing("target","player") and getDistance("target") > 8 then
-					if cast.handOfHindrance("target") then return end
-				end
+    --------------------
+    --- Action Lists ---
+    --------------------
+        -- Action List - Extras
+            local function actionList_Extras()
+            -- Hand of Freedom
+                if isChecked("Hand of Freedom") and hasNoControl() then
+                    if cast.handOfFreedom() then return end
+                end
+            -- Hand of Hinderance
+                if isMoving("target") and not getFacing("target","player") and getDistance("target") > 8 then
+                    if cast.handOfHindrance("target") then return end
+                end
             -- Greater Blessing of Might
                 if isChecked("Greater Blessing of Might") and greaterBuff < 3 then
                     for i = 1, #br.friend do
@@ -259,7 +267,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- Blessing of Protection
                     if isChecked("Blessing of Protection") then
                         for i = 1, #br.friend do
-                            local thisUnit = br.friend[i]
+                            local thisUnit = br.friend[i].unit
                             if getHP(thisUnit) < getOptionValue("Blessing of Protection") and inCombat then
                                 if cast.blessingOfProtection(thisUnit) then return end
                             end
@@ -309,7 +317,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             -- Lay On Hands
                     if isChecked("Lay On Hands") then
                         for i = 1, #br.friend do
-                            local thisUnit = br.friend[i]
+                            local thisUnit = br.friend[i].unit
                             if getHP(thisUnit) < getOptionValue("Lay On Hands") and inCombat then
                                 if cast.layOnHands(thisUnit) then return end
                             end
@@ -352,6 +360,15 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
         -- Action List - Cooldowns
             local function actionList_Cooldowns()
                 if useCDs() or burst then
+                -- Trinkets
+                    if isChecked("Trinkets") and getDistance(units.dyn5) < 5 then
+                        if canUse(13) then
+                            useItem(13)
+                        end
+                        if canUse(14) then
+                            useItem(14)
+                        end
+                    end
                     if getOptionValue("APL Mode") == 1 then
 
                     end
