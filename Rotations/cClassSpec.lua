@@ -33,17 +33,19 @@ function cFileBuild(cFileName,self)
     self.powerRegen     = getRegen("player")
     self.timeToMax      = getTimeToMax("player")
 
-    -- Build Best Unit per Range
-    for i = 40, 5, -1 do
-        self.units["dyn"..tostring(i)]                  = dynamicTarget(i, true)
-        self.units["dyn"..tostring(i).."AoE"]           = dynamicTarget(i, false)
-        if i == 40 then
-            self.enemies["yards"..tostring(i)]              = getEnemies("player",i)
-            self.enemies["yards"..tostring(i).."t"]         = getEnemies(self.units["dyn"..tostring(i)],i)
-        elseif i < 40 then
-            local theseUnits = self.enemies["yards"..tostring(i + 1)]
-            self.enemies["yards"..tostring(i)]      = getTableEnemies("player",i,theseUnits)
-            self.enemies["yards"..tostring(i).."t"] = getTableEnemies(self.units["dyn"..tostring(i)],i,theseUnits)
+    if cFileName == "class" then
+        -- Build Best Unit per Range
+        for i = 40, 5, -1 do
+            self.units["dyn"..tostring(i)]                  = dynamicTarget(i, true)
+            self.units["dyn"..tostring(i).."AoE"]           = dynamicTarget(i, false)
+            if i == 40 then
+                self.enemies["yards"..tostring(i)]              = getEnemies("player",i)
+                self.enemies["yards"..tostring(i).."t"]         = getEnemies(self.units["dyn"..tostring(i)],i)
+            elseif i < 40 then
+                local theseUnits = self.enemies["yards"..tostring(i + 1)]
+                self.enemies["yards"..tostring(i)]      = getTableEnemies("player",i,theseUnits)
+                self.enemies["yards"..tostring(i).."t"] = getTableEnemies(self.units["dyn"..tostring(i)],i,theseUnits)
+            end
         end
     end
 
