@@ -81,7 +81,7 @@ function cFileBuild(cFileName,self)
         end
     end
     -- Unit/Enemies Table Common Checks Independant of Spells
-    if cFileName == "spec" then
+    if cFileName == "class" then
         self.units.dyn40 = dynamicTarget(40,  true)
         self.units.dyn40AoE = dynamicTarget(40,  false)
         self.enemies.yards40 = getEnemies("player",40)
