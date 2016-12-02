@@ -124,7 +124,6 @@ if select(2, UnitClass("player")) == "WARLOCK" then
             local flaskBuff                                     = getBuffRemain("player",br.player.flask.wod.buff.agilityBig)
             local friendly                                      = friendly or UnitIsFriend("target", "player")
             local gcd                                           = br.player.gcd
-            local grimoirePet                                   = getOptionValue("Grimoire of Service")
             local hasteAmount                                   = GetHaste()/100
             local healPot                                       = getHealthPot()
             local inCombat                                      = br.player.inCombat

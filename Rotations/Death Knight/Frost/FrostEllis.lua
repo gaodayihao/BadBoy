@@ -232,7 +232,7 @@ if select(2, UnitClass("player")) == "DEATHKNIGHT" then
                     and inCombat 
                     and isChecked(LC_BLINDING_SLEET_HP) 
                     and php < getOptionValue(LC_BLINDING_SLEET_HP) 
-                    and #getFacingUnits("player",enemies.yards8,60) > 1 
+                    and #getFacingUnits("player",enemies.yards12,60) > 1 
                 then
                     if cast.blindingSleet() then return true end
                 end
