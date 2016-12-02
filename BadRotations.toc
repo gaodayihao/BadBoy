@@ -255,6 +255,7 @@ Rotations\Warlock\Affliction\AfflictionCuteOne.lua
 Rotations\Warlock\Demonology\cDemonology.lua
 Rotations\Warlock\Demonology\Demonology.lua
 Rotations\Warlock\Demonology\DemonologyCuteOne.lua
+Rotations\Warlock\Demonology\DemonologyEllis.lua
 
 Rotations\Warlock\Destruction\cDestruction.lua
 Rotations\Warlock\Destruction\Destruction.lua

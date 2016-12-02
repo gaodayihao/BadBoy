@@ -133,6 +133,7 @@ Raidable means if its good to raid with.
 | **Warlock** |||
 |Affliction|90%|CuteOne|7.1|:interrobang:
 |Demonology|100%|CuteOne|7.1|:interrobang:
+|Demonology|90%|Ellis|7.1|:interrobang:
 |Destruction|100%|CuteOne|7.1|:interrobang:
 ||||
 | **Warrior** |||

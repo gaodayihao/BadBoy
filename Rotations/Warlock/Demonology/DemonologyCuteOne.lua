@@ -717,7 +717,7 @@ if select(2, UnitClass("player")) == "WARLOCK" then
                         end
             -- Felstorm
                         -- felguard:felstorm
-                        if felguard and petInfo[1].numEnemies > 0 then
+                        if br.player.petPool.useFelstorm then
                             if cast.commandDemon() then return end
                         end
             -- Doom
