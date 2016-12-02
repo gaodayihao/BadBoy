@@ -1719,8 +1719,10 @@ function round2(num,idp)
 	return math.floor(num * mult + 0.5) / mult
 end
 -- if getTalent(8) == true then
-function getTalent(Row,Column)
-	return select(4,GetTalentInfo(Row,Column,GetActiveSpecGroup())) or false
+function getTalent(Row,Column,specGroup)
+	if specGroup == nil then specGroup = GetActiveSpecGroup() end
+	local _,_,_,selected = GetTalentInfo(Row,Column,specGroup)
+	return selected or false
 end
 -- if getTimeToDie("target") >= 6 then
 function getTimeToDie(unit)
@@ -2562,7 +2564,7 @@ function isValidUnit(Unit)
 		not UnitIsDeadOrGhost(Unit) and 
 		UnitCanAttack("player",Unit) 
 	then
-		local inAggroRange = getDistance(Unit) < 20
+		local inAggroRange = getDistance(Unit) < 40
 		if (threat or isDummy(Unit) or (not threat and (UnitIsUnit(Unit,"target") or inAggroRange))) then
 			local combat = UnitAffectingCombat("player")
 			local canAttackPlayer = UnitCanAttack(Unit,"player")
