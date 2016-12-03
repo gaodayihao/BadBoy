@@ -41,6 +41,8 @@ LC_PRE_PULL_TIMER_DESCRIPTION =  "|cffFFFFFFSet to desired time to start Pre-Pul
 LC_PROLONGED_POWER = "|cffFF0000Prolonged PowerPotion";
 LC_RACIAL = "Racial";
 LC_WAR_STOMP = "War Stomp";
+LC_TRINKETS = "Trinkets";
+LC_TRINKETS_DESCRIPTION = "Trinkets";
 
 --Priest
 LC_BODY_AND_SOUL = "Body And Soul";

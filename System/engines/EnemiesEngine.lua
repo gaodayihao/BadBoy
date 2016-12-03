@@ -315,8 +315,8 @@ function EnemiesEngine()
 				coef = coef + burnValue
 				-- if user checked avoid shielded, we add the % this shield remove to coef
 				coef = coef + shieldValue
-				local displayCoef = math.floor(coef*10)/10
-				local displayName = UnitName(unit) or "invalid"
+				--local displayCoef = math.floor(coef*10)/10
+				--local displayName = UnitName(unit) or "invalid"
 				-- print("Unit "..displayName.." - "..displayCoef)
 			end
 		end

@@ -41,6 +41,8 @@ LC_PRE_PULL_TIMER_DESCRIPTION =  "|cffFFFFFF在开怪倒计时到达多少秒时
 LC_PROLONGED_POWER = "|cff00BB00延时之力";
 LC_RACIAL = "种族技能";
 LC_WAR_STOMP = "战争践踏";
+LC_TRINKETS = "饰品";
+LC_TRINKETS_DESCRIPTION = "自动使用饰品";
 
 --Priest
 LC_BODY_AND_SOUL = "身心合一";

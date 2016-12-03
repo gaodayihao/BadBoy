@@ -72,6 +72,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             section = br.ui:createSection(br.ui.window.profile, LC_COOLDOWNS)
             -- Racial
                 br.ui:createCheckbox(section,LC_RACIAL,LC_RACIAL_DESCRIPTION)
+            -- Trinkets
+                br.ui:createCheckbox(section,LC_TRINKETS,LC_TRINKETS_DESCRIPTION)
             -- Holy Wrath
                 br.ui:createSpinner(section,LC_HOLY_WRATH,  100,  40,  100,  5,LC_HOLY_WRATH_DESCRIPTION)
             -- Avenging Wrath / Crusade
@@ -341,6 +343,15 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
         -- Action List - Cooldowns
             local function actionList_Cooldowns()
                 if useCDs() then
+            -- Trinkets
+                    if isChecked(LC_TRINKETS) and (buff.crusade.exists or buff.avengingWrath.exists) then
+                        if canUse(13) then
+                            useItem(13)
+                        end
+                        if canUse(14) then
+                            useItem(14)
+                        end
+                    end
             -- Holy Wrath
                     if talent.holyWrath and isChecked(LC_HOLY_WRATH) and php <= getOptionValue(LC_HOLY_WRATH) then
                         if cast.holyWrath() then return true end
