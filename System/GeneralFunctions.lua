@@ -2558,7 +2558,7 @@ function isValidUnit(Unit)
 	local canAttackUnit = UnitCanAttack("player",Unit)
 	local creatureType = UnitCreatureType(Unit)
 	local trivial = creatureType == "Critter" or creatureType == "Non-combat Pet" or creatureType == "Gas Cloud" or creatureType == "Wild Pet"
-	if canAttackUnit and ObjectExists(Unit) and not trivial and not UnitIsDeadOrGhost(Unit) and not UnitIsFriend(Unit, "player") then
+	if canAttackUnit and ObjectExists(Unit) and not trivial and not UnitIsDeadOrGhost(Unit) and not UnitIsFriend(Unit, "player") and getDistance(Unit) <= 40 then
 		local threat = hasThreat(Unit)
 		local myTarget = UnitIsUnit(Unit,"target")
 		local dummy = isDummy(Unit) ~= nil
