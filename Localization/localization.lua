@@ -43,6 +43,8 @@ LC_RACIAL = "Racial";
 LC_WAR_STOMP = "War Stomp";
 LC_TRINKETS = "Trinkets";
 LC_TRINKETS_DESCRIPTION = "Trinkets";
+LC_TRINKETS1_DURATION = "Trinket1 Duration"
+LC_TRINKETS2_DURATION = "Trinket2 Duration"
 
 --Priest
 LC_BODY_AND_SOUL = "Body And Soul";

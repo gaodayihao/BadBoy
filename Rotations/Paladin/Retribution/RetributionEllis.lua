@@ -74,6 +74,8 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 br.ui:createCheckbox(section,LC_RACIAL,LC_RACIAL_DESCRIPTION)
             -- Trinkets
                 br.ui:createCheckbox(section,LC_TRINKETS,LC_TRINKETS_DESCRIPTION)
+                br.ui:createSpinnerWithout(section,LC_TRINKETS1_DURATION,  20,  0,  60,  5)
+                br.ui:createSpinnerWithout(section,LC_TRINKETS2_DURATION,  20,  0,  60,  5)
             -- Holy Wrath
                 br.ui:createSpinner(section,LC_HOLY_WRATH,  100,  40,  100,  5,LC_HOLY_WRATH_DESCRIPTION)
             -- Avenging Wrath / Crusade
@@ -236,15 +238,21 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                 then
                     if cast.handOfHindrance("target") then return true end
                 end
-                local useGreaterBlessing = isChecked(LC_GREATER_BLESSING)
-                if useGreaterBlessing and solo and (not buff.greaterBlessingOfMight.exists or buff.greaterBlessingOfMight.remain < 60*10) then
-                    if cast.greaterBlessingOfMight() then return true end
-                end
-                if useGreaterBlessing and solo and (not buff.greaterBlessingOfKings.exists or buff.greaterBlessingOfKings.remain < 60*10) then
-                    if cast.greaterBlessingOfKings() then return true end
-                end
-                if useGreaterBlessing and solo and (not buff.greaterBlessingOfWisdom.exists or buff.greaterBlessingOfWisdom.remain < 60*10) then
-                    if cast.greaterBlessingOfWisdom() then return true end
+
+                if br.timer:useTimer("GreaterBlessingDelay",1.5) then
+                    if gbDelay == nil then gbDelay = 0 end
+                    if gbDelay == 0 then gbDelay = 1 return end
+                    gbDelay = 0
+                    local useGreaterBlessing = isChecked(LC_GREATER_BLESSING)
+                    if useGreaterBlessing and solo and (not buff.greaterBlessingOfMight.exists or buff.greaterBlessingOfMight.remain < 60*10) then
+                        if cast.greaterBlessingOfMight() then return true end
+                    end
+                    if useGreaterBlessing and solo and (not buff.greaterBlessingOfKings.exists or buff.greaterBlessingOfKings.remain < 60*10) then
+                        if cast.greaterBlessingOfKings() then return true end
+                    end
+                    if useGreaterBlessing and solo and (not buff.greaterBlessingOfWisdom.exists or buff.greaterBlessingOfWisdom.remain < 60*10) then
+                        if cast.greaterBlessingOfWisdom() then return true end
+                    end
                 end
             end -- End Action List - Extras
         -- Action List - Defensives
@@ -344,11 +352,19 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             local function actionList_Cooldowns()
                 if useCDs() then
             -- Trinkets
-                    if isChecked(LC_TRINKETS) and (buff.crusade.exists or buff.avengingWrath.exists) then
-                        if canUse(13) then
+                    if isChecked(LC_TRINKETS) then
+                        if canUse(13) 
+                            and (buff.crusade.exists and buff.crusade.remain <= getOptionValue(LC_TRINKETS1_DURATION) 
+                                or buff.avengingWrath.exists and buff.avengingWrath.remain <= getOptionValue(LC_TRINKETS1_DURATION)
+                                or getOptionValue(LC_TRINKETS1_DURATION) == 0) 
+                        then
                             useItem(13)
                         end
-                        if canUse(14) then
+                        if canUse(14) 
+                            and (buff.crusade.exists and buff.crusade.remain <= getOptionValue(LC_TRINKETS2_DURATION) 
+                                or buff.avengingWrath.exists and buff.avengingWrath.remain <= getOptionValue(LC_TRINKETS2_DURATION)
+                                or getOptionValue(LC_TRINKETS2_DURATION) == 0) 
+                        then
                             useItem(14)
                         end
                     end

@@ -78,7 +78,7 @@ function EnemiesEngine()
 							local unitThreat = UnitThreatSituation("player",thisUnit) or -1
 							local shieldValue = isShieldedTarget(thisUnit) or 0
 							-- local X1,Y1,Z1 = GetObjectPosition(thisUnit)
-							local unitCoeficient = getUnitCoeficient(thisUnit,unitDistance,unitThreat,burnValue,shieldValue) or 0
+							local unitCoeficient = --[[getUnitCoeficient(thisUnit,unitDistance,unitThreat,burnValue,shieldValue) or]] 0
 							local unitHP = getHP(thisUnit)
 							local inCombat = UnitAffectingCombat(thisUnit)
 							local longTimeCC = false
@@ -117,9 +117,9 @@ function EnemiesEngine()
 				end
 			end
 			-- sort them by coeficient
-			table.sort(br.enemy, function(x,y)
-				return x.coeficient and y.coeficient and x.coeficient > y.coeficient or false
-			end)
+			-- table.sort(br.enemy, function(x,y)
+			-- 	return x.coeficient and y.coeficient and x.coeficient > y.coeficient or false
+			-- end)
 
             if br.data["isDebugging"] == true then
                 br.debug.cpu.enemiesEngine.makeEnemiesTableCount = br.debug.cpu.enemiesEngine.makeEnemiesTableCount + 1

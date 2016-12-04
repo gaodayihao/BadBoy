@@ -43,6 +43,8 @@ LC_RACIAL = "种族技能";
 LC_WAR_STOMP = "战争践踏";
 LC_TRINKETS = "饰品";
 LC_TRINKETS_DESCRIPTION = "自动使用饰品";
+LC_TRINKETS1_DURATION = "饰品1持续时间"
+LC_TRINKETS2_DURATION = "饰品2持续时间"
 
 --Priest
 LC_BODY_AND_SOUL = "身心合一";

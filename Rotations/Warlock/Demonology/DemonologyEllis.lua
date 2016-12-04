@@ -110,9 +110,9 @@ if select(2, UnitClass("player")) == "WARLOCK" then
     --------------
             local activePet                                     = br.player.pet
             local activePetId                                   = br.player.petId
-            local addsExist                                     = false 
-            local addsIn                                        = 999
             local artifact                                      = br.player.artifact
+            local autoFacing                                    = isChecked(LC_AUTO_FACING)
+            local autoTarget                                    = isChecked(LC_AUTO_TARGET)
             local buff                                          = br.player.buff
             local cast                                          = br.player.cast
             local castable                                      = br.player.cast.debug
@@ -203,7 +203,10 @@ if select(2, UnitClass("player")) == "WARLOCK" then
         -- Action List - Summon Pet
             local function actionList_SummonPet()
                 --print(activePet)
-                if activePet == "None" and br.timer:useTimer("Summon Pet",3) then
+                if not IsMounted() and activePet == "None" and br.timer:useTimer("Summon Pet",1.5) then
+                    if summonPetDelay == nil then summonPetDelay = 0 end
+                    if summonPetDelay == 0 then summonPetDelay = 1 return end
+                    summonPetDelay = 0
                     if summonPet == 1 then
                         if talent.grimoireOfSupremacy then
                             if getOptionValue(LC_GRIMOIRE_OF_SUPREMACY) == 1 then
@@ -230,7 +233,37 @@ if select(2, UnitClass("player")) == "WARLOCK" then
                         if cast.summonFelguard() then return true end
                     end
                 end
-            end
+            end 
+        -- Action List - Auto Target
+            local function actionList_AutoTarget()
+                if autoTarget == false then return end
+                if isValidUnit("target") then return end
+                local theEnemies = enemies.yards40
+                local targetUnit = nil
+                for i = 1, #theEnemies do
+                    local thisUnit = theEnemies[i]
+                    if not targetUnit and UnitGUID(thisUnit) ~= lastTarget then
+                        targetUnit = thisUnit
+                    else
+                        local health = UnitHealth(thisUnit)
+                        if health > UnitHealth(targetUnit) and UnitGUID(thisUnit) ~= lastTarget then
+                            targetUnit = thisUnit
+                        end
+                    end
+                end
+                if targetUnit then
+                    TargetUnit(targetUnit)
+                end
+            end -- End Action List - Auto Target
+        -- Action List - Auto Facing
+            local function actionList_AutoFacing()
+                if autoFacing 
+                    and not isMoving("player") 
+                    and not getFacing("player","target",120)
+                then
+                    FaceDirection(GetAnglesBetweenObjects("player", "target"), true)
+                end
+            end -- End Action List - Auto Facing
         -- Action List - Default
             local function actionList_Default()
         -- Pet Attack
@@ -444,10 +477,18 @@ if select(2, UnitClass("player")) == "WARLOCK" then
     --- Opener Rotation ---
     -----------------------
                 if actionList_Opener() then return end
+    -------------------------------
+    --- In Combat - Auto Target ---
+    -------------------------------
+                if inCombat and actionList_AutoTarget() then return end
     --------------------------
     --- In Combat Rotation ---
     --------------------------
                 if inCombat and not IsMounted() and isValidUnit(units.dyn40) then
+        -------------------------------
+        --- In Combat - Auto Facing ---
+        -------------------------------
+                    if actionList_AutoFacing() then return end
         ------------------------------
         --- In Combat - Interrupts ---
         ------------------------------
