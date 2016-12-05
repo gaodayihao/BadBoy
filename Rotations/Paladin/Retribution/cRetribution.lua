@@ -70,6 +70,7 @@ function cRetribution:new()
             greaterBlessingOfWisdom     = 203539,
             theFiresOfJustice           = 209785,
             whisperOfTheNathrezim       = 207635,
+            divineSteed                 = 221885,
         }
         self.spell.spec.debuffs         = {
 

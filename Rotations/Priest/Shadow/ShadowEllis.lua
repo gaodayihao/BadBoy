@@ -154,8 +154,8 @@ if select(2, UnitClass("player")) == "PRIEST" then
             local falling, swimming, flying, moving             = getFallTime(), IsSwimming(), IsFlying(), GetUnitSpeed("player")>0
             local flaskBuff                                     = getBuffRemain("player",br.player.flask.wod.buff.intellectBig)
             local friendly                                      = friendly or UnitIsFriend("target", "player")
-            local gcd                                           = br.player.gcdMax
-            local gcdMax                                        = 1.5
+            local gcd                                           = br.player.gcd
+            local gcdMax                                        = br.player.gcdMax
             local inCombat                                      = br.player.inCombat
             local inInstance                                    = br.player.instance=="party"
             local inRaid                                        = br.player.instance=="raid"
@@ -805,7 +805,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                     if castSpell("player",racial,false,false,false) then return end
                 end
             -- dispersion,if=dot.shadow_word_pain.remains>7.5&dot.vampiric_touch.remains>7.5&buff.voidform.stack<10
-                if getDebuffRemain("target",spell.shadowWordPain,"player") > 7.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 7.5 and buff.stack.voidForm >= 5 and buff.stack.voidForm <= 10 then
+                if useDispersion and getDebuffRemain("target",spell.shadowWordPain,"player") > 7.5 and getDebuffRemain("target",spell.vampiricTouch,"player") > 7.5 and buff.stack.voidForm >= 5 and buff.stack.voidForm <= 10 then
                     if cast.dispersion() then return end
                 end
             -- shadow_word_death,if=!talent.reaper_of_souls.enabled&current_insanity_drain*gcd.max>insanity&(insanity-(current_insanity_drain*gcd.max)+15)<100&!buff.power_infusion.up&buff.insanity_drain_stacks.stack<=60&cooldown.shadow_word_death.charges=2

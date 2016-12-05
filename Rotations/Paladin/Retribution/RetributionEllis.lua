@@ -594,7 +594,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
     --- Begin Profile ---
     ---------------------
         -- Pause
-            if pause() or mode.rotation == 4 or IsMounted() then
+            if pause() or mode.rotation == 4 or (IsMounted() and not buff.divineSteed.exists) then
                 return true
             else
     -----------------------
