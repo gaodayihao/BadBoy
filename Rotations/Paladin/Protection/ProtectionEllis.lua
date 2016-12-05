@@ -302,7 +302,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
                     end
             -- Lay On Hands
                 -- lay_on_hands,if=health.pct<15
-                    if php < 40 and getDebuffRemain("player",25771) == 0 then
+                    if php < 15 and getDebuffRemain("player",25771) == 0 then
                         if cast.layOnHands() then return end
                     end
                 -- potion,name=unbending_potion
