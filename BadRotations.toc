@@ -176,7 +176,7 @@ Rotations\Paladin\Holy\HolyGabbz.lua
 
 Rotations\Paladin\Protection\cProtection.lua
 Rotations\Paladin\Protection\Protection.lua
-Rotations\Paladin\Protection\protectionSimC.lua
+Rotations\Paladin\Protection\ProtectionEllis.lua
 
 Rotations\Paladin\Retribution\cRetribution.lua
 Rotations\Paladin\Retribution\Retribution.lua

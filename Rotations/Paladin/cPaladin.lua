@@ -15,6 +15,7 @@ if select(2, UnitClass("player")) == "PALADIN" then
         self.profile                    = spec
         self.spell.class                = {}        -- Abilities Available To All Specs in Class
         self.spell.class.abilities      = {
+            avengingWrath               = 31884,
             blessingOfFreedom           = 1044,
             blessingOfProtection        = 1022,
             blindingLight               = 115750,
@@ -26,6 +27,7 @@ if select(2, UnitClass("player")) == "PALADIN" then
             handOfReckoning             = 62124,
             judgment                    = 20271,
             layOnHands                  = 633,
+            rebuke                      = 96231,
             redemption                  = 7328,
             repentance                  = 20066,
             tyrsDeliverance             = 200654,
@@ -34,7 +36,7 @@ if select(2, UnitClass("player")) == "PALADIN" then
             artificialStamina           = 211309,
         }
         self.spell.class.buffs          = {        -- Buffs Available To All Specs in Class
-
+            divineShield                = 221885,
         }
         self.spell.class.debuffs        = {        -- Debuffs Available To All Specs in Class
             judgment                    = 197277,

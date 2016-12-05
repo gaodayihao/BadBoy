@@ -18,7 +18,6 @@ function cRetribution:new()
     -----------------
         self.spell.spec                 = {}
         self.spell.spec.abilities       = {
-            avengingWrath               = 31884,
             bladeOfJustice              = 184575,
             cleanseToxins               = 213644,
             consecration                = 205228,
@@ -33,7 +32,6 @@ function cRetribution:new()
             handOfHindrance             = 183218,
             holyWrath                   = 210220,
             justicarsVengeance          = 215661,
-            rebuke                      = 96231,
             sealOfLight                 = 202273,
             shieldOfVengeance           = 184662,
             templarsVerdict             = 85256,
@@ -70,7 +68,6 @@ function cRetribution:new()
             greaterBlessingOfWisdom     = 203539,
             theFiresOfJustice           = 209785,
             whisperOfTheNathrezim       = 207635,
-            divineSteed                 = 221885,
         }
         self.spell.spec.debuffs         = {
 

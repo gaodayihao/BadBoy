@@ -317,7 +317,7 @@ if select(3, UnitClass("player")) == 2 then -- Change specID to ID of spec. IE: 
             end -- End Action List - Defensive
         -- Action List - Interrupts
             local function actionList_Interrupts()
-                if useInterrupts() and br.timer:useTimer("Interrupts",0.5) then
+                if useInterrupts() and br.timer:useTimer("Interrupts",1.5) then
                     local interruptAt = getOptionValue(LC_INTERRUPTS_AT)
                     for i = 1, #enemies.yards10 do
                         local thisUnit = enemies.yards10[i]
