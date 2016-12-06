@@ -184,8 +184,8 @@ function br.loader:new(spec,specName)
                     -- return rake
                     return multiplier*RakeMultiplier
                 end
+                return 0
             end
-            return 0
         end
         for k,v in pairs(self.spell.debuffs) do
             -- Build Debuff Table for all enemy units
