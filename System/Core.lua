@@ -258,29 +258,24 @@ frame:SetScript("OnEvent", frame.OnEvent)
 --[[-------------------------------------------------------------------------------------------------------------------------------------------------------]]
 --[[This function is refired everytime wow ticks. This frame is located in Core.lua]]
 function BadRotationsUpdate(self)
-	local tempTime = GetTime();
-	if not self.lastUpdateTime then
-		self.lastUpdateTime = tempTime
+	if not getOptionCheck("Start/Stop BadRotations") or br.data["Power"] ~= 1 then
+		optionsFrame:Hide()
+		_G["debugFrame"]:Hide()
+		return false
 	end
-	if self.lastUpdateTime and (tempTime - self.lastUpdateTime) > (1/10) then
-		self.lastUpdateTime = tempTime
+	if FireHack == nil then
+		optionsFrame:Hide()
+		_G["debugFrame"]:Hide()
+		if getOptionCheck("Start/Stop BadRotations") then
+			ChatOverlay("FireHack not Loaded.")
+		end
+		return
+	end
 
+	local rd = math.random(80,120)
+	if br.timer:useTimer("UnitUpdate", 1/(getOptionValue(LC_UNITS_TPS) or 5) * (rd/100)) then
 		-- prevent ticking when firechack isnt loaded
 		-- if user click power button, stop everything from pulsing.
-		if not getOptionCheck("Start/Stop BadRotations") or br.data["Power"] ~= 1 then
-			optionsFrame:Hide()
-			_G["debugFrame"]:Hide()
-			return false
-		end
-		if FireHack == nil then
-			optionsFrame:Hide()
-			_G["debugFrame"]:Hide()
-			if getOptionCheck("Start/Stop BadRotations") then
-				ChatOverlay("FireHack not Loaded.")
-			end
-			return
-		end
-
 		-- pulse enemiesEngine
 		br:PulseUI()
 
@@ -297,7 +292,9 @@ function BadRotationsUpdate(self)
 
 		-- accept dungeon queues
 		br:AcceptQueues()
-
+	end
+	
+	if br.timer:useTimer("RotationUpdate", 1/(getOptionValue(LC_ROTATION_TPS) or 15) * (rd/100)) then
 		--[[Class/Spec Selector]]
 	    br.selectedProfile = br.data.options[br.selectedSpec]["Rotation".."Drop"] or 1
 		local functionSelector = {
@@ -347,8 +344,7 @@ function BadRotationsUpdate(self)
             br.player:createOptions()
             br.player:createToggles()
             br.player:update()
-        end
-        if br.player ~= nil then
+        elseif br.player ~= nil then
         	br.player:update()
         end
 	end

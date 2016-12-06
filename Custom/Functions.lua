@@ -455,9 +455,9 @@ function mergeSpellTables(tSpell, tCharacter, tClass, tSpec)
   tSpell = mergeTables(tSpell, tSpec)
   return tSpell
 end
-function mergeIdTables(idTable)
+function mergeIdTables(idTable, tSpec)
 	local class = select(2,UnitClass("player"))
-	local spec = select(2, GetSpecializationInfo(GetSpecialization()))
+	local spec = tSpec --[[select(2, GetSpecializationInfo(GetSpecialization()))]]
 	if br.idList.Shared ~= nil then
 		idTable = mergeTables(idTable, br.idList.Shared)
 	end

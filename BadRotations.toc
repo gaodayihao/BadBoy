@@ -8,6 +8,11 @@
 BadRotations.lua
 bindings.xml
 
+##Localization
+Localization\localization.lua
+Localization\localization_tw.lua
+Localization\localization_cn.lua
+
 ## System
 # System\Beautycase.lua
 System\Core.lua
@@ -150,6 +155,7 @@ Rotations\Shaman\Restoration\RestorationKuu.lua
 Rotations\Warlock\Affliction\AfflictionCuteOne.lua
 
 Rotations\Warlock\Demonology\DemonologyCuteOne.lua
+Rotations\Warlock\Demonology\DemonologyEllis.lua
 
 Rotations\Warlock\Destruction\DestructionCuteOne.lua
 

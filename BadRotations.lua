@@ -333,11 +333,7 @@ function br.pulse:dispDist()
 end
 function br.pulse:makeEnTable()
     if br.pulse.makeTable then
-    	if br.pulse.makeTableTimer == nil then br.pulse.makeTableTimer = GetTime() end 
-		if br.pulse.makeTableTimer < GetTime() - 1 or br.enemy == nil then
-        	makeEnemiesTable(40);
-        	br.pulse.makeTableTimer = GetTime()
-        end
+        makeEnemiesTable(40)
     end
 end
 function br.pulse:ttd()

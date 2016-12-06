@@ -25,7 +25,7 @@ function EnemiesEngine()
 		br.enemy = {}
 		br.enemy.timer = 0
 		--local LibDraw = LibStub("LibDraw-1.0")
-		local  maxDistance = maxDistance or 50
+		local  maxDistance = maxDistance or 40
 		if br.enemy then cleanupEngine() end
 		if br.enemy == nil or br.enemy.timer == nil or br.enemy.timer <= GetTime() - 0.1 then
             local startTime
@@ -78,7 +78,7 @@ function EnemiesEngine()
 							local unitThreat = UnitThreatSituation("player",thisUnit) or -1
 							local shieldValue = isShieldedTarget(thisUnit) or 0
 							-- local X1,Y1,Z1 = GetObjectPosition(thisUnit)
-							local unitCoeficient = getUnitCoeficient(thisUnit,unitDistance,unitThreat,burnValue,shieldValue) or 0
+							local unitCoeficient = --[[ getUnitCoeficient(thisUnit,unitDistance,unitThreat,burnValue,shieldValue) or ]] 0
 							local unitHP = getHP(thisUnit)
 							local inCombat = UnitAffectingCombat(thisUnit)
 							local longTimeCC = false
@@ -117,9 +117,9 @@ function EnemiesEngine()
 				end
 			end
 			-- sort them by coeficient
-			table.sort(br.enemy, function(x,y)
-				return x.coeficient and y.coeficient and x.coeficient > y.coeficient or false
-			end)
+			-- table.sort(br.enemy, function(x,y)
+			-- 	return x.coeficient and y.coeficient and x.coeficient > y.coeficient or false
+			-- end)
 
             if br.data["isDebugging"] == true then
                 br.debug.cpu.enemiesEngine.makeEnemiesTableCount = br.debug.cpu.enemiesEngine.makeEnemiesTableCount + 1
@@ -201,12 +201,7 @@ function EnemiesEngine()
 	end
 	-- to enlight redundant checks in getDistance within getEnemies
 	function getDistanceXYZ(unit1,unit2)
-		-- check if unit is valid
-		if GetObjectExists(unit1) and GetObjectExists(unit2) then
-			local x1, y1, z1 = GetObjectPosition(unit1)
-			local x2, y2, z2 = GetObjectPosition(unit2)
-			return math.sqrt(((x2-x1)^2)+((y2-y1)^2)+((z2-z1)^2));
-		end
+		return GetDistanceBetweenObjects(unit1,unit2)
 	end
 	-- /dump UnitGUID("target")
 	-- /dump getEnemies("target",10)
@@ -308,8 +303,8 @@ function EnemiesEngine()
 				coef = coef + burnValue
 				-- if user checked avoid shielded, we add the % this shield remove to coef
 				coef = coef + shieldValue
-				local displayCoef = math.floor(coef*10)/10
-				local displayName = UnitName(unit) or "invalid"
+				--local displayCoef = math.floor(coef*10)/10
+				--local displayName = UnitName(unit) or "invalid"
 				-- print("Unit "..displayName.." - "..displayCoef)
 			end
 		end
