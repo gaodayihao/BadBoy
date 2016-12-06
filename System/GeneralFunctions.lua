@@ -641,11 +641,11 @@ function castHealGround(SpellID,Radius,Health,NumberOfPlayers)
             for i = 1,#lowHPTargets do
                 for j = 1,#lowHPTargets do
                     if lowHPTargets[i].unit ~= lowHPTargets[j].unit then
-                        if math.sqrt(((lowHPTargets[j].x-lowHPTargets[i].x)^2)+((lowHPTargets[j].y-lowHPTargets[i].y)^2)) < Radius then
+                        if GetDistanceBetweenObjects(lowHPTargets[i].unit,lowHPTargets[j].unit) < Radius then
                             for k = 1,#lowHPTargets do
                                 if lowHPTargets[i].unit ~= lowHPTargets[k].unit and lowHPTargets[j].unit ~= lowHPTargets[k].unit then
-                                    if math.sqrt(((lowHPTargets[k].x-lowHPTargets[i].x)^2)+((lowHPTargets[k].y-lowHPTargets[i].y)^2)) < Radius 
-                                        and math.sqrt(((lowHPTargets[k].x-lowHPTargets[j].x)^2)+((lowHPTargets[k].y-lowHPTargets[j].y)^2)) < Radius 
+                                    if GetDistanceBetweenObjects(lowHPTargets[k].unit,lowHPTargets[i].unit) < Radius 
+                                        and GetDistanceBetweenObjects(lowHPTargets[k].unit,lowHPTargets[j].unit) < Radius 
                                     then
                                         tinsert(foundTargets,{ unit = lowHPTargets[i].unit,x = lowHPTargets[i].x,y = lowHPTargets[i].y,z = lowHPTargets[i].z })
                                         tinsert(foundTargets,{ unit = lowHPTargets[j].unit,x = lowHPTargets[j].x,y = lowHPTargets[j].y,z = lowHPTargets[i].z })
@@ -1229,19 +1229,6 @@ function getDistance(Unit1,Unit2,option)
     if GetObjectExists(Unit1) and UnitIsVisible(Unit1) == true
         and GetObjectExists(Unit2) and UnitIsVisible(Unit2) == true 
     then
-         -- local TargetCombatReach = UnitCombatReach(Unit2)
-        -- local PlayerCombatReach = UnitCombatReach(Unit1)
-        -- local MeleeCombatReachConstant = 4/3
-        -- local meleeRange = max(5, PlayerCombatReach + TargetCombatReach + MeleeCombatReachConstant)
-        -- local dist = GetDistanceBetweenObjects(Unit1,Unit2) - (PlayerCombatReach + TargetCombatReach) - rangeMod
-        -- local dist2 = dist + (PlayerCombatReach + TargetCombatReach)
-        -- if dist > 13 then
-        --     return dist
-        -- elseif dist2 > meleeRange then
-        --     return dist2
-        -- else
-        --     return 0
-        -- end
     -- Get the distance
         local TargetCombatReach = UnitCombatReach(Unit2)
         local PlayerCombatReach = UnitCombatReach(Unit1)
