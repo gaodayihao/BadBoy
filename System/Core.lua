@@ -336,7 +336,17 @@ function BadRotationsUpdate(self)
 		 	[581] = {className = "DemonHunter", specName = "Vengeance"},
 		}
 		local playerSpec = GetSpecializationInfo(GetSpecialization())
-		_G[functionSelector[playerSpec].className..functionSelector[playerSpec].specName]()
+		br.playerSpecName = functionSelector[playerSpec].specName
+
+		if br.player == nil or br.player.profile ~= br.playerSpecName then
+            br.player = br.loader:new(playerSpec,br.playerSpecName)
+            setmetatable(br.player, {__index = br.loader})
+            br.player:createOptions()
+            br.player:createToggles()
+            br.player:update()
+        elseif br.player ~= nil then
+        	br.player:update()
+        end
 	end
 end
 

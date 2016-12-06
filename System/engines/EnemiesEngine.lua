@@ -78,7 +78,7 @@ function EnemiesEngine()
 							local unitThreat = UnitThreatSituation("player",thisUnit) or -1
 							local shieldValue = isShieldedTarget(thisUnit) or 0
 							-- local X1,Y1,Z1 = GetObjectPosition(thisUnit)
-							local unitCoeficient = --[[getUnitCoeficient(thisUnit,unitDistance,unitThreat,burnValue,shieldValue) or]] 0
+							local unitCoeficient = --[[ getUnitCoeficient(thisUnit,unitDistance,unitThreat,burnValue,shieldValue) or ]] 0
 							local unitHP = getHP(thisUnit)
 							local inCombat = UnitAffectingCombat(thisUnit)
 							local longTimeCC = false
@@ -254,21 +254,14 @@ function EnemiesEngine()
 	end
 	-- returns true if Unit is a valid enemy
 	function getSanity(unit)
-		if UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
-			if getCreatureType(unit) and 
-				UnitCanAttack("player", unit) and 
-				getLineOfSight(unit, "player")
-			then
-				if UnitAffectingCombat("player") then
-					return (isEnnemy(unit) and (hasThreat(unit) or getDistance(unit) < 20)) or isDummy(unit)
-				else
-					return UnitIsUnit(unit,"target") or isDummy(unit)
-				end
-			else
-				return false
-			end
+		if  UnitIsVisible(unit) == true and getCreatureType(unit) == true
+			and ((UnitCanAttack(unit, "player") == true or not UnitIsFriend(unit,"player") or isDummy(unit)) and getLineOfSight(unit, "player")) 
+			and UnitIsDeadOrGhost(unit) == false
+		then
+			return true
+		else
+			return false
 		end
-		return false
 	end
 	-- This function will set the prioritisation of the units, ie which target should i attack
 	function getUnitCoeficient(unit,distance,threat,burnValue,shieldValue)

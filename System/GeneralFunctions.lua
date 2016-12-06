@@ -740,47 +740,55 @@ function castSpell(Unit,SpellID,FacingCheck,MovementCheck,SpamAllowed,KnownSkip,
             or UnitBuffID("player",79206) ~= nil then
             -- if ability is ready and in range
             -- if getSpellCD(SpellID) < select(4,GetNetStats()) / 1000
-            if (getSpellCD(SpellID) < select(4,GetNetStats()) / 1000) and (getOptionCheck("Skip Distance Check") or getDistance("player",Unit) <= spellRange or DistanceSkip == true or inRange(SpellID,Unit)) then
-                -- if spam is not allowed
-                if SpamAllowed == false then
-                    -- get our last/current cast
-                    if timersTable == nil or (timersTable ~= nil and (timersTable[SpellID] == nil or timersTable[SpellID] <= GetTime() -0.6)) then
-                        if (FacingCheck == true or getFacing("player",Unit) == true) and (UnitIsUnit("player",Unit) or getLineOfSight("player",Unit) == true) then
-                            if noCast then 
-                                return true
-                            else 
-                                timersTable[SpellID] = GetTime()
-                                currentTarget = UnitGUID(Unit)
-                                CastSpellByName(GetSpellInfo(SpellID),Unit)
-                                --lastSpellCast = SpellID
-                                -- change main button icon
-                                if getOptionCheck("Start/Stop BadRotations") then
-                                    mainButton:SetNormalTexture(select(3,GetSpellInfo(SpellID)))
-                                    lastSpellCast = SpellID
-                                    lastSpellTarget = UnitGUID(Unit)
-                                end
-                                return true
-                            end
-                        end
-                    end
-                elseif (FacingCheck == true or getFacing("player",Unit) == true) and (UnitIsUnit("player",Unit) or getLineOfSight("player",Unit) == true) then
-                    if noCast then
-                        return true
-                    else
-                        currentTarget = UnitGUID(Unit)
-                        CastSpellByName(GetSpellInfo(SpellID),Unit)
-                        if getOptionCheck("Start/Stop BadRotations") then
-                            mainButton:SetNormalTexture(select(3,GetSpellInfo(SpellID)))
-                            lastSpellCast = SpellID
-                            lastSpellTarget = UnitGUID(Unit)
-                        end
-                        return true
-                    end
-                end
-            end
-        end
-    end
-    return false
+			if (getSpellCD(SpellID) < select(4,GetNetStats()) / 1000) and (getOptionCheck("Skip Distance Check") or getDistance("player",Unit) <= spellRange or DistanceSkip == true or inRange(SpellID,Unit)) then
+				-- if spam is not allowed
+				if SpamAllowed == false then
+					-- get our last/current cast
+					if timersTable == nil or (timersTable ~= nil and (timersTable[SpellID] == nil or timersTable[SpellID] <= GetTime() -0.6)) then
+						if (FacingCheck == true or getFacing("player",Unit) == true) and (UnitIsUnit("player",Unit) or getLineOfSight("player",Unit) == true) then
+							if noCast then 
+								return true
+							else 
+								timersTable[SpellID] = GetTime()
+								currentTarget = UnitGUID(Unit)
+								CastSpellByName(GetSpellInfo(SpellID),Unit)
+								if IsAoEPending() then
+									local X,Y,Z = ObjectPosition(Unit)
+									ClickPosition(X,Y,Z)
+								end
+								--lastSpellCast = SpellID
+								-- change main button icon
+								if getOptionCheck("Start/Stop BadRotations") then
+									mainButton:SetNormalTexture(select(3,GetSpellInfo(SpellID)))
+									lastSpellCast = SpellID
+									lastSpellTarget = UnitGUID(Unit)
+								end
+								return true
+							end
+						end
+					end
+				elseif (FacingCheck == true or getFacing("player",Unit) == true) and (UnitIsUnit("player",Unit) or getLineOfSight("player",Unit) == true) then
+					if noCast then
+						return true
+					else
+						currentTarget = UnitGUID(Unit)
+						CastSpellByName(GetSpellInfo(SpellID),Unit)
+						if IsAoEPending() then
+							local X,Y,Z = ObjectPosition(Unit)
+							ClickPosition(X,Y,Z)
+						end
+						if getOptionCheck("Start/Stop BadRotations") then
+							mainButton:SetNormalTexture(select(3,GetSpellInfo(SpellID)))
+							lastSpellCast = SpellID
+							lastSpellTarget = UnitGUID(Unit)
+						end
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
 end
 -- Cast Spell Queue
 function castQueue()
@@ -2553,26 +2561,18 @@ function isValidTarget(Unit)
     end
 end
 function isValidUnit(Unit)
-    local canAttackUnit = UnitCanAttack("player",Unit)
-    local creatureType = UnitCreatureType(Unit)
-    local trivial = creatureType == "Critter" or creatureType == "Non-combat Pet" or creatureType == "Gas Cloud" or creatureType == "Wild Pet"
-    if canAttackUnit and ObjectExists(Unit) and not trivial and not UnitIsDeadOrGhost(Unit) and not UnitIsFriend(Unit, "player") --[[ and getDistance(Unit) <= 40]] then
-        local myTarget = UnitIsUnit(Unit,"target")
-        local inAggroRange = getDistance(Unit) <= 20
-        local instance = IsInInstance()
-        local combat = UnitAffectingCombat("player")
-        -- Only consider Units that are in 20yrs or I have targeted when not in Combat and not in an Instance.
-        if not combat and not instance and (inAggroRange or myTarget) then return true end
-        local solo = #br.friend == 1 
-        local threat = hasThreat(Unit)
-        -- Only consider Units that I have threat with or I am alone and have targeted when not in Combat and in an Instance.
-        if not combat and instance and (threat or (solo and myTarget)) then return true end 
-        -- Only consider Units that I have threat with or I can attack and have targeted or are dummies within 20yrds when in Combat.
-        if combat then
-            if threat or myTarget or (inAggroRange and isDummy(Unit) ~= nil) then return true end
-        end
-    end
-    return false
+	local trivial = UnitCreatureType(Unit) == "Critter" or UnitCreatureType(Unit) == "Non-combat Pet" or UnitCreatureType(Unit) == "Gas Cloud" or UnitCreatureType(Unit) == "Wild Pet"
+	if UnitCanAttack("player",Unit) and not trivial and ObjectExists(Unit) then
+	    local inAggroRange = getDistance(Unit) <= 20
+		-- Only consider Units that are in 20yrs or I have targeted when not in Combat and not in an Instance.
+		if not UnitAffectingCombat("player") and not IsInInstance() and (inAggroRange or UnitIsUnit(Unit,"target")) then return true end
+	    local threat = hasThreat(Unit)
+		-- Only consider Units that I have threat with or I am alone and have targeted when not in Combat and in an Instance.
+		if not UnitAffectingCombat("player") and IsInInstance() and (threat or (#br.friend == 1 and UnitIsUnit(Unit,"target"))) then return true end 
+		-- Only consider Units that I have threat with or I can attack and have targeted or are dummies within 20yrds when in Combat.
+		if UnitAffectingCombat("player") and (threat or UnitIsUnit(Unit,"target") or (isDummy(Unit) and inAggroRange)) then return true end
+	end
+	return false
 end
 function SpecificToggle(toggle)
     if customToggle then 
