@@ -255,14 +255,11 @@ local function runRotation()
                 if isChecked(LC_POT_STONED) and php <= getOptionValue(LC_POT_STONED) 
                     and inCombat and (hasHealthPot() or hasItem(5512)) 
                 then
-                    if canUse(5512) then
-                        useItem(5512)
-                    elseif canUse(healPot) then
-                        useItem(healPot)
-                    end
+                    if canUse(5512) and useItem(5512) then return true end
+                    if canUse(healPot) and useItem(healPot) then return true end
                 end
         -- Gift of the Naaru
-                if isChecked(LC_GIFT_OF_THE_NAARU) and php <= getOptionValue(LC_GIFT_OF_THE_NAARU) and php > 0 and race == "Draenei" then
+                if isChecked(LC_GIFT_OF_THE_NAARU) and getSpellCD(racial)==0 and php <= getOptionValue(LC_GIFT_OF_THE_NAARU) and php > 0 and race == "Draenei" then
                     if castSpell("player",racial,false,false,false) then return end
                 end
         -- Blessing of Protection

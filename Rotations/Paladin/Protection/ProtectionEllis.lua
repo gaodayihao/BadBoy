@@ -300,7 +300,7 @@ local function runRotation()
         -- Avenging Wrath
             -- avenging_wrath,if=!talent.seraphim.enabled
             -- avenging_wrath,if=talent.seraphim.enabled&buff.seraphim.up
-                if not talent.seraphim or talent.seraphim and buff.seraphim.exists then
+                if #enemies.yards5 > 0 and not talent.seraphim or talent.seraphim and buff.seraphim.exists then
                     if cast.avengingWrath() then return end
                 end
         -- Judgment
@@ -311,6 +311,9 @@ local function runRotation()
                 if talent.crusadersJudgment and cd.avengersShield == 0 then
                     if cast.avengersShield() then return end
                 end
+        -- Consecration
+            -- consecration
+                if #enemies.yards5 > 0 and cast.consecration() then return end
         -- Blessed Hammer
             -- blessed_hammer
                 if talent.blessedHammer then
@@ -319,9 +322,6 @@ local function runRotation()
         -- Avengers Shield
             -- avengers_shield
                 if cast.avengersShield() then return end
-        -- Consecration
-            -- consecration
-                if #enemies.yards5 > 0 and cast.consecration() then return end
         -- Blinding Light
             -- blinding_light
                 if #enemies.yards8 > 0 and cast.blindingLight() then return end

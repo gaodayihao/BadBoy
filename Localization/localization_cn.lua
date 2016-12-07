@@ -5,7 +5,7 @@ LC_ROTATION_TPS_DESCRIPTION = "设置每秒技能循环的响应次数";
 LC_UNITS_TPS = "TPS：单位扫描";
 LC_UNITS_TPS_DESCRIPTION = "设置每秒对附近单位的分析次数";
 
---RotationOptions Common
+-- RotationOptions Common
 LC_ARCANE_TORRENT = "奥术洪流"
 LC_ARCANE_TORRENT_DESCRIPTION = "|cffFFBB00自动使用奥术洪流"
 LC_ARTIFACT = "神器"
@@ -46,11 +46,11 @@ LC_TRINKETS_DESCRIPTION = "自动使用饰品";
 LC_TRINKETS1_DURATION = "饰品1持续时间"
 LC_TRINKETS2_DURATION = "饰品2持续时间"
 
---Priest
+-- Priest
 LC_BODY_AND_SOUL = "身心合一";
 LC_BODY_AND_SOUL_DESCRIPTION = "|cffFFBB00在玩家移动时，延时n秒使用|cffFF0000真言术：盾|cffFFBB00来触发身心合一。S2M时无效";
 
---Shawdow Priest
+-- Shawdow Priest
 LC_BLESSED_DAWNLIGHT_MEDALLION = "使用项链"
 LC_BLESSED_DAWNLIGHT_MEDALLION_DESCRIPTION = "|cffFFBB00在开启自杀后下一个GCD将会死亡前自动使用项链"
 LC_DISPERSION = "影散"
@@ -70,7 +70,7 @@ LC_VAMPIRIC_EMBRACE_DESCRIPTION = "|cffFFBB00当血量低于设定百分比时�
 LC_VT_MAX_TARGETS = "多目标 吸血之触";
 LC_VT_MAX_TARGETS_DESCRIPTION = "|cffFFBB00吸血之触 目标上限";
 
---DeathKnight
+-- DeathKnight
 LC_DARK_SUCCOR = "黑暗救赎";
 LC_DARK_SUCCOR_DESCRIPTION = "|cffFFBB00当HP少于设定值时，使用黑暗救赎触发的免费|cffFF0000死亡打击";
 LC_DEATH_STRIKE = "死亡打击";
@@ -80,7 +80,7 @@ LC_ICEBOUND_FORTITUDE_DESCRIPTION = "|cffFFBB00当HP少于设定值时，使用|
 LC_MIND_FREEZE = "心智冰封";
 LC_MIND_FREEZE_DESCRIPTION = "心智冰封";
 
---Frost DeathKnight
+-- Frost DeathKnight
 LC_BLINDING_SLEET = "致盲冰雨"
 LC_BLINDING_SLEET_DESCRIPTION = "致盲冰雨"
 LC_BLINDING_SLEET_HP = "致盲冰雨 - HP"
@@ -98,9 +98,7 @@ LC_PILLAR_OF_FROST_DESCRIPTION = "自动使用冰霜之柱";
 LC_RUNE_WEAPON = "强力/饥饿符文武器"
 LC_RUNE_WEAPON_DESCRIPTION = "自动使用强力/饥饿符文武器"
 
---Retribution Paladin
-LC_AVENGING_WRATH_CRUSADE = "复仇之怒/征伐";
-LC_AVENGING_WRATH_CRUSADE_DESCRIPTION = "|cffFFFFFF自动使用复仇之怒/征伐";
+-- Paladin
 LC_BLESSING_OF_PROTECTION = "保护祝福";
 LC_BLESSING_OF_PROTECTION_DESCRIPTION = "|cffFFFFFF团队中有队员血量低于设定百分比时使用";
 LC_BLINDING_LIGHT = "盲目之光";
@@ -111,26 +109,30 @@ LC_BLINDING_LIGHT_HP = "盲目之光 - 自保";
 LC_BLINDING_LIGHT_HP_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
 LC_DIVINE_SHIELD = "圣盾术";
 LC_DIVINE_SHIELD_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
-LC_EXCUTION_SENTENCE = "处决宣判";
-LC_EXCUTION_SENTENCE_DESCRIPTION = "|cffFFFFFF自动使用处决宣判";
-LC_EYE_FOR_AN_EYE = "以眼还眼";
-LC_EYE_FOR_AN_EYE_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
 LC_FLASH_OF_LIGHT = "圣光闪现";
 LC_FLASH_OF_LIGHT_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
-LC_GREATER_BLESSING = "强效祝福";
-LC_GREATER_BLESSING_DESCRIPTION = "单人时，对自己使用强效祝福";
 LC_HAMMER_OF_JUSTICE = "制裁之锤";
 LC_HAMMER_OF_JUSTICE_DESCRIPTION = "|cffFFFFFF使用制裁之锤打断施法";
 LC_HAMMER_OF_JUSTICE_HP = "制裁之锤 - 自保";
 LC_HAMMER_OF_JUSTICE_HP_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
-LC_HOLY_WRATH = "神圣愤怒";
-LC_HOLY_WRATH_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
-LC_JUDGMENT_IGNORE = "无视审判";
-LC_JUDGMENT_IGNORE_DESCRIPTION = "|cffFFFFFF当审判CD过长时，无视目标审判的debuff，打循环";
 LC_REBUKE = "责难";
 LC_REBUKE_DESCRIPTION = "|cffFFFFFF使用责难打断施法";
 LC_REDEMPTION = "救赎";
 LC_REDEMPTION_DESCRIPTION = "对死亡的目标使用救赎";
+
+-- Retribution Paladin
+LC_AVENGING_WRATH_CRUSADE = "复仇之怒/征伐";
+LC_AVENGING_WRATH_CRUSADE_DESCRIPTION = "|cffFFFFFF自动使用复仇之怒/征伐";
+LC_EXCUTION_SENTENCE = "处决宣判";
+LC_EXCUTION_SENTENCE_DESCRIPTION = "|cffFFFFFF自动使用处决宣判";
+LC_EYE_FOR_AN_EYE = "以眼还眼";
+LC_EYE_FOR_AN_EYE_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
+LC_GREATER_BLESSING = "强效祝福";
+LC_GREATER_BLESSING_DESCRIPTION = "单人时，对自己使用强效祝福";
+LC_HOLY_WRATH = "神圣愤怒";
+LC_HOLY_WRATH_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
+LC_JUDGMENT_IGNORE = "无视审判";
+LC_JUDGMENT_IGNORE_DESCRIPTION = "|cffFFFFFF当审判CD过长时，无视目标审判的debuff，打循环";
 
 -- Demonology Warlock
 LC_SUMMON_PET = "召唤恶魔";
@@ -152,5 +154,20 @@ LC_GRIMOIRE_OF_SERVICE_SUCCUBUS = "魅魔";
 LC_GRIMOIRE_OF_SERVICE_FELHUNTER = "恶魔猎犬";
 LC_GRIMOIRE_OF_SERVICE_VOIDWALKER = "虚空行者";
 LC_GRIMOIRE_OF_SERVICE_IMP = "小鬼";
+
+-- Shaman
+LC_ANCESTRAL_SPIRIT = "先祖之魂";
+LC_ASTRAL_SHIFT = "星界转移";
+LC_ASTRAL_SHIFT_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
+LC_HEALING_SURGE = "汹涌治疗";
+LC_HEALING_SURGE_DESCRIPTION = "|cffFFFFFF血量低于设定百分比时使用";
+
+-- Enhancement Shaman
+LC_FERAL_LUNGE = "野性突袭";
+LC_FERAL_SPIRIT = "野性狼魂";
+LC_GHOST_WOLF = "鬼魂之狼";
+LC_GHOST_WOLF_DESCRIPTION = "鬼魂之狼延迟(s)";
+LC_WATER_WALKING = "水上行走";
+LC_WIND_SHEAR = "削风术";
 
 end

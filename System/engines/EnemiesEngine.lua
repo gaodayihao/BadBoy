@@ -51,12 +51,17 @@ function EnemiesEngine()
 				--local thisUnit = GetObjectIndex(i)
                 local thisUnit = GetObjectWithIndex(i)
 				-- check if it a unit first
-                if ObjectIsType(thisUnit, ObjectTypes.Unit)  then
+                if ObjectIsType(thisUnit, ObjectTypes.Unit) 
+					and (GetDistanceBetweenObjects("player",thisUnit) - UnitCombatReach("player") - UnitCombatReach("thisUnit") <= 50) then
                     br.debug.cpu.enemiesEngine.unitTargets = br.debug.cpu.enemiesEngine.unitTargets + 1
 					-- sanity checks
 					-- if getSanity(thisUnit) == true then --and isValidUnit(thisUnit) then
 					if isValidUnit(thisUnit) then
                         br.debug.cpu.enemiesEngine.sanityTargets = br.debug.cpu.enemiesEngine.sanityTargets + 1
+
+							if br.debug.cpu.enemiesEngine.sanityTargets >= 50 then
+								break
+							end
                         -- get the unit distance
 						--local _, ObjectPosition1 = pcall(ObjectPosition,"player")
 						--local _, ObjectPosition2 = pcall(ObjectPosition,thisUnit)

@@ -1739,7 +1739,7 @@ br.idList = {
             },
         },
         Enhancement = {
-            abilities                       = {
+                abilities                       = {
                 ascendance                  = 114051,
                 boulderfist                 = 201897,
                 cleanseSpirit               = 51886,
