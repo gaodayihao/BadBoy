@@ -1708,16 +1708,14 @@ function getPetLineOfSight(Unit)
 end
 -- if getSpellCD(12345) <= 0.4 then
 function getSpellCD(SpellID)
-    if GetSpellCooldown(SpellID) == 0 then
-        return 0
-    else
-        local Start ,CD = GetSpellCooldown(SpellID)
-        local MyCD = Start + CD - GetTime()
-        if getOptionCheck("Latency Compensation") then
-            MyCD = MyCD - getLatency()
-        end
-        return MyCD
-    end
+	if GetSpellCooldown(SpellID) == 0 then
+		return 0
+	else
+		local Start ,CD = GetSpellCooldown(SpellID)
+		local MyCD = Start + CD - GetTime()
+		MyCD = MyCD - getLatency()
+		return MyCD
+	end
 end
 --- Round
 function round2(num,idp)
@@ -2070,28 +2068,38 @@ function isAlive(Unit)
 end
 -- isBoss()
 function isBoss(unit)
-    if unit==nil then unit="target" end
-    if UnitExists(unit) then
-        local npcID = string.match(UnitGUID(unit),"-(%d+)-%x+$")
-        local bossCheck = LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false
-        -- local bossCheck = br.player.BossIDs[tonumber(npcID)] or false
-        if ((UnitClassification(unit) == "rare" and UnitHealthMax(unit)>(4*UnitHealthMax("player")))
-            or UnitClassification(unit) == "rareelite" 
-            or UnitClassification(unit) == "worldboss" 
-            or (UnitClassification(unit) == "elite" and UnitHealthMax(unit)>(4*UnitHealthMax("player")) and select(2,IsInInstance())~="raid")--UnitLevel(unit) >= UnitLevel("player")+3) 
-            or UnitLevel(unit) < 0)
-                and not UnitIsTrivial(unit)
-                and select(2,IsInInstance())~="party"
-        then
-            return true
-        elseif bossCheck or isDummy(unit) then
-            return true
-        else
-            return false
-        end
-    else
-        return false
-    end
+	local function getInstanceBoss()
+		if IsInInstance() then
+			local lockTimeleft, isPreviousInstance, encountersTotal, encountersComplete = GetInstanceLockTimeRemaining();
+			for i=1,encountersTotal do
+				local bossName = select(1,GetInstanceLockTimeRemainingEncounter(i))
+				if UnitName(unit) == i then return true end
+			end
+		end
+		return false
+	end
+	if unit==nil then unit="target" end
+	if UnitExists(unit) then
+		local npcID = string.match(UnitGUID(unit),"-(%d+)-%x+$")
+		local bossCheck = LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false
+		-- local bossCheck = br.player.BossIDs[tonumber(npcID)] or false
+		if ((UnitClassification(unit) == "rare" and UnitHealthMax(unit)>(4*UnitHealthMax("player")))
+			or UnitClassification(unit) == "rareelite" 
+			or UnitClassification(unit) == "worldboss" 
+			or (UnitClassification(unit) == "elite" and UnitHealthMax(unit)>(4*UnitHealthMax("player")) and select(2,IsInInstance())~="raid")--UnitLevel(unit) >= UnitLevel("player")+3) 
+			or UnitLevel(unit) < 0)
+				and not UnitIsTrivial(unit)
+				-- and select(2,IsInInstance())~="party"
+		then
+			return true
+		elseif bossCheck or isDummy(unit) or getInstanceBoss() then
+			return true
+		else
+			return false
+		end
+	else
+		return false
+	end
 end
 
 --- if isBuffed()
