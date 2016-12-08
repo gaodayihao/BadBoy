@@ -70,21 +70,13 @@ function castGroundAtBestLocation(spellID, radius, minUnits, maxRange, minRange,
 	-- begin
 	if minRange == nil then minRange = 0 end
 	local allUnitsInRange = {}
-	local unitTable = {}
 	-- Make function usable between enemies and friendlies
-	if spellType == "heal" then	
-		unitTable = br.friend 
-	else 
-		local enemy = {}
-		for k, v in pairs(br.enemy) do
-			tinsert(enemy,br.enemy[k])
-		end
-		unitTable = enemy
-	end
+	if spellType == "heal" then	unitTable = br.friend else unitTable = br.enemy end
 	-- fill allUnitsInRange with data from enemiesEngine/healingEngine
 	--print("______________________1")
-	for i=1,#unitTable do
-		local thisUnit = unitTable[i].unit
+	-- for i=1,#unitTable do
+	for k, v in pairs(unitTable) do
+		local thisUnit = unitTable[k].unit
 		local thisDistance = getDistance(thisUnit)
 		local hasThreat = isValidUnit(thisUnit) or UnitIsFriend(thisUnit,"player") --hasThreat(br.enemy[i].unit)
 		--print(thisUnit.." - "..thisDistance)

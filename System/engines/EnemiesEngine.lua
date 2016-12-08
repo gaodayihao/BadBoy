@@ -57,24 +57,22 @@ function EnemiesEngine()
                     br.debug.cpu.enemiesEngine.unitTargets = br.debug.cpu.enemiesEngine.unitTargets + 1
 
                     -- Check if Enemy exists already and update info.
-                    local addEnemy
-					if addEnemy == nil then addEnemy = true end
-					if br.enemy ~= nil then
-						for k, v in pairs(br.enemy) do
-							if k == thisUnit then
-								addEnemy = false
-								break
-							end
-						end
+                    local addEnemy = true
+					if br.enemy ~= nil and br.enemy[thisUnit] ~= nil then
+						addEnemy = false
+						-- for k, v in pairs(br.enemy) do
+						-- 	if k == thisUnit then
+						-- 		addEnemy = false
+						-- 		break
+						-- 	end
+						-- end
 					end
 
 					-- sanity checks
 					-- if getSanity(thisUnit) == true then --and isValidUnit(thisUnit) then
-					if isValidUnit(thisUnit) then
-						if addEnemy then							
-							br.enemy[thisUnit] 	= { }
-							brEnemyCount = brEnemyCount + 1
-						end
+					if addEnemy and isValidUnit(thisUnit) then			
+						br.enemy[thisUnit] 	= { }
+						brEnemyCount = brEnemyCount + 1
 					end
 				end
 			end
@@ -124,7 +122,11 @@ function EnemiesEngine()
 	function cleanupEngine()
 		for k, v in pairs(br.enemy) do
 			-- here i want to scan the enemies table and find any occurances of invalid units
-			if not isValidUnit(k) then
+			if not GetObjectExists(br.enemy[k].unit) 
+				or UnitIsDeadOrGhost(br.enemy[k].unit) 
+				or not UnitCanAttack("player",Unit) 
+				or getDistance(br.enemy[k].unit) > 40
+			then
 				-- i will remove such units from table
 				br.enemy[k] = nil
 				brEnemyCount = brEnemyCount - 1

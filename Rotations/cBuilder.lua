@@ -19,9 +19,10 @@ function br.loader:new(spec,specName)
     -- Spell Table
     self.spell = mergeIdTables(self.spell)
 
-    -- Detect
-    self.detect             = {}
-    self.detect.rage        = {["y8"]=8,["y10"]=10,["y12"]=12,["y20"]=20}
+    -- Spell Range
+    self.spellRange             = {}
+    self.spellRange.rage        = {["y8"]=8,["y9"]=9,["y10"]=10,["y12"]=12,["y20"]=20}
+    self.spellRange.inited      = false
 ------------------
 --- OOC UPDATE ---
 ------------------
@@ -38,6 +39,7 @@ function br.loader:new(spec,specName)
     function self.update()
         -- Call baseUpdate()
         self.baseUpdate()
+        self.buildSpellRange()
         self.cBuilder()
         if select(2,UnitClass("player")) == "HUNTER" or select(2,UnitClass("player")) == "WARLOCK" then
             self.getPetInfo()
@@ -47,6 +49,28 @@ function br.loader:new(spec,specName)
         self:startRotation()
     end
 
+------------------------
+--- Build SpellRange ---
+------------------------
+    function self.buildSpellRange()
+        if self.spellRange.inited then
+            return
+        end
+        -- Build Unit/Enemies Tables per Spell Range
+        for k,v in pairs(self.spell.abilities) do
+            local spellCast = v
+            local spellName = GetSpellInfo(v)
+            local minRange = select(5,GetSpellInfo(spellName))
+            local maxRange = select(6,GetSpellInfo(spellName))
+            if maxRange == nil or maxRange <= 0 then
+                maxRange = 5
+            end
+            if not self.spellRange.rage["y"..tostring(maxRange)] then
+                self.spellRange.rage["y"..tostring(maxRange)] = maxRange
+            end
+        end
+        self.spellRange.inited = true
+    end
 ---------------
 --- BUILDER ---
 ---------------
@@ -76,49 +100,12 @@ function br.loader:new(spec,specName)
         self.powerRegen     = getRegen("player")
         self.timeToMax      = getTimeToMax("player")
 
-        -- -- Build Best Unit per Range
-        -- local typicalRanges = {
-        --     40,
-        --     35,
-        --     30,
-        --     25,
-        --     20,
-        --     15,
-        --     13,
-        --     12,
-        --     10,
-        --     8,
-        --     5,
-        -- }
-        -- for x = 1, #typicalRanges do
-        --     local i = typicalRanges[x]
-        --     self.units["dyn"..tostring(i)]                  = dynamicTarget(i, true)
-        --     self.units["dyn"..tostring(i).."AoE"]           = dynamicTarget(i, false) 
-        --     self.enemies["yards"..tostring(i)]              = getEnemies("player",i)
-        --     self.enemies["yards"..tostring(i).."t"]         = getEnemies(self.units["dyn"..tostring(i)],i)
-        -- end
-
-        -- Build Unit/Enemies Tables per Spell Range
-        for k,v in pairs(self.spell.abilities) do
-            local spellCast = v
-            local spellName = GetSpellInfo(v)
-            local minRange = select(5,GetSpellInfo(spellName))
-            local maxRange = select(6,GetSpellInfo(spellName))
-            if maxRange == nil or maxRange <= 0 then
-                maxRange = 5
-            end
-            if not self.detect.rage["y"..tostring(maxRange)] then
-                self.detect.rage["y"..tostring(maxRange)] = maxRange
-            end
-        end
-
-        -- Unit/Enemies Table Common Checks Independant of Spells
         self.units.dyn40 = dynamicTarget(40,  true)
         self.units.dyn40AoE = dynamicTarget(40,  false)
         self.enemies.yards40 = getEnemies("player",40)
         self.enemies.yards40t  = getEnemies(self.units.dyn40,40)
         local theseUnits = self.enemies.yards40
-        for k,v in pairs(self.detect.rage) do
+        for k,v in pairs(self.spellRange.rage) do
             if v ~= 40 then
                 self.units["dyn"..tostring(v)]           = dynamicTarget(v,  true)
                 self.units["dyn"..tostring(v).."AoE"]    = dynamicTarget(v,  false)
@@ -126,6 +113,29 @@ function br.loader:new(spec,specName)
                 self.enemies["yards"..tostring(v).."t"]  = getTableEnemies(self.units["dyn"..tostring(v)],v,theseUnits)
             end
         end
+
+        -- -- Build Best Unit per Range
+        -- local typicalRanges = {
+        --     40, -- Typical Ranged Limit
+        --     35,
+        --     30,
+        --     25,
+        --     20,
+        --     15,
+        --     13, -- Feral Interrupt
+        --     12, 
+        --     10, -- Other Typical AoE Effect
+        --     9, -- Monk Artifact
+        --     8, -- Typical AoE Effect
+        --     5, -- Typical Melee
+        -- }
+        -- for x = 1, #typicalRanges do
+        --     local i = typicalRanges[x]
+        --     self.units["dyn"..tostring(i)]                  = dynamicTarget(i, true)
+        --     self.units["dyn"..tostring(i).."AoE"]           = dynamicTarget(i, false) 
+        --     self.enemies["yards"..tostring(i)]              = getTableEnemies("player",i,theseUnits)
+        --     self.enemies["yards"..tostring(i).."t"]         = getTableEnemies(self.units["dyn"..tostring(i)],i,theseUnits)
+        -- end
 
         if not UnitAffectingCombat("player") then
             -- Build Artifact Info
