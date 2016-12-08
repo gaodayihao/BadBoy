@@ -438,6 +438,10 @@ local function runRotation()
                 and getFacing("player",units.dyn5,120) then
                 if cast.wakeOfAshes() then return end
             end
+    -- Judgment
+            if  holyPower >=3 and enemies.yards8 >= 5 then
+                if cast.judgment("target") then return end
+            end
     -- Divine Storm
         -- if=debuff.judgment.up&spell_targets.divine_storm>=2&buff.divine_purpose.up&buff.divine_purpose.remains<gcd*2
         -- if=debuff.judgment.up&spell_targets.divine_storm>=2&holy_power>=5&buff.divine_purpose.react
@@ -445,7 +449,8 @@ local function runRotation()
             if judgmentUp and divineStormValid() and ((buff.divinePurpose.exists and buff.divinePurpose.remain < gcd*2)
                 or (holyPower >=5 and buff.divinePurpose.exists)
                 or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3 or not autoUseCrusade))
-                or (holyPower >=3 and talent.crusade and buff.crusade.exists and buff.crusade.remain < gcd))
+                or (holyPower >=3 and talent.crusade and buff.crusade.exists and buff.crusade.remain < gcd)
+                or (holyPower >=3 and enemies.yards8 >= 5))
             then
                 if cast.divineStorm() then return end
             end

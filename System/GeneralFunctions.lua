@@ -2073,7 +2073,7 @@ function isBoss(unit)
 			local lockTimeleft, isPreviousInstance, encountersTotal, encountersComplete = GetInstanceLockTimeRemaining();
 			for i=1,encountersTotal do
 				local bossName = select(1,GetInstanceLockTimeRemainingEncounter(i))
-				if UnitName(unit) == i then return true end
+				if UnitName(unit) == bossName then return true end
 			end
 		end
 		return false
@@ -2081,18 +2081,21 @@ function isBoss(unit)
 	if unit==nil then unit="target" end
 	if UnitExists(unit) then
 		local npcID = string.match(UnitGUID(unit),"-(%d+)-%x+$")
-		local bossCheck = LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false
+		--local bossCheck = LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false
+        local unitClassfication = UnitClassification(unit)
 		-- local bossCheck = br.player.BossIDs[tonumber(npcID)] or false
-		if ((UnitClassification(unit) == "rare" and UnitHealthMax(unit)>(4*UnitHealthMax("player")))
-			or UnitClassification(unit) == "rareelite" 
-			or UnitClassification(unit) == "worldboss" 
-			or (UnitClassification(unit) == "elite" and UnitHealthMax(unit)>(4*UnitHealthMax("player")) and select(2,IsInInstance())~="raid")--UnitLevel(unit) >= UnitLevel("player")+3) 
-			or UnitLevel(unit) < 0)
+		if ((unitClassfication == "rare" and UnitHealthMax(unit)>(4*UnitHealthMax("player")))
+			or unitClassfication == "rareelite" 
+			or (unitClassfication == "elite" and UnitHealthMax(unit)>(4*UnitHealthMax("player")) and GetNumGroupMembers() == 0)
+			or UnitLevel(unit) < 0
+            or UnitLevel(unit) >= 113)
 				and not UnitIsTrivial(unit)
-				-- and select(2,IsInInstance())~="party"
 		then
 			return true
-		elseif bossCheck or isDummy(unit) or getInstanceBoss() then
+		elseif (LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false) 
+            or isDummy(unit) 
+            or getInstanceBoss() 
+        then
 			return true
 		else
 			return false
