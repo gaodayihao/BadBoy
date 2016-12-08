@@ -439,7 +439,7 @@ local function runRotation()
                 if cast.wakeOfAshes() then return end
             end
     -- Judgment
-            if  holyPower >=3 and enemies.yards8 >= 5 then
+            if  holyPower >=3 and #enemies.yards8 >= 5 then
                 if cast.judgment("target") then return end
             end
     -- Divine Storm
@@ -450,7 +450,7 @@ local function runRotation()
                 or (holyPower >=5 and buff.divinePurpose.exists)
                 or (holyPower >=5 and (not talent.crusade or cd.crusade > gcd*3 or not autoUseCrusade))
                 or (holyPower >=3 and talent.crusade and buff.crusade.exists and buff.crusade.remain < gcd)
-                or (holyPower >=3 and enemies.yards8 >= 5))
+                or (holyPower >=3 and #enemies.yards8 >= 5))
             then
                 if cast.divineStorm() then return end
             end

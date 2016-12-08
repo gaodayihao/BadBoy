@@ -8,7 +8,7 @@
 BadRotations.lua
 bindings.xml
 
-##Localization
+## Localization
 Localization\localization.lua
 Localization\localization_tw.lua
 Localization\localization_cn.lua
