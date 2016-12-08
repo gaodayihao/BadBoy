@@ -31,7 +31,7 @@ function EnemiesEngine()
 		if br.enemy == nil or br.enemyTimer == nil or br.enemyTimer <= GetTime() - 0.1 then
 			local startTime
 			if br.data["isDebugging"] == true then
-			startTime = debugprofilestop()
+				startTime = debugprofilestop()
 			end
 
 			br.enemyTimer = GetTime()

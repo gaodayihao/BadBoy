@@ -147,6 +147,7 @@ Rotations\Rogue\Subtlety\SubtletyCuteOne.lua
 
 Rotations\Shaman\Elemental\ElementalCuteOne.lua
 
+Rotations\Shaman\Enhancement\EnhancementEllis.lua
 Rotations\Shaman\Enhancement\EnhancementCuteOne.lua
 
 Rotations\Shaman\Restoration\RestorationKuu.lua
