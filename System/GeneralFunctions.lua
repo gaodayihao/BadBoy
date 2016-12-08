@@ -2083,15 +2083,16 @@ function isBoss(unit)
 		local npcID = string.match(UnitGUID(unit),"-(%d+)-%x+$")
 		-- local bossCheck = LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false
 		-- local bossCheck = br.player.BossIDs[tonumber(npcID)] or false
-		local bossCheck = isInstanceBoss(unit)
-		if ((UnitClassification(unit) == "rare" and UnitHealthMax(unit)>(4*UnitHealthMax("player")))
-			or UnitClassification(unit) == "rareelite" 
-			or UnitClassification(unit) == "worldboss" 
-			or (UnitClassification(unit) == "elite" and UnitHealthMax(unit)>(4*UnitHealthMax("player")) and select(2,IsInInstance())~="raid")--UnitLevel(unit) >= UnitLevel("player")+3) 
+        local unitClassification = UnitClassification(unit)
+		local bossCheck = isInstanceBoss(unit) or (LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false)
+        local solo = GetNumGroupMembers() == 0
+		if ((unitClassification == "rare" and UnitHealthMax(unit)>(4*UnitHealthMax("player")) and solo)
+			or unitClassification == "rareelite" and solo
+			or unitClassification == "worldboss" 
+			or (unitClassification == "elite" and UnitHealthMax(unit)>(4*UnitHealthMax("player")) and solo)--UnitLevel(unit) >= UnitLevel("player")+3) 
 			or UnitLevel(unit) < 0
             or UnitLevel(unit) >= 113)
 				and not UnitIsTrivial(unit)
-				and select(2,IsInInstance())~="party"
 		then
 			return true
 		elseif bossCheck or isDummy(unit) then
