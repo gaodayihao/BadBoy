@@ -2083,15 +2083,15 @@ function isBoss(unit)
 		local npcID = string.match(UnitGUID(unit),"-(%d+)-%x+$")
 		-- local bossCheck = LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false
 		-- local bossCheck = br.player.BossIDs[tonumber(npcID)] or false
-        local unitClassification = UnitClassification(unit)
+		local unitClassification = UnitClassification(unit)
 		local bossCheck = isInstanceBoss(unit) or (LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false)
-        local solo = GetNumGroupMembers() == 0
+		local solo = GetNumGroupMembers() == 0
 		if ((unitClassification == "rare" and UnitHealthMax(unit)>(4*UnitHealthMax("player")) and solo)
 			or unitClassification == "rareelite" and solo
 			or unitClassification == "worldboss" 
 			or (unitClassification == "elite" and UnitHealthMax(unit)>(4*UnitHealthMax("player")) and solo)--UnitLevel(unit) >= UnitLevel("player")+3) 
 			or UnitLevel(unit) < 0
-            or UnitLevel(unit) >= 113)
+			or UnitLevel(unit) >= 113)
 				and not UnitIsTrivial(unit)
 		then
 			return true

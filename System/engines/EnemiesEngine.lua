@@ -29,10 +29,10 @@ function EnemiesEngine()
 		local  maxDistance = maxDistance or 40
 		if br.enemy then cleanupEngine() end
 		if br.enemy == nil or br.enemyTimer == nil or br.enemyTimer <= GetTime() - 0.1 then
-            local startTime
-            if br.data["isDebugging"] == true then
-                startTime = debugprofilestop()
-            end
+			local startTime
+			if br.data["isDebugging"] == true then
+			startTime = debugprofilestop()
+			end
 
 			br.enemyTimer = GetTime()
 			-- -- create/empty table
@@ -42,22 +42,22 @@ function EnemiesEngine()
 			-- 	table.wipe(br.enemy)
 			-- end
 			-- use objectmanager to build up table
-            -- DEBUG
-            br.debug.cpu.enemiesEngine.sanityTargets = 0
-            br.debug.cpu.enemiesEngine.unitTargets = 0
-            -- DEBUG --
-            --for i = 1, GetObjectCountBR() do
-            for i = 1, ObjectCount() do
+			-- DEBUG
+			br.debug.cpu.enemiesEngine.sanityTargets = 0
+			br.debug.cpu.enemiesEngine.unitTargets = 0
+			-- DEBUG --
+			--for i = 1, GetObjectCountBR() do
+			for i = 1, ObjectCount() do
 				-- define our unit
 				--local thisUnit = GetObjectIndex(i)
-                local thisUnit = GetObjectWithIndex(i)
+				local thisUnit = GetObjectWithIndex(i)
 				-- check if it a unit first
-                if brEnemyCount < 50 and ObjectIsType(thisUnit, ObjectTypes.Unit) 
+				if brEnemyCount < 50 and ObjectIsType(thisUnit, ObjectTypes.Unit) 
 					and (GetDistanceBetweenObjects("player",thisUnit) - UnitCombatReach("player") - UnitCombatReach(thisUnit) <= 40) then
-                    br.debug.cpu.enemiesEngine.unitTargets = br.debug.cpu.enemiesEngine.unitTargets + 1
+					br.debug.cpu.enemiesEngine.unitTargets = br.debug.cpu.enemiesEngine.unitTargets + 1
 
-                    -- Check if Enemy exists already and update info.
-                    local addEnemy = true
+					-- Check if Enemy exists already and update info.
+					local addEnemy = true
 					if br.enemy ~= nil and br.enemy[thisUnit] ~= nil then
 						addEnemy = false
 						-- for k, v in pairs(br.enemy) do
@@ -110,12 +110,12 @@ function EnemiesEngine()
 				end
 			end
 
-            if br.data["isDebugging"] == true then
-                br.debug.cpu.enemiesEngine.makeEnemiesTableCount = br.debug.cpu.enemiesEngine.makeEnemiesTableCount + 1
-                br.debug.cpu.enemiesEngine.makeEnemiesTableCurrent = debugprofilestop()-startTime
-                br.debug.cpu.enemiesEngine.makeEnemiesTable = br.debug.cpu.enemiesEngine.makeEnemiesTable + debugprofilestop()-startTime
-                br.debug.cpu.enemiesEngine.makeEnemiesTableAverage = br.debug.cpu.enemiesEngine.makeEnemiesTable / br.debug.cpu.enemiesEngine.makeEnemiesTableCount
-            end
+			if br.data["isDebugging"] == true then
+				br.debug.cpu.enemiesEngine.makeEnemiesTableCount = br.debug.cpu.enemiesEngine.makeEnemiesTableCount + 1
+				br.debug.cpu.enemiesEngine.makeEnemiesTableCurrent = debugprofilestop()-startTime
+				br.debug.cpu.enemiesEngine.makeEnemiesTable = br.debug.cpu.enemiesEngine.makeEnemiesTable + debugprofilestop()-startTime
+				br.debug.cpu.enemiesEngine.makeEnemiesTableAverage = br.debug.cpu.enemiesEngine.makeEnemiesTable / br.debug.cpu.enemiesEngine.makeEnemiesTableCount
+			end
 		end
 	end
 	-- remove invalid units on pulse
@@ -124,7 +124,7 @@ function EnemiesEngine()
 			-- here i want to scan the enemies table and find any occurances of invalid units
 			if not GetObjectExists(br.enemy[k].unit) 
 				or UnitIsDeadOrGhost(br.enemy[k].unit) 
-				or not UnitCanAttack("player",Unit) 
+				or not UnitCanAttack("player",br.enemy[k].unit) 
 				or getDistance(br.enemy[k].unit) > 40
 			then
 				-- i will remove such units from table
