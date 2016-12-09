@@ -22,7 +22,6 @@ br.idList = {
                 tighteningGrasp             = 206970,
                 tombstone                   = 219809,
                 vampiricBlood               = 55233,
-                iceboundFortitude           = 48792,
             },
             artifacts                       = {
                 allConsumingRot             = 192464,
@@ -176,6 +175,7 @@ br.idList = {
                 deathGrip                   = 49576,
                 deathStrike                 = 49998,
                 frostBreath                 = 190780,
+                iceboundFortitude           = 48792,
                 mindFreeze                  = 47528,
                 pathOfFrost                 = 3714,
                 raiseAlly                   = 61999,
@@ -185,6 +185,7 @@ br.idList = {
 
             },
             buffs                           = {
+                darkSuccor                  = 101568,
                 pathOfFrost                 = 3714,
                 wraithWalk                  = 212552,
             },
