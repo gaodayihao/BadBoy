@@ -197,7 +197,7 @@ function frame:OnEvent(event, arg1, arg2)
 	if event == "ADDON_LOADED" and arg1 == "BadRotations" then
 		--br:Run()
 	end
-	if ((event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= arg2 and arg2 ~= 0 and br.loadedIn) then
+	if ((event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg2 ~= 0 and br.loadedIn) then
         -- Closing the windows will save the position
         br.ui.window.config.parent.closeButton:Click()
         br.ui.window.profile.parent.closeButton:Click()
