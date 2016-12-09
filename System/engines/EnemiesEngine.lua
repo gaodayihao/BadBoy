@@ -52,7 +52,7 @@ function EnemiesEngine()
 				--local thisUnit = GetObjectIndex(i)
 				local thisUnit = GetObjectWithIndex(i)
 				-- check if it a unit first
-				if brEnemyCount < 50 and ObjectIsType(thisUnit, ObjectTypes.Unit) 
+				if brEnemyCount < 50 and ObjectIsType(thisUnit, ObjectTypes.Unit) and UnitCanAttack("player", thisUnit)
 					and (GetDistanceBetweenObjects("player",thisUnit) - UnitCombatReach("player") - UnitCombatReach(thisUnit) <= 40) then
 					br.debug.cpu.enemiesEngine.unitTargets = br.debug.cpu.enemiesEngine.unitTargets + 1
 
