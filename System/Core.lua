@@ -217,13 +217,15 @@ function frame:OnEvent(event, arg1, arg2)
 	    else
 	        br.selectedProfile = br.data.options[br.selectedSpec]["RotationDrop"]
 	    end
+    end
 
+	if event == "PLAYER_SPECIALIZATION_CHANGED" and arg1 ~= arg2 and arg2 ~= 0 and br.loadedIn then
         -- Recreate ConfigWindow with new Spec
         br.ui:createConfigWindow()
-
         -- rebuild up UI
 		BadRotationsFrame()
-    end
+	end
+
     if event == "PLAYER_LOGOUT" then
         br:saveWindowPosition()
     end
