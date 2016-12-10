@@ -248,7 +248,7 @@ function cCharacter:new(class)
 
 -- Returns the Global Cooldown time
 	function self.getGlobalCooldown()
-		local gcd = getSpellCD(61304) --(1.5 / ((UnitSpellHaste("player")/100)+1))
+		local gcd = (1.5 / ((UnitSpellHaste("player")/100)+1)) --getSpellCD(61304)
 		if gcd < 0.75 then
 			return  0.75
 		else
@@ -258,12 +258,7 @@ function cCharacter:new(class)
 
 -- Return the Maximum Global Cooldown time
 	function self.getGlobalCooldownMaximum()
-		local gcd = (1.5 / ((UnitSpellHaste("player")/100)+1))
-		if gcd < 0.75 then
-			return 0.75
-		else
-			return gcd
-		end
+		return 1.5
 	end
 
 -- Starts auto attack when in melee range and facing enemy
@@ -367,7 +362,7 @@ function cCharacter:new(class)
 			Troll    = 26297, -- Berserking
 			Scourge  = 7744,  -- Will of the Forsaken
 			-- Both
-			Pandaren = 107079, -- Quaking Palm
+			Pandaren = 107079, -- Quaking Palm 
 		}
 		return racialSpells[self.race]
 	end

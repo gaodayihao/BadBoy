@@ -162,7 +162,7 @@ local function runRotation()
         local enemies                                                       = br.player.enemies
         local forceAOE                                                      = br.player.mode.rotation == 2
         local forceSingle                                                   = br.player.mode.rotation == 3
-        local gcd                                                           = br.player.gcdMax
+        local gcd                                                           = br.player.gcd
         local hastar                                                        = ObjectExists("target")
         local healPot                                                       = getHealthPot()
         local holyPower                                                     = br.player.holyPower

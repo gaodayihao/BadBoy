@@ -133,7 +133,7 @@ local function runRotation()
         --local falling, swimming                                             = getFallTime(), IsSwimming()
         local forceAOE                                                      = br.player.mode.rotation == 2
         local forceSingle                                                   = br.player.mode.rotation == 3
-        local gcd                                                           = br.player.gcdMax
+        local gcd                                                           = br.player.gcd
         local ghostWolfTimer                                                = -1
         local healPot                                                       = getHealthPot()
         local inCombat                                                      = br.player.inCombat

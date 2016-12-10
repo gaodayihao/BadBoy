@@ -347,7 +347,7 @@ if select(2, UnitClass("player")) == "PRIEST" then
                 if inCombat then
                     --analyzeS2M()
                     updateTTD()
-                    dieAtNextGCD = currentInsanityDrain*(gcdMax + math.min(0.05,getLatency())) > power
+                    dieAtNextGCD = currentInsanityDrain*(gcd + math.min(0.05,getLatency())) > power
                 end
 
                 updateInsanityDrainStacks()
