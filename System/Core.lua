@@ -217,6 +217,11 @@ function frame:OnEvent(event, arg1, arg2)
 	    else
 	        br.selectedProfile = br.data.options[br.selectedSpec]["RotationDrop"]
 	    end
+
+		-- update spell range
+		if br.player ~= nil and br.player.spellRange ~= nil and br.player.spellRange.inited == true then
+			br.player.spellRange.inited = false
+		end
     end
 
 	if event == "PLAYER_SPECIALIZATION_CHANGED" and arg1 ~= arg2 and arg2 ~= 0 and br.loadedIn then
@@ -266,6 +271,8 @@ function BadRotationsUpdate(self)
 		return false
 	end
 	if FireHack == nil then
+		-- prevent ticking when firechack isnt loaded
+		-- if user click power button, stop everything from pulsing.
 		optionsFrame:Hide()
 		_G["debugFrame"]:Hide()
 		if getOptionCheck("Start/Stop BadRotations") then
@@ -276,8 +283,9 @@ function BadRotationsUpdate(self)
 
 	local rd = math.random(80,120)
 	if br.timer:useTimer("UnitUpdate", 1/(getOptionValue(LC_UNITS_TPS) or 5) * (rd/100)) then
-		-- prevent ticking when firechack isnt loaded
-		-- if user click power button, stop everything from pulsing.
+		-- clear distance cache
+		br.distanceCache = {}
+
 		-- pulse enemiesEngine
 		br:PulseUI()
 

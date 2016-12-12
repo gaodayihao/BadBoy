@@ -1226,21 +1226,32 @@ function getDistance(Unit1,Unit2,option)
         Unit2 = Unit1
         Unit1 = "player"
     end
-    -- Modifier for Balance Affinity range change
-    if rangeMod == nil then rangeMod = 0 end
-    if br.player ~= nil then
-        if br.player.talent.balanceAffinity ~= nil then
-            if br.player.talent.balanceAffinity then
-                rangeMod = 5
-            else
-                rangeMod = 0
-            end
-        end
-    end
     -- Check if objects exists and are visible
     if GetObjectExists(Unit1) and UnitIsVisible(Unit1) == true
         and GetObjectExists(Unit2) and UnitIsVisible(Unit2) == true 
     then
+        -- get distance from cache
+        local unit1GUID = UnitGUID(Unit1)
+        local unit2GUID = UnitGUID(Unit2)
+        if br.distanceCache[unit1GUID] ~= nil and br.distanceCache[unit1GUID][unit2GUID] ~= nil then
+            return br.distanceCache[unit1GUID][unit2GUID]
+        end
+
+        if br.distanceCache[unit1GUID] == nil then
+            br.distanceCache[unit1GUID] = {}
+        end
+
+        -- Modifier for Balance Affinity range change
+        if rangeMod == nil then rangeMod = 0 end
+        if br.player ~= nil then
+            if br.player.talent.balanceAffinity ~= nil then
+                if br.player.talent.balanceAffinity then
+                    rangeMod = 5
+                else
+                    rangeMod = 0
+                end
+            end
+        end
     -- Get the distance
         local TargetCombatReach = UnitCombatReach(Unit2)
         local PlayerCombatReach = UnitCombatReach(Unit1)
@@ -1255,19 +1266,24 @@ function getDistance(Unit1,Unit2,option)
         local dist3 = dist + 0.05 * ((8 - dist) / 0.15)
         local dist4 = dist + (PlayerCombatReach + TargetCombatReach)
         local meleeRange = max(5, PlayerCombatReach + TargetCombatReach + MeleeCombatReachConstant + IfSourceAndTargetAreRunning)
-        if option == "dist" then return dist end
-        if option == "dist2" then return dist2 end
-        if option == "dist3" then return dist3 end
-        if option == "dist4" then return dist4 end
+        -- if option == "dist" then return dist end
+        -- if option == "dist2" then return dist2 end
+        -- if option == "dist3" then return dist3 end
+        -- if option == "dist4" then return dist4 end
         if dist > 13 then
+            br.distanceCache[unit1GUID][unit2GUID] = dist
             return dist
         elseif dist2 > 8 then
+            br.distanceCache[unit1GUID][unit2GUID] = dist2
             return dist2
         elseif dist3 > 5 then
+            br.distanceCache[unit1GUID][unit2GUID] = dist3
             return dist3
         elseif dist4 > meleeRange then -- Thanks Ssateneth
+            br.distanceCache[unit1GUID][unit2GUID] = dist4
             return dist4
         else
+            br.distanceCache[unit1GUID][unit2GUID] = 0
             return 0
         end
     else

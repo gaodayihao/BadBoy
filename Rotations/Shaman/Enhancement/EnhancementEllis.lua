@@ -381,7 +381,7 @@ local function runRotation()
             end
         -- Doom Winds
             -- doom_winds
-            if getOptionValue(LC_ARTIFACT) == 1 or (getOptionValue(LC_ARTIFACT) == 2 and useCDs()) then
+            if getOptionValue(LC_ARTIFACT) == 1 or (getOptionValue(LC_ARTIFACT) == 2 and useCDs()) and cd.doomWinds == 0 and getDistance(units.dyn5) <= 5 then
                 if cast.doomWinds() then return end
             end
         -- Crash Lightning
