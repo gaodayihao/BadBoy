@@ -169,5 +169,7 @@ LC_GHOST_WOLF = "鬼魂之狼";
 LC_GHOST_WOLF_DESCRIPTION = "鬼魂之狼延迟(s)";
 LC_WATER_WALKING = "水上行走";
 LC_WIND_SHEAR = "削风术";
+LC_DOOM_WINDS_DELAY = "末日之风延迟";
+LC_DOOM_WINDS_DELAY_DESCRIPTION = "末日之风等待疾风打击最大时间";
 
 end

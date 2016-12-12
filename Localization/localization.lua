@@ -169,3 +169,5 @@ LC_GHOST_WOLF = "Ghost Wolf";
 LC_GHOST_WOLF_DESCRIPTION = "Ghost Wolf Delay";
 LC_WATER_WALKING = "Water Walking";
 LC_WIND_SHEAR = "Wind Shear";
+LC_DOOM_WINDS_DELAY = "Doom Winds Delay";
+LC_DOOM_WINDS_DELAY_DESCRIPTION = "Doom Winds wait to have buff Wind Strikes";

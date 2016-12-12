@@ -47,6 +47,8 @@ local function createOptions()
             br.ui:createCheckbox(section, LC_AUTO_FACING, LC_AUTO_FACING_DESCRIPTION)
         -- Artifact
             br.ui:createDropdown(section, LC_ARTIFACT, {LC_ARTIFACT_EVERY_TIME,LC_ARTIFACT_CD}, 1)
+        -- Doom Winds Delay
+            br.ui:createSpinner(section, LC_DOOM_WINDS_DELAY,  3,  1,  10,  1, LC_DOOM_WINDS_DELAY_DESCRIPTION)
         -- Ghost Wolf
             br.ui:createSpinner(section, LC_GHOST_WOLF,  1.5,  0,  5,  0.5, LC_GHOST_WOLF_DESCRIPTION)
         -- Water Walking
@@ -129,8 +131,8 @@ local function runRotation()
         local charges                                                       = br.player.charges
         local combatTime                                                    = getCombatTime()
         local debuff                                                        = br.player.debuff
+        local doomWindsDelay                                                = getOptionValue(LC_DOOM_WINDS_DELAY)
         local enemies                                                       = br.player.enemies
-        --local falling, swimming                                             = getFallTime(), IsSwimming()
         local forceAOE                                                      = br.player.mode.rotation == 2
         local forceSingle                                                   = br.player.mode.rotation == 3
         local gcd                                                           = br.player.gcd
@@ -152,13 +154,25 @@ local function runRotation()
         local talent                                                        = br.player.talent
         local units                                                         = br.player.units
         local useArtifact                                                   = false
+        local useDoomWinds                                                  = false
 
         if movingStart == nil then movingStart = 0 end
         if feralSpiritCastTime == nil then feralSpiritCastTime = 0 end
         if feralSpiritRemain == nil then feralSpiritRemain = 0 end
         if lastSpell == spell.feralSpirit then feralSpiritCastTime = GetTime() + 15 end
         if feralSpiritCastTime > GetTime() then feralSpiritRemain = feralSpiritCastTime - GetTime() else feralSpiritCastTime = 0; feralSpiritRemain = 0 end
+        if doomWindsDelayStart == nil then doomWindsDelayStart = 0 end
 
+        if not isChecked(LC_DOOM_WINDS_DELAY) then
+            doomWindsDelay = 0
+        elseif cd.doomWinds == 0 and doomWindsDelayStart == 0 then
+            doomWindsDelayStart = GetTime()
+        elseif cd.doomWinds > 0 then
+            doomWindsDelayStart = 0
+        end
+
+        useDoomWinds = doomWindsDelay == 0 or GetTime() - doomWindsDelayStart >= doomWindsDelay or buff.windStrikes.exists
+        
         if isChecked(LC_GHOST_WOLF) then
             ghostWolfTimer = getOptionValue(LC_GHOST_WOLF)
         end
@@ -381,8 +395,12 @@ local function runRotation()
             end
         -- Doom Winds
             -- doom_winds
-            if getOptionValue(LC_ARTIFACT) == 1 or (getOptionValue(LC_ARTIFACT) == 2 and useCDs()) and cd.doomWinds == 0 and getDistance(units.dyn5) <= 5 then
-                if cast.doomWinds() then return end
+            if (getOptionValue(LC_ARTIFACT) == 1 or (getOptionValue(LC_ARTIFACT) == 2 and useCDs()))
+                and cd.doomWinds == 0 
+                and getDistance(units.dyn5) <= 5
+                and useDoomWinds
+            then
+                if cast.doomWinds() then doomWindsDelayStart = 0 return end
             end
         -- Crash Lightning
             -- crash_lightning,if=active_enemies>=3

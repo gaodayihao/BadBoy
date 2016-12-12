@@ -1847,6 +1847,7 @@ br.idList = {
                 prolongedPower              = 229206,
                 stormbringer                = 201846,
                 temptation                  = 234143,
+                windStrikes                 = 198293,
             },
             debuffs                         = {
                 frostbrand                  = 147732,
