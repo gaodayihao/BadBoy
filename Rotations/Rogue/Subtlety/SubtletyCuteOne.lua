@@ -90,6 +90,8 @@ local function createOptions()
             br.ui:createCheckbox(section, "Shadow Dance")
             -- Vanish
             br.ui:createCheckbox(section, "Vanish")
+            -- SSW Offset
+            br.ui:createSpinner(section, "SSW Offset", 0, 0, 10, 1, "|cffFFBB00For Advanced Users, check SimC Wiki. Leave this at 0 if you don't know what you're doing.")
         br.ui:checkSectionState(section)
         -------------------------
         --- DEFENSIVE OPTIONS ---
@@ -153,7 +155,7 @@ end
 ----------------
 local function runRotation()
     if br.timer:useTimer("debugSubtlety", math.random(0.15,0.3)) then
-        --print("Running: "..rotationName)
+        --Print("Running: "..rotationName)
 
 ---------------
 --- Toggles ---
@@ -163,9 +165,9 @@ local function runRotation()
         UpdateToggle("Defensive",0.25)
         UpdateToggle("Interrupt",0.25)
         UpdateToggle("Cleave",0.25)
-        br.player.mode.cleave = br.data["Cleave"]
+        br.player.mode.cleave = br.data.settings[br.selectedSpec].toggles["Cleave"]
         UpdateToggle("Picker",0.25)
-        br.player.mode.pickPocket = br.data["Picker"]
+        br.player.mode.pickPocket = br.data.settings[br.selectedSpec].toggles["Picker"]
 
 --------------
 --- Locals ---
@@ -188,9 +190,9 @@ local function runRotation()
         local dynTar15                                      = br.player.units.dyn15 
         local dynTar20AoE                                   = br.player.units.dyn20AoE --Stealth
         local dynTar30AoE                                   = br.player.units.dyn30AoE
-        local dynTable5                                     = (br.data['Cleave']==1 and br.enemy) or { [1] = {["unit"]=dynTar5, ["distance"] = getDistance(dynTar5)}}
-        local dynTable15                                    = (br.data['Cleave']==1 and br.enemy) or { [1] = {["unit"]=dynTar15, ["distance"] = getDistance(dynTar15)}}
-        local dynTable20AoE                                 = (br.data['Cleave']==1 and br.enemy) or { [1] = {["unit"]=dynTar20AoE, ["distance"] = getDistance(dynTar20AoE)}}
+        local dynTable5                                     = (br.data.settings[br.selectedSpec].toggles['Cleave']==1 and br.enemy) or { [1] = {["unit"]=dynTar5, ["distance"] = getDistance(dynTar5)}}
+        local dynTable15                                    = (br.data.settings[br.selectedSpec].toggles['Cleave']==1 and br.enemy) or { [1] = {["unit"]=dynTar15, ["distance"] = getDistance(dynTar15)}}
+        local dynTable20AoE                                 = (br.data.settings[br.selectedSpec].toggles['Cleave']==1 and br.enemy) or { [1] = {["unit"]=dynTar20AoE, ["distance"] = getDistance(dynTar20AoE)}}
         local enemies                                       = br.player.enemies
         local flaskBuff, canFlask                           = getBuffRemain("player",br.player.flask.wod.buff.agilityBig), canUse(br.player.flask.wod.agilityBig)   
         local gcd                                           = br.player.gcd
@@ -211,8 +213,8 @@ local function runRotation()
         local solo                                          = #br.friend < 2    
         local spell                                         = br.player.spell
         local stealth                                       = br.player.buff.stealth.exists
-        local stealthingAll                                 = br.player.buff.stealth.exists or br.player.buff.vanish.exists or br.player.buff.shadowmeld.exists or br.player.buff.shadowDance.exists
-        local stealthingRogue                               = br.player.buff.stealth.exists or br.player.buff.vanish.exists or br.player.buff.shadowDance.exists
+        local stealthingAll                                 = br.player.buff.stealth.exists or br.player.buff.vanish.exists or br.player.buff.shadowmeld.exists or br.player.buff.shadowDance.exists or br.player.buff.subterfuge.exists
+        local stealthingRogue                               = br.player.buff.stealth.exists or br.player.buff.vanish.exists or br.player.buff.shadowDance.exists or br.player.buff.subterfuge.exists
         local t18_4pc                                       = br.player.eq.t18_4pc
         local talent                                        = br.player.talent
         local time                                          = getCombatTime()
@@ -229,9 +231,10 @@ local function runRotation()
         if vanishTime == nil then vanishTime = GetTime() end
         if hasEquiped(137032) then shadowWalker = 1 else shadowWalker = 0 end
         -- variable,name=ssw_er,value=equipped.shadow_satyrs_walk*(10-floor(target.distance*0.5))
-        local sswVar = shadowWalker * (10 - math.floor(getDistance(units.dyn5)*0.5))
+        --local sswVar = shadowWalker * (10 - math.floor(getDistance(units.dyn5)*0.5))
+        local sswRefund = shadowWalker * (12 + getOptionValue("SSW Offset"))
         -- variable,name=ed_threshold,value=energy.deficit<=(20+talent.vigor.enabled*35+talent.master_of_shadows.enabled*25+variable.ssw_er)
-        local edThreshVar = (powerDeficit <= (20 + (vigorous * 35) + (mosTalent * 25) + sswVar))
+        local edThreshVar = (powerDeficit <= (15 + (vigorous * 35) + (mosTalent * 30) + sswRefund))
 
         -- Custom Functions
         local function usePickPocket()
@@ -349,7 +352,7 @@ local function runRotation()
         end -- End Action List - Interrupts
     -- Action List - Cooldowns
         local function actionList_Cooldowns()
-            -- print("Cooldowns")
+            -- Print("Cooldowns")
             if useCDs() and getDistance(units.dyn5) < 5 then
         -- Trinkets
                 if isChecked("Trinkets") then
@@ -376,12 +379,12 @@ local function runRotation()
                 end
         -- Shadow Blades
                 -- shadow_blades,if=!stealthed.all
-                if not stealthingAll then
+                if combo <= 2 or (hasEquiped(137100) and combo >= 1) then
                     if cast.shadowBlades() then return end
                 end
         -- Goremaws Bite
                 -- goremaws_bite,if=!stealthed.all&((combo_points.deficit>=4-(time<10)*2&energy.deficit>50+talent.vigor.enabled*25-(time>=10)*15)|target.time_to_die<8)
-                if not stealthingAll and ((comboDeficit >= 4 - justStarted * 2 and powerDeficit > 50 + vigorous * 25 - justStarted * 15) or ttd(units.dyn5) < 8) then
+                if not stealthingAll and charges.frac.shadowDance <= 2.45 and ((comboDeficit >= 4 - justStarted * 2 and powerDeficit > 50 + vigorous * 25 - justStarted * 15) or ttd(units.dyn5) < 8) then
                     if cast.goremawsBite() then return end
                 end
         -- Marked For Death
@@ -409,7 +412,7 @@ local function runRotation()
     -- Action List - Stealth Cooldowns
         local function actionList_StealthCooldowns()
             if getDistance(units.dyn5) < 5 then
-            -- print("Stealth Cooldowns")
+            -- Print("Stealth Cooldowns")
         -- Shadow Dance
                 -- shadow_dance,if=charges_fractional>=2.45
                 if charges.frac.shadowDance >= 2.45 then
@@ -429,9 +432,9 @@ local function runRotation()
                 -- pool_resource,for_next=1,extra_amount=40-variable.ssw_er
                 -- shadowmeld,if=energy>=40-variable.ssw_er&energy.deficit>10
                 if isChecked("Racial") and not solo then
-                    if power < 40 - sswVar then
+                    if power < 40 - sswRefund then
                         return true
-                    elseif power >= 40 - sswVar and powerDeficit > 10 then
+                    elseif power >= 40 - sswRefund and powerDeficit >= 10 + sswRefund then
                         if cast.shadowmeld() then return end
                     end
                 end
@@ -444,7 +447,7 @@ local function runRotation()
         end
     -- Action List - Finishers
         local function actionList_Finishers()
-            -- print("Finishers")
+            -- Print("Finishers")
         -- Enveloping Shadows
             -- enveloping_shadows,if=buff.enveloping_shadows.remains<target.time_to_die&buff.enveloping_shadows.remains<=combo_points*1.8
             if buff.envelopingShadows.remain < ttd(units.dyn5) and buff.envelopingShadows.remain <= combo * 1.8 then
@@ -469,7 +472,7 @@ local function runRotation()
         end -- End Action List - Finishers
     -- Action List - Stealthed
         local function actionList_Stealthed()
-            -- print("Stealth")
+            -- Print("Stealth")
         -- Symbols of Death
             -- symbols_of_death,if=buff.shadowmeld.down&((buff.symbols_of_death.remains<target.time_to_die-4&buff.symbols_of_death.remains<=buff.symbols_of_death.duration*0.3)|(equipped.shadow_satyrs_walk&energy.time_to_max<0.25))
             if not buff.shadowmeld.exists and ((buff.symbolsOfDeath.remain < ttd(units.dyn5) - 4 and buff.symbolsOfDeath.refresh) 
@@ -495,7 +498,7 @@ local function runRotation()
         end
     -- Action List - Generators
         local function actionList_Generators()
-            -- print("Generator")
+            -- Print("Generator")
         -- Shuriken Storm
             -- shuriken_storm,if=spell_targets.shuriken_storm>=2
             if #enemies.yards10 >= 2 then
@@ -508,7 +511,7 @@ local function runRotation()
         end -- End Action List - Generators
     -- Action List - PreCombat
         local function actionList_PreCombat()
-            -- print("PreCombat")
+            -- Print("PreCombat")
         -- Stealth
             -- stealth
             if isChecked("Stealth") and (not IsResting() or isDummy("target")) then
@@ -543,11 +546,11 @@ local function runRotation()
         local function actionList_Opener()
             if isValidUnit("target") then
         -- Shadowstep
-                if isChecked("Shadowstep") and (not stealthingAll or power < 40) then
+                if isChecked("Shadowstep") and (not stealthingAll or power < 40) and not inCombat then
                     if cast.shadowstep("target") then return end 
                 end
         -- Shadowstrike
-                if (not isChecked("Shadowstep") or stealthingAll) and getDistance("target") <= getOptionValue ("SS Range") and mode.pickPocket ~= 2 then
+                if (not isChecked("Shadowstep") or stealthingAll) and getDistance("target") <= getOptionValue ("SS Range") and mode.pickPocket ~= 2 and not inCombat then
                     if cast.shadowstrike("target") then return end
                 end
         -- Start Attack
@@ -619,7 +622,7 @@ local function runRotation()
                     end
         -- Stealth Cooldowns
                     -- call_action_list,name=stealth_cds,if=combo_points.deficit>=2+talent.premeditation.enabled&(variable.ed_threshold|(cooldown.shadowmeld.up&!cooldown.vanish.up&cooldown.shadow_dance.charges<=1)|target.time_to_die<12)
-                    if comboDeficit >= 2 + premed and (edThreshVar or ((cd.shadowmeld == 0 or not isChecked("Racial") or solo) and (cd.vanish ~= 0 or not isChecked("Vanish") or solo) and charges.shadowDance <= 1) or ttd("target") < 12 or #enemies.yards10 >=5) then
+                    if comboDeficit >= 2 + premed and ((edThreshVar and (not hasEquiped(137032) or powerDeficit >= 10)) or ((cd.shadowmeld == 0 or not isChecked("Racial") or solo) and (cd.vanish ~= 0 or not isChecked("Vanish") or solo) and charges.shadowDance <= 1) or (ttd("target") < 12 * charges.frac.shadowDance * (1 + (shadowWalker * 0.5))) or #enemies.yards10 >=5) then
                         if actionList_StealthCooldowns() then return end
                     end
         -- Generators

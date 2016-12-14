@@ -920,11 +920,11 @@ end
 -- Used in openers
 function castOpener(spellIndex,flag,index)
     if (not br.player.cast.debug[spellIndex] and (br.player.cd[spellIndex] == 0 or br.player.cd[spellIndex] > br.player.gcd)) then
-        print(index..": "..select(1,GetSpellInfo(br.player.spell[spellIndex])).." (Uncastable)");
+        Print(index..": "..select(1,GetSpellInfo(br.player.spell[spellIndex])).." (Uncastable)");
         _G[flag] = true;
         return
     else
-        if br.player.cast[spellIndex]() then print(index..": "..select(1,GetSpellInfo(br.player.spell[spellIndex]))); _G[flag] = true; return end
+        if br.player.cast[spellIndex]() then Print(index..": "..select(1,GetSpellInfo(br.player.spell[spellIndex]))); _G[flag] = true; return end
     end
 end
 function canCast(spellID,unit)
@@ -1077,21 +1077,21 @@ function getChiMax(Unit)
 end
 -- if getCombatTime() <= 5 then
 function getCombatTime()
-    local combatStarted = br.data["Combat Started"]
-    local combatTime = br.data["Combat Time"]
-    if combatStarted == nil then
-        return 0
-    end
-    if combatTime == nil then
-        combatTime = 0
-    end
-    if UnitAffectingCombat("player") == true then
-        combatTime = (GetTime() - combatStarted)
-    else
-        combatTime = 0
-    end
-    br.data["Combat Time"] = combatTime
-    return (math.floor(combatTime*1000)/1000)
+	local combatStarted = br.data.settings[br.selectedSpec]["Combat Started"]
+	local combatTime = br.data.settings[br.selectedSpec]["Combat Time"]
+	if combatStarted == nil then
+		return 0
+	end
+	if combatTime == nil then
+		combatTime = 0
+	end
+	if UnitAffectingCombat("player") == true then
+		combatTime = (GetTime() - combatStarted)
+	else
+		combatTime = 0
+	end
+	br.data.settings[br.selectedSpec]["Combat Time"] = combatTime
+	return (math.floor(combatTime*1000)/1000)
 end
 -- if getCreatureType(Unit) == true then
 function getCreatureType(Unit)
@@ -1621,19 +1621,19 @@ function getTotemDistance(Unit1)
         Unit1 = "player"
     end
 
-    if UnitIsVisible(Unit1) then
-        for i = 1,GetObjectCountBR() do
-            if UnitCreator(ObjectWithIndex(i)) == ObjectPointer("player") and (UnitName(ObjectWithIndex(i)) == "Searing Totem" or UnitName(ObjectWithIndex(i)) == "Magma Totem") then
-                X2,Y2,Z2 = GetObjectPosition(GetObjectIndex(i))
-            end
-        end
-        local X1,Y1,Z1 = GetObjectPosition(Unit1)
-        TotemDistance = math.sqrt(((X2-X1)^2)+((Y2-Y1)^2)+((Z2-Z1)^2))
-        --print(TotemDistance)
-        return TotemDistance
-    else
-        return 0
-    end
+	if UnitIsVisible(Unit1) then
+		for i = 1,GetObjectCountBR() do
+			if UnitCreator(ObjectWithIndex(i)) == ObjectPointer("player") and (UnitName(ObjectWithIndex(i)) == "Searing Totem" or UnitName(ObjectWithIndex(i)) == "Magma Totem") then
+				X2,Y2,Z2 = GetObjectPosition(GetObjectIndex(i))
+			end
+		end
+		local X1,Y1,Z1 = GetObjectPosition(Unit1)
+		TotemDistance = math.sqrt(((X2-X1)^2)+((Y2-Y1)^2)+((Z2-Z1)^2))
+		--Print(TotemDistance)
+		return TotemDistance
+	else
+		return 0
+	end
 end
 -- if getBossID("boss1") == 71734 then
 function getBossID(BossUnitID)
@@ -2092,12 +2092,12 @@ function isInstanceBoss(unit)
 		for i=1,encountersTotal do
 			if unit == "player" then
 				local bossList = select(1,GetInstanceLockTimeRemainingEncounter(i))
-				print(bossList)
+				Print(bossList)
 			end
 			if ObjectExists(unit) then
 				local bossName = GetInstanceLockTimeRemainingEncounter(i)
 				local targetName = UnitName(unit)
-				-- print("Target: "..targetName.." | Boss: "..bossName.." | Match: "..tostring(targetName == bossName))
+				-- Print("Target: "..targetName.." | Boss: "..bossName.." | Match: "..tostring(targetName == bossName))
 				if targetName == bossName then return true end
 			end
 		end
@@ -2661,79 +2661,79 @@ function BurstToggle(toggle,delay)
     end
 end
 function SlashCommandHelp(cmd,msg)
-    if cmd == nil then cmd = "" end
-    if msg == nil then msg = "" end
-    if cmd == "Print Help" then print(tostring(commandHelp)); return end
-    if commandHelp == nil then 
-        commandHelp = "BadRotations Slash Commands\n        /"..cmd.." - "..msg
-    else
-        commandHelp = commandHelp.."\n        /"..cmd.." - "..msg
-    end
+	if cmd == nil then cmd = "" end
+	if msg == nil then msg = "" end
+	if cmd == "Print Help" then Print(tostring(commandHelp)); return end
+	if commandHelp == nil then 
+		commandHelp = "BadRotations Slash Commands\n        /"..cmd.." - "..msg
+	else
+		commandHelp = commandHelp.."\n        /"..cmd.." - "..msg
+	end
  end
 -- if pause() then
 -- set skipCastingCheck to true, to not check if player is casting
 -- (useful if you want to use off-cd stuff, or spells which can be cast while other is casting)
 function pause(skipCastingCheck)
-    -- local button = CreateFrame("Button", "DismountButton")
-    -- if button == "RightButton" then
-    --     print("Right Clicked")
-    -- end
-    if SpecificToggle("Pause Mode") == nil or getValue("Pause Mode") == 6 then
-        pausekey = IsLeftAltKeyDown()
-    else
-        pausekey = SpecificToggle("Pause Mode")
-    end
-    -- DPS Testing
-    if isChecked("DPS Testing") then
-        if GetObjectExists("target") and isInCombat("player") then
-            if getCombatTime() >= (tonumber(getOptionValue("DPS Testing"))*60) and isDummy() then
-                StopAttack()
-                ClearTarget()
-                print(tonumber(getOptionValue("DPS Testing")) .." Minute Dummy Test Concluded - Profile Stopped")
-                profileStop = true
-            else
-                profileStop = false
-            end
-        elseif not isInCombat("player") and profileStop==true then
-            if GetObjectExists("target") then
-                StopAttack()
-                ClearTarget()
-                profileStop=false
-            end
-        end
-    end
-    -- Pause Toggle
-    if br.data['Pause'] == 1 then
-        ChatOverlay("\124cFFED0000 -- Paused -- ")
-        return true
-    end
-    -- Pause Hold/Auto
-    if (pausekey and GetCurrentKeyBoardFocus() == nil and isChecked("Pause Mode"))
-        or profileStop
-        or (IsMounted() and (ObjectExists("target") and GetObjectID("target") ~= 56877) and not UnitBuffID("player",164222) and not UnitBuffID("player",165803) and not UnitBuffID("player",157059) and not UnitBuffID("player",157060))
-        or SpellIsTargeting()
-        -- or (not UnitCanAttack("player","target") and not UnitIsPlayer("target") and UnitExists("target"))
-        or (UnitCastingInfo("player") and not skipCastingCheck)
-        or (UnitChannelInfo("player") and not skipCastingCheck)
-        or UnitIsDeadOrGhost("player")
-        -- or (UnitIsDeadOrGhost("target") and not UnitIsPlayer("target"))
-        or UnitBuffID("player",80169) -- Eating
-        or UnitBuffID("player",87959) -- Drinking
-        or UnitBuffID("target",117961) --Impervious Shield - Qiang the Merciless
-        or UnitDebuffID("player",135147) --Dead Zone - Iron Qon: Dam'ren
-        or (((UnitHealth("target")/UnitHealthMax("target"))*100) > 10 and UnitBuffID("target",143593)) --Defensive Stance - General Nagrazim
-        or UnitBuffID("target",140296) --Conductive Shield - Thunder Lord / Lightning Guardian
-    then
-        if (UnitCastingInfo("player") and not skipCastingCheck) or (UnitChannelInfo("player") and not skipCastingCheck) then
-            return true
-        else 
-            ChatOverlay("Profile Paused")
-            if UnitExists("pet") and UnitAffectingCombat("pet") then PetFollow() end
-            return true
-        end
-    else
-        return false
-    end
+	-- local button = CreateFrame("Button", "DismountButton")
+	-- if button == "RightButton" then
+	-- 	Print("Right Clicked")
+	-- end
+	if SpecificToggle("Pause Mode") == nil or getValue("Pause Mode") == 6 then
+		pausekey = IsLeftAltKeyDown()
+	else
+		pausekey = SpecificToggle("Pause Mode")
+	end
+	-- DPS Testing
+	if isChecked("DPS Testing") then
+		if GetObjectExists("target") and isInCombat("player") then
+			if getCombatTime() >= (tonumber(getOptionValue("DPS Testing"))*60) and isDummy() then
+				StopAttack()
+				ClearTarget()
+				Print(tonumber(getOptionValue("DPS Testing")) .." Minute Dummy Test Concluded - Profile Stopped")
+				profileStop = true
+			else
+				profileStop = false
+			end
+		elseif not isInCombat("player") and profileStop==true then
+			if GetObjectExists("target") then
+				StopAttack()
+				ClearTarget()
+				profileStop=false
+			end
+		end
+	end
+	-- Pause Toggle
+	if br.data.settings[br.selectedSpec].toggles['Pause'] == 1 then
+		ChatOverlay("\124cFFED0000 -- Paused -- ")
+		return true
+	end
+	-- Pause Hold/Auto
+	if (pausekey and GetCurrentKeyBoardFocus() == nil and isChecked("Pause Mode"))
+		or profileStop
+		or (IsMounted() and (ObjectExists("target") and GetObjectID("target") ~= 56877) and not UnitBuffID("player",164222) and not UnitBuffID("player",165803) and not UnitBuffID("player",157059) and not UnitBuffID("player",157060))
+		or SpellIsTargeting()
+		-- or (not UnitCanAttack("player","target") and not UnitIsPlayer("target") and UnitExists("target"))
+		or (UnitCastingInfo("player") and not skipCastingCheck)
+		or (UnitChannelInfo("player") and not skipCastingCheck)
+		or UnitIsDeadOrGhost("player")
+		-- or (UnitIsDeadOrGhost("target") and not UnitIsPlayer("target"))
+		or UnitBuffID("player",80169) -- Eating
+		or UnitBuffID("player",87959) -- Drinking
+		or UnitBuffID("target",117961) --Impervious Shield - Qiang the Merciless
+		or UnitDebuffID("player",135147) --Dead Zone - Iron Qon: Dam'ren
+		or (((UnitHealth("target")/UnitHealthMax("target"))*100) > 10 and UnitBuffID("target",143593)) --Defensive Stance - General Nagrazim
+		or UnitBuffID("target",140296) --Conductive Shield - Thunder Lord / Lightning Guardian
+	then
+		if (UnitCastingInfo("player") and not skipCastingCheck) or (UnitChannelInfo("player") and not skipCastingCheck) then
+			return true
+		else 
+			ChatOverlay("Profile Paused")
+			if UnitExists("pet") and UnitAffectingCombat("pet") then PetFollow() end
+			return true
+		end
+	else
+		return false
+	end
 end
 -- feed a var
 function toggleTrueNil(var)
@@ -2778,40 +2778,40 @@ function spellDebug(Message)
 end
 -- if isChecked("Debug") then
 function isChecked(Value)
-    if br.data~=nil then
-        --print(br.data.options[br.selectedSpec]["profile"..Value.."Check"])
-        if br.data.options[br.selectedSpec] == nil or br.data.options[br.selectedSpec][br.selectedProfile] == nil then return false end
+	if br.data~=nil then
+		--Print(br.data.settings[br.selectedSpec]["profile"..Value.."Check"])
+	    if br.data.settings[br.selectedSpec] == nil or br.data.settings[br.selectedSpec][br.selectedProfile] == nil then return false end
 
-        if br.data.options[br.selectedSpec]
-            and (br.data.options[br.selectedSpec][br.selectedProfile][Value.. "Check"]==1 or br.data.options[br.selectedSpec][br.selectedProfile][Value.. "Check"] == true)
-        then
-            return true
-        end
-    end
+	    if br.data.settings[br.selectedSpec]
+	        and (br.data.settings[br.selectedSpec][br.selectedProfile][Value.. "Check"]==1 or br.data.settings[br.selectedSpec][br.selectedProfile][Value.. "Check"] == true)
+	    then
+	        return true
+	    end
+	end
     return false
 end
 -- if isSelected("Stormlash Totem") then
 function isSelected(Value)
-    if br.data["Cooldowns"] == 3 or (isChecked(Value)
-        and (getValue(Value) == 3 or (getValue(Value) == 2 and br.data["Cooldowns"] == 2))) then
-        return true
-    end
+	if br.data.settings[br.selectedSpec].toggles["Cooldowns"] == 3 or (isChecked(Value)
+		and (getValue(Value) == 3 or (getValue(Value) == 2 and br.data.settings[br.selectedSpec].toggles["Cooldowns"] == 2))) then
+		return true
+	end
 end
 -- if getValue("player") <= getValue("Eternal Flame") then
 function getValue(Value)
-    if br.data~=nil then
-        if br.data.options[br.selectedSpec][br.selectedProfile]~=nil then
-            if br.data.options[br.selectedSpec][br.selectedProfile][Value.."Status"] ~= nil then
-                return br.data.options[br.selectedSpec][br.selectedProfile][Value.."Status"]
-            elseif br.data.options[br.selectedSpec][br.selectedProfile][Value.."Drop"] ~= nil then
-                return br.data.options[br.selectedSpec][br.selectedProfile][Value.."Drop"]
-            else
-                return 0
-            end
-        end
-    else
-        return 0
-    end
+	if br.data~=nil then
+		if br.data.settings[br.selectedSpec][br.selectedProfile]~=nil then
+	        if br.data.settings[br.selectedSpec][br.selectedProfile][Value.."Status"] ~= nil then
+	            return br.data.settings[br.selectedSpec][br.selectedProfile][Value.."Status"]
+	        elseif br.data.settings[br.selectedSpec][br.selectedProfile][Value.."Drop"] ~= nil then
+	            return br.data.settings[br.selectedSpec][br.selectedProfile][Value.."Drop"]
+	        else
+	            return 0
+	        end
+		end
+	else
+		return 0
+	end
 end
 -- used to gather informations from the bot options frame
 function getOptionCheck(Value)
@@ -2952,88 +2952,88 @@ function TierScan(thisTier)
             },
             ["DEMONHUNTER"] = {
 
-            },
-            ["HUNTER"] = {
-                124284, -- chest
-                124292, -- hands
-                124296, -- head
-                124301, -- legs
-                124307, -- shoulder
-            },
-            ["MAGE"] = {
-                124171, -- chest
-                124154, -- hands
-                124160, -- head
-                124165, -- legs
-                124177, -- shoulder
-            },
-            ["MONK"] = {
-                124247, -- chest
-                124256, -- hands
-                124262, -- head
-                124268, -- legs
-                124273, -- shoulder
-            },
-            ["PALADIN"] = {
-                124318, -- chest
-                124328, -- hands
-                124333, -- head
-                124339, -- legs
-                124345, -- shoulder
-            },
-            ["PRIEST"] = {
-                124172, -- chest
-                124155, -- hands
-                124161, -- head
-                124166, -- legs
-                124178, -- shoulder
-            },
-            ["ROGUE"] = {
-                124248, -- chest
-                124257, -- hands
-                124263, -- head
-                124269, -- legs
-                124274, -- shoulder
-            },
-            ["SHAMAN"] = {
-                124303, -- chest
-                124293, -- hands
-                124297, -- head
-                124302, -- legs
-                124308, -- shoulder
-            },
-            ["WARLOCK"] = {
-                124173, -- chest
-                124156, -- hands
-                124162, -- head
-                124167, -- legs
-                124179, -- shoulder
-            },
-            ["WARRIOR"] = {
-                124319, -- chest
-                124329, -- hands
-                124334, -- head
-                124340, -- legs
-                124346, -- shoulder
-            },
-        },
-    }
-    -- scan every items
-    for i=1, 19 do
-        -- if there is an item in that slot
-        if GetInventoryItemID("player", i) ~= nil then
-            -- compare to items in our items list
-            for j = 1, 5 do
-                if sets[thisTier][myClass][j] ~= nil then
-                    --print(sets[thisTier][myClass][j]) 
-                    if GetItemInfo(GetInventoryItemID("player", i)) == GetItemInfo(sets[thisTier][myClass][j]) then
-                        equippedItems = equippedItems + 1;
-                    end
-                end
-            end
-        end
-    end
-    return equippedItems;
+			},
+			["HUNTER"] = {
+				124284, -- chest
+				124292, -- hands
+				124296, -- head
+				124301, -- legs
+				124307, -- shoulder
+			},
+			["MAGE"] = {
+				124171, -- chest
+				124154, -- hands
+				124160, -- head
+				124165, -- legs
+				124177, -- shoulder
+			},
+			["MONK"] = {
+				124247, -- chest
+				124256, -- hands
+				124262, -- head
+				124268, -- legs
+				124273, -- shoulder
+			},
+			["PALADIN"] = {
+				124318, -- chest
+				124328, -- hands
+				124333, -- head
+				124339, -- legs
+				124345, -- shoulder
+			},
+			["PRIEST"] = {
+				124172, -- chest
+				124155, -- hands
+				124161, -- head
+				124166, -- legs
+				124178, -- shoulder
+			},
+			["ROGUE"] = {
+				124248, -- chest
+				124257, -- hands
+				124263, -- head
+				124269, -- legs
+				124274, -- shoulder
+			},
+			["SHAMAN"] = {
+				124303, -- chest
+				124293, -- hands
+				124297, -- head
+				124302, -- legs
+				124308, -- shoulder
+			},
+			["WARLOCK"] = {
+				124173, -- chest
+				124156, -- hands
+				124162, -- head
+				124167, -- legs
+				124179, -- shoulder
+			},
+			["WARRIOR"] = {
+				124319, -- chest
+				124329, -- hands
+				124334, -- head
+				124340, -- legs
+				124346, -- shoulder
+			},
+		},
+	}
+	-- scan every items
+	for i=1, 19 do
+		-- if there is an item in that slot
+		if GetInventoryItemID("player", i) ~= nil then
+			-- compare to items in our items list
+			for j = 1, 5 do
+				if sets[thisTier][myClass][j] ~= nil then
+					--Print(sets[thisTier][myClass][j]) 
+					if GetItemInfo(GetInventoryItemID("player", i)) == GetItemInfo(sets[thisTier][myClass][j]) then
+						equippedItems = equippedItems + 1;
+					end
+				end
+			end
+		end
+	end
+	return equippedItems;
 end
 
 function hasEquiped(itemID)
@@ -3049,4 +3049,20 @@ function hasEquiped(itemID)
         end
     end
     return foundItem;
+end
+
+function convertName(name)
+    local function titleCase( first, rest )
+       return first:upper()..rest:lower()
+    end
+    if name ~= nil then
+	    -- Cap All First Letters of Words
+	    name = name:gsub( "(%a)([%w_']*)", titleCase )
+	    -- Lower first character of name
+	    name = name:gsub("%a", string.lower, 1)
+	    -- Remove all non alphanumeric in string
+	    name = name:gsub('%W','')
+	    return name
+	end
+	return "None"
 end

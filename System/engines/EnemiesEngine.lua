@@ -20,7 +20,7 @@ function EnemiesEngine()
 	--[[------------------------------------------------------------------------------------------------------------------]]
 	--[[------------------------------------------------------------------------------------------------------------------]]
 	--[[------------------------------------------------------------------------------------------------------------------]]
-	local varDir = br.data.options[br.selectedSpec]
+	local varDir = br.data.settings[br.selectedSpec]
 	br.enemy = {}
 	brEnemyCount = 0
 	function makeEnemiesTable(maxDistance)
@@ -29,10 +29,10 @@ function EnemiesEngine()
 		local  maxDistance = maxDistance or 40
 		if br.enemy then cleanupEngine() end
 		if br.enemy == nil or br.enemyTimer == nil or br.enemyTimer <= GetTime() - 0.1 then
-			local startTime
-			if br.data["isDebugging"] == true then
-				startTime = debugprofilestop()
-			end
+            local startTime
+            if br.data.settings[br.selectedSpec].toggles["isDebugging"] == true then
+                startTime = debugprofilestop()
+            end
 
 			br.enemyTimer = GetTime()
 			-- -- create/empty table
@@ -114,12 +114,12 @@ function EnemiesEngine()
 				end
 			end
 
-			if br.data["isDebugging"] == true then
-				br.debug.cpu.enemiesEngine.makeEnemiesTableCount = br.debug.cpu.enemiesEngine.makeEnemiesTableCount + 1
-				br.debug.cpu.enemiesEngine.makeEnemiesTableCurrent = debugprofilestop()-startTime
-				br.debug.cpu.enemiesEngine.makeEnemiesTable = br.debug.cpu.enemiesEngine.makeEnemiesTable + debugprofilestop()-startTime
-				br.debug.cpu.enemiesEngine.makeEnemiesTableAverage = br.debug.cpu.enemiesEngine.makeEnemiesTable / br.debug.cpu.enemiesEngine.makeEnemiesTableCount
-			end
+            if br.data.settings[br.selectedSpec].toggles["isDebugging"] == true then
+                br.debug.cpu.enemiesEngine.makeEnemiesTableCount = br.debug.cpu.enemiesEngine.makeEnemiesTableCount + 1
+                br.debug.cpu.enemiesEngine.makeEnemiesTableCurrent = debugprofilestop()-startTime
+                br.debug.cpu.enemiesEngine.makeEnemiesTable = br.debug.cpu.enemiesEngine.makeEnemiesTable + debugprofilestop()-startTime
+                br.debug.cpu.enemiesEngine.makeEnemiesTableAverage = br.debug.cpu.enemiesEngine.makeEnemiesTable / br.debug.cpu.enemiesEngine.makeEnemiesTableCount
+            end
 		end
 	end
 	-- remove invalid units on pulse
@@ -299,9 +299,9 @@ function EnemiesEngine()
 				coef = coef + burnValue
 				-- if user checked avoid shielded, we add the % this shield remove to coef
 				coef = coef + shieldValue
-				--local displayCoef = math.floor(coef*10)/10
-				--local displayName = UnitName(unit) or "invalid"
-				-- print("Unit "..displayName.." - "..displayCoef)
+				-- local displayCoef = math.floor(coef*10)/10
+				-- local displayName = UnitName(unit) or "invalid"
+				-- -- Print("Unit "..displayName.." - "..displayCoef)
 			end
 		end
 		return coef
