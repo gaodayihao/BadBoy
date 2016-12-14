@@ -178,7 +178,7 @@ local function runRotation()
             local targetUnit = nil
             for i = 1, #theEnemies do
                 local thisUnit = theEnemies[i]
-                if not targetUnit and UnitGUID(thisUnit) ~= lastTarget then
+                if not targetUnit or UnitGUID(thisUnit) ~= lastTarget then
                     targetUnit = thisUnit
                 elseif targetUnit ~= nil then
                     local health = UnitHealth(thisUnit)
