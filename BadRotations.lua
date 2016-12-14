@@ -9,6 +9,13 @@ br.dropOptions.Toggle2 ={"LeftCtrl","LeftShift","LeftAlt","RightCtrl","RightShif
 br.dropOptions.CD = {"Never","CDs","Always" }
 br.loadedIn = false
 br.rotations = {}
+
+SetCVar("targetnearestuseold", 1)
+SetCVar("nameplateMaxDistance", 40)
+SetCVar("nameplateOtherTopInset", -1)
+SetCVar("nameplateOtherBottomInset", -1)
+SetCVar("alwaysCompareItems", "1")
+
 -- developers debug, use /run br.data.settings[br.selectedSpec].toggles["isDebugging"] = true
 br.debug = {}
 function br.debug:Print(message)
