@@ -180,9 +180,9 @@ local function runRotation()
 --- Custom Function ---
 -----------------------
         local function activeEnemies()
+            if forceSingle then return 1 end
+            if forceAOE then return 99 end
             if activeEnemiesCache > -1 then return activeEnemiesCache end
-            if forceSingle then activeEnemiesCache = 1 end
-            if forceAOE then activeEnemiesCache = 99 end
             activeEnemiesCache = #getFacingUnits("player",enemies.yards5,120)
             return activeEnemiesCache
         end
@@ -312,7 +312,7 @@ local function runRotation()
                 local thisUnit = theEnemies[i]
                 if not targetUnit and UnitGUID(thisUnit) ~= lastTarget then
                     targetUnit = thisUnit
-                else
+                elseif targetUnit ~= nil then
                     local health = UnitHealth(thisUnit)
                     if health > UnitHealth(targetUnit) and UnitGUID(thisUnit) ~= lastTarget then
                         targetUnit = thisUnit
@@ -359,10 +359,10 @@ local function runRotation()
                 if cast.crashLightning() then return end
             end
         -- Stormstrike/Windstrike
-			-- windstrike,if=active_enemies>=3&!talent.hailstorm.enabled
-			-- stormstrike,if=active_enemies>=3&!talent.hailstorm.enabled
+            -- windstrike,if=active_enemies>=3&!talent.hailstorm.enabled
+            -- stormstrike,if=active_enemies>=3&!talent.hailstorm.enabled
             -- stormstrike,if=buff.stormbringer.react 
-			-- windstrike,if=buff.stormbringer.react
+            -- windstrike,if=buff.stormbringer.react
             if buff.stormbringer.exists or not talent.hailstorm and activeEnemies() >= 3 then
                 if buff.ascendance.exists then
                     if cast.windstrike() then return end
@@ -408,8 +408,8 @@ local function runRotation()
                 if cast.crashLightning() then return end
             end
         -- Stormstrike/Windstrike
-			-- windstrike
-			-- stormstrike
+            -- windstrike
+            -- stormstrike
             if buff.ascendance.exists then
                 if cast.windstrike() then return end
             else

@@ -407,7 +407,7 @@ local function runRotation()
                 local thisUnit = theEnemies[i]
                 if not targetUnit and UnitGUID(thisUnit) ~= lastTarget then
                     targetUnit = thisUnit
-                else
+                elseif targetUnit ~= nil then
                     local health = UnitHealth(thisUnit)
                     if health > UnitHealth(targetUnit) and UnitGUID(thisUnit) ~= lastTarget then
                         targetUnit = thisUnit

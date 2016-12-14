@@ -207,11 +207,10 @@ function EnemiesEngine()
 			local getEnemiesTable = { }
 			for k, v in pairs(br.enemy) do
 				local thisUnit = br.enemy[k].unit
-				local thisDistance = getDistance("player",thisUnit)
 				-- check if unit is valid
 				if GetObjectExists(thisUnit) and (not InCombat or br.enemy[k].inCombat) then
                     if unit == "player" and not precise then
-                        if thisDistance <= Radius then
+                        if getDistance("player",thisUnit) <= Radius then
                             tinsert(getEnemiesTable,thisUnit)
                         end
                     else
