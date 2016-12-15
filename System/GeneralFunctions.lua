@@ -948,7 +948,7 @@ function castMouseoverHealing(Class)
         for i = 1,#SpecialTargets do
             local target = SpecialTargets[i]
             if UnitExists(target) and not UnitIsPlayer(target) then
-                local npcID = tonumber(string.match(UnitGUID(target),"-(%d+)-%x+$"))
+                local npcID = GetObjectID(target)
                 for i = 1,#npcTable do
                     if npcID == npcTable[i] then
                         -- Dispel
@@ -1401,7 +1401,7 @@ function getGUID(unit)
             targetGUID = UnitGUID(unit)
             nShortHand = string.sub(UnitGUID(unit),-5)
         else
-            targetGUID = string.match(UnitGUID(unit),"-(%d+)-%x+$")
+            targetGUID = GetObjectID(unit)
             nShortHand = string.sub(UnitGUID(unit),-5)
         end
     end
@@ -2112,7 +2112,7 @@ end
 function isBoss(unit)
 	if unit==nil then unit="target" end
 	if UnitExists(unit) then
-		local npcID = string.match(UnitGUID(unit),"-(%d+)-%x+$")
+		local npcID = GetObjectID(unit)
 		-- local bossCheck = LibStub("LibBossIDs-1.0").BossIDs[tonumber(npcID)] or false
 		-- local bossCheck = br.player.BossIDs[tonumber(npcID)] or false
 		local unitClassification = UnitClassification(unit)
@@ -2228,7 +2228,7 @@ function isDummy(Unit)
     if Unit == nil then
         Unit = "target"
     end
-    if GetObjectExists(Unit) and UnitGUID(Unit) then
+    if GetObjectExists(Unit) then
         local dummies = {
         -- Misc/Unknown
             [79987]  = "Training Dummy",               -- Location Unknown
@@ -2340,7 +2340,7 @@ function isDummy(Unit)
             [70245]  = "Training Dummy",              -- Lvl ?? (Throne of Thunder)
             [113964] = "Raider's Training Dummy",     -- Lvl ?? (The Dreamgrove) - Tanking
         }
-        if dummies[tonumber(string.match(UnitGUID(Unit),"-(%d+)-%x+$"))] ~= nil then
+        if dummies[GetObjectID(Unit)] ~= nil then
             return true
         end
     end
@@ -2529,7 +2529,7 @@ function isPlayer(Unit)
             [72220] = "Sooli the Survivalist",
             [72221] = "Kavan the Arcanist"
         }
-        if playerNPC[tonumber(string.match(UnitGUID(Unit),"-(%d+)-%x+$"))] ~= nil then
+        if playerNPC[GetObjectID(Unit)] ~= nil then
             return true
         end
     else

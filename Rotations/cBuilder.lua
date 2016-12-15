@@ -113,19 +113,26 @@ function br.loader:new(spec,specName)
         -- Update Talent Info
         br.activeSpecGroup = GetActiveSpecGroup()
         if self.talent == nil then self.talent = {} end
+        local tempTalents = {}
         for r = 1, 7 do --search each talent row
             for c = 1, 3 do -- search each talent column
                 if not activeOnly then
                 -- Cache Talent IDs for talent checks
                     local _,_,_,selected,_,talentID = GetTalentInfo(r,c,br.activeSpecGroup)
-                    local spellName = convertName(GetSpellInfo(talentID))
-                    self.talent[spellName] = selected
-                    if not IsPassiveSpell(talentID) then
-                        self.spell['abilities'][spellName] = talentID
-                        self.spell[spellName] = talentID 
-                    end
+                    -- local spellName = convertName(GetSpellInfo(talentID))
+                    -- self.talent[spellName] = selected
+                    -- if not IsPassiveSpell(talentID) then
+                    --     self.spell['abilities'][spellName] = talentID
+                    --     self.spell[spellName] = talentID 
+                    -- end
+                    table.insert(tempTalents,talentID,selected)
                 end
             end
+        end
+
+        -- Build Talent Info
+        for k,v in pairs(self.spell.talents) do
+            self.talent[k] = tempTalents[v]
         end
     end
     getTalentInfo()
