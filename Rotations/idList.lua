@@ -678,13 +678,37 @@ br.idList = {
         -- BeastMastery
         [253] = {
             abilities                       = {
-
+                aMurderOfCrows              = 131894,
+                aspectOfTheCheetah          = 186257,
+                aspectOfTheTurtle           = 186265,
+                aspectOfTheWild             = 193530,
+                barrage                     = 120360,
+                bestialWrath                = 19574,
+                bindingShot                 = 109248,
+                chimaeraShot                = 53209,
+                cobraShot                   = 193455,
+                concussiveShot              = 5116,
+                counterShot                 = 147362,
+                direBeast                   = 120679,
+                direfrenzy                  = 217200,
+                disengage                   = 781,
+                eagleEye                    = 6197,
+                exhilaration                = 109304,
+                feignDeath                  = 5384,
+                flare                       = 1543,
+                killCommand                 = 34026,
+                misdirection                = 34477,
+                multiShot                   = 2643,
+                stampede                    = 201430,
+                titansThunder               = 207097,
+                volley                      = 194386
             },
             artifacts                       = {
 
             },
             buffs                           = {
-
+                bestialWrath                = 19574,
+                direBeast                   = 120694
             },
             debuffs                         = {
 
@@ -693,7 +717,10 @@ br.idList = {
 
             },
             talents                         = {
-
+                direfrenzy                  = 217200,
+                aMurderOfCrows              = 131894,
+                barrage                     = 120360,
+                volley                      = 194386
             },
         },
         -- Marksmanship

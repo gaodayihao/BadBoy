@@ -232,14 +232,21 @@ frame:SetScript("OnEvent", frame.OnEvent)
 --[[-------------------------------------------------------------------------------------------------------------------------------------------------------]]
 --[[-------------------------------------------------------------------------------------------------------------------------------------------------------]]
 --[[This function is refired everytime wow ticks. This frame is located at the top of Core.lua]]
+-- closeWindowsVar = 0
+function closeWindows()
+	if closeWindowsVar == nil then
+		if br.ui.window.config.parent ~= nil then br.ui.window.config.parent.closeButton:Click() end
+        if br.ui.window.debug.parent ~= nil then br.ui.window.debug.parent.closeButton:Click() end
+        if br.ui.window.help.parent ~= nil then br.ui.window.help.parent.closeButton:Click() end
+        if br.ui.window.profile.parent ~= nil then br.ui.window.profile.parent.closeButton:Click() end
+       	closeWindowsVar = 1
+    end
+end
 function BadRotationsUpdate(self)
 		-- Close windows and swap br.selectedSpec on Spec Change
 	if select(2,GetSpecializationInfo(GetSpecialization())) ~= br.selectedSpec then
 		-- Closing the windows will save the position
-		if br.ui.window.config.parent ~= nil then br.ui.window.config.parent.closeButton:Click() end
-		if br.ui.window.debug.parent ~= nil then br.ui.window.debug.parent.closeButton:Click() end
-		if br.ui.window.help.parent ~= nil then br.ui.window.help.parent.closeButton:Click() end
-		if br.ui.window.profile.parent ~= nil then br.ui.window.profile.parent.closeButton:Click() end
+		closeWindows()
 			
 		-- Update Selected Spec/Profile
 		br.selectedSpec = select(2,GetSpecializationInfo(GetSpecialization()))
@@ -247,6 +254,7 @@ function BadRotationsUpdate(self)
 		-- Recreate Config Window and commandHelp with new Spec
 		if br.ui.window.config.parent == nil then br.ui:createConfigWindow() end
 		commandHelp = nil
+		slashHelpList()
 		if br.data.settings[br.selectedSpec] == nil then
 			br.data.settings[br.selectedSpec] = {
 				toggles = {},
@@ -261,33 +269,27 @@ function BadRotationsUpdate(self)
 	-- prevent ticking when firechack isnt loaded
 	-- if user click power button, stop everything from pulsing and hide frames.
 	if not getOptionCheck("Start/Stop BadRotations") or br.data.settings[br.selectedSpec].toggles["Power"] ~= 1 then
-		-- optionsFrame:Hide()
-		-- _G["debugFrame"]:Hide()
-		-- if br.ui.window.config.parent ~= nil then br.ui.window.config.parent.closeButton:Click() end
-		-- if br.ui.window.debug.parent ~= nil then br.ui.window.debug.parent.closeButton:Click() end
-		-- if br.ui.window.help.parent ~= nil then br.ui.window.help.parent.closeButton:Click() end
-		-- if br.ui.window.profile.parent ~= nil then br.ui.window.profile.parent.closeButton:Click() end
+			-- optionsFrame:Hide()
+			-- _G["debugFrame"]:Hide()
+		closeWindows()
 		return false
 	end
 	if FireHack == nil then
 		if br.dirtyHack == true then
 			-- optionsFrame:Hide()
 			-- _G["debugFrame"]:Hide()
-			if br.ui.window.config.parent ~= nil then br.ui.window.config.parent.closeButton:Click() end
-			if br.ui.window.debug.parent ~= nil then br.ui.window.debug.parent.closeButton:Click() end
-			if br.ui.window.help.parent ~= nil then br.ui.window.help.parent.closeButton:Click() end
-			if br.ui.window.profile.parent ~= nil then br.ui.window.profile.parent.closeButton:Click() end
+			closeWindows()
 			if getOptionCheck("Start/Stop BadRotations") then
 				ChatOverlay("FireHack not Loaded.")
 				if br.timer:useTimer("notLoaded", 10) then
 					Print("|cffFFFFFFCannot Start... |cffFF1100Firehack |cffFFFFFFis not loaded. Please attach Firehack.")
 				end
 			end
-			return
+			return false
 		end
 		br.dirtyHack = true
 	end
-
+	closeWindowsVar = nil
 	local rd = math.random(80,120)
 	if br.timer:useTimer("UnitUpdate", 1/(getOptionValue(LC_UNITS_TPS) or 5) * (rd/100)) then
 		-- clear distance cache
