@@ -285,9 +285,9 @@ function BadRotationsUpdate(self)
 					Print("|cffFFFFFFCannot Start... |cffFF1100Firehack |cffFFFFFFis not loaded. Please attach Firehack.")
 				end
 			end
-			return false
 		end
 		br.dirtyHack = true
+		return false
 	end
 	closeWindowsVar = nil
 	local rd = math.random(80,120)
