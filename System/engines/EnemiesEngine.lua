@@ -56,7 +56,7 @@ function EnemiesEngine()
 					and ObjectIsType(thisUnit, ObjectTypes.Unit) 
 					and UnitCanAttack("player", thisUnit)
 					and not UnitIsDeadOrGhost(thisUnit) 
-					and getLineOfSight("player",thisUnit)
+					--and getLineOfSight("player",thisUnit)
 					and getDistance("player",thisUnit) <= 40 --and (GetDistanceBetweenObjects("player",thisUnit) - UnitCombatReach("player") - UnitCombatReach(thisUnit) <= 40) then
 				then
 					br.debug.cpu.enemiesEngine.unitTargets = br.debug.cpu.enemiesEngine.unitTargets + 1

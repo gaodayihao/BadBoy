@@ -543,7 +543,7 @@ function br.loader:new(spec,specName)
                 --------------------
                     --local unitName      = UnitName(thisUnit)
                     local unitGUID      = UnitGUID(thisUnit)
-                    local demoEmpBuff   = UnitBuffID(thisUnit,self.spell.spec.buffs.demonicEmpowerment) ~= nil
+                    local demoEmpBuff   = UnitBuffID(thisUnit,self.spell.buffs.demonicEmpowerment) ~= nil
                     --local unitCount     = #getEnemies(tostring(thisUnit),10) or 0
                     
                     local pet = {

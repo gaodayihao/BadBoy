@@ -344,19 +344,29 @@ local function runRotation()
             if talent.crashingStorm and activeEnemies() >= 3 then
                 if cast.crashLightning() then return end
             end
-        -- Boulderfist
-            -- boulderfist,if=buff.boulderfist.remains<gcd&maelstrom>=50&active_enemies>=3
-            -- boulderfist,if=buff.boulderfist.remains<gcd|(charges_fractional>1.75&maelstrom<=100&active_enemies<=2)
-            if (buff.boulderfist.remain < gcd and power >= 50 and activeEnemies() >= 3)
-                or
-                (buff.boulderfist.remain < gcd or (charges.frac.boulderfist > 1.75 and power <= 100 and activeEnemies() <= 2))
-            then
-                if cast.boulderfist() then return end
-            end
         -- Crash Lightning
             -- crash_lightning,if=buff.crash_lightning.remains<gcd&active_enemies>=2
             if buff.crashLightning.remain < gcd and activeEnemies() >= 2 then
                 if cast.crashLightning() then return end
+            end
+        -- Frostbrand
+            -- frostbrand,if=talent.hailstorm.enabled&buff.frostbrand.remains<gcd
+            if talent.hailstorm and buff.frostbrand.remain < gcd then
+                if cast.frostbrand() then return end
+            end
+        -- Boulderfist
+            -- boulderfist,if=buff.boulderfist.remains<gcd&maelstrom>=50&active_enemies>=3
+            -- boulderfist,if=buff.boulderfist.remains<gcd|(charges_fractional>1.75&maelstrom<=80&active_enemies<=2)
+            if (buff.boulderfist.remain < gcd and power >= 50 and activeEnemies() >= 3)
+                or
+                (buff.boulderfist.remain < gcd or (charges.frac.boulderfist > 1.75 and power <= 80 and activeEnemies() <= 2))
+            then
+                if cast.boulderfist() then return end
+            end
+        -- Doom Winds
+            -- doom_winds,if=buff.stormbringer.react
+            if buff.stormbringer.exists then
+                if cast.doomWinds() then doomWindsDelayStart = 0 return end
             end
         -- Stormstrike/Windstrike
             -- windstrike,if=active_enemies>=3&!talent.hailstorm.enabled
@@ -369,11 +379,6 @@ local function runRotation()
                 else
                     if cast.stormstrike() then return end
                 end
-            end
-        -- Frostbrand
-            -- frostbrand,if=talent.hailstorm.enabled&buff.frostbrand.remains<gcd
-            if talent.hailstorm and buff.frostbrand.remain < gcd then
-                if cast.frostbrand() then return end
             end
         -- Flametongue
             -- flametongue,if=buff.flametongue.remains<gcd
@@ -447,6 +452,11 @@ local function runRotation()
             -- sundering
             if talent.sundering and getDistance(units.dyn8) < 8 then
                 if cast.sundering() then return end
+            end
+        -- Boulderfist
+            -- boulderfist,if=charges_fractional>1.75 
+            if charges.frac.boulderfist > 1.75 then
+                if cast.boulderfist() then return end
             end
         -- Lava Lash
             -- lava_lash,if=maelstrom>=90
